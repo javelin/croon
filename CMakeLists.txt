@@ -106,6 +106,30 @@ add_custom_target(croon_package_nest
 set(CROON_NESTS "${CROON_PACKAGE_NEST},${CROON_UPPSRC}")
 
 if(CROON_UMK_EXECUTABLE)
+    set(CROON_CORE_TEST_BINARY "${CMAKE_CURRENT_BINARY_DIR}/tests/CroonCoreTests")
+
+    add_custom_target(croon_core_behavior
+        COMMAND "${CMAKE_COMMAND}" -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/tests"
+        COMMAND "${CROON_UMK_EXECUTABLE}"
+            "${CMAKE_CURRENT_SOURCE_DIR}/tests/upp,${CROON_PACKAGE_NEST},${CROON_UPPSRC}"
+            CroonCoreTests
+            "${CROON_BUILD_METHOD}"
+            "${CROON_UMK_OPTIONS}"
+            "${CROON_CORE_TEST_BINARY}"
+        COMMAND "${CROON_CORE_TEST_BINARY}"
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        COMMENT "Building and running Croon core behavior tests"
+        VERBATIM
+    )
+    add_dependencies(croon_core_behavior croon_package_nest)
+
+    add_test(
+        NAME croon_core_behavior
+        COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_CURRENT_BINARY_DIR}" --target croon_core_behavior
+    )
+endif()
+
+if(CROON_UMK_EXECUTABLE)
     add_custom_target(croon
         COMMAND "${CROON_UMK_EXECUTABLE}" "${CROON_NESTS}" Croon "${CROON_BUILD_METHOD}" "${CROON_UMK_OPTIONS}"
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
