@@ -98,6 +98,34 @@ def main() -> None:
         if layout_member in timing_header:
             fail(f"TimingDlg.h still declares layout member {layout_member}")
 
+    if croon_h.find('#include "Page3.h"') > croon_h.find("<Croon/CroonVideoDlg.lay>"):
+        fail("Croon.h includes VideoDlg layout before Page3 declaration")
+
+    video_lay = (root / "CroonVideoDlg.lay").read_text()
+    for layout in [
+        "LAYOUT(CroonVideoDlgLayout",
+        "ITEM(Page3, page3",
+        "ITEM(Button, okBtn",
+        "ITEM(Button, cancelBtn",
+    ]:
+        if layout not in video_lay:
+            fail(f"missing {layout}")
+
+    video_header = (root / "VideoDlg.h").read_text()
+    if "WithCroonVideoDlgLayout<TopWindow>" not in video_header:
+        fail("VideoDlg does not inherit WithCroonVideoDlgLayout")
+    for layout_member in ["Page3 page3;", "Button okBtn;", "Button cancelBtn;"]:
+        if layout_member in video_header:
+            fail(f"VideoDlg.h still declares layout member {layout_member}")
+
+    video_impl = (root / "VideoDlg.cpp").read_text()
+    if "CtrlLayout(*this" not in video_impl:
+        fail("VideoDlg constructor does not call CtrlLayout")
+    constructor_body = video_impl.split("VideoDlg::VideoDlg()", 1)[-1].split("\n}\n", 1)[0]
+    for line in constructor_body.splitlines():
+        if "*this <<" in line and "GatherButton" not in line:
+            fail("VideoDlg still hardcodes non-gather child placement")
+
 
 if __name__ == "__main__":
     main()

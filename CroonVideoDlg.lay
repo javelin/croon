@@ -1,0 +1,5 @@
+LAYOUT(CroonVideoDlgLayout, 450, 550)
+	ITEM(Page3, page3, HSizePosZ().VSizePosZ(0, 40))
+	ITEM(Button, okBtn, SetLabel(t_("OK")).RightPosZ(85, 70).BottomPosZ(10, 25))
+	ITEM(Button, cancelBtn, SetLabel(t_("Cancel")).RightPosZ(10, 70).BottomPosZ(10, 25))
+END_LAYOUT

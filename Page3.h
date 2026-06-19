@@ -8,7 +8,7 @@
 
 class Page3 : public Page {
 public:
-    Page3(String gatherKey);
+    Page3(String gatherKey = "");
     void Layout() override;
     void HideButtons() override {
         Page::HideButtons(); gatherBtn.Hide(); gatherBtn.Disable(); }

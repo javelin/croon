@@ -6,7 +6,7 @@
 #ifndef _Croon_VideoDlg_h_
 #define _Croon_VideoDlg_h_
 
-class VideoDlg : public TopWindow {
+class VideoDlg : public WithCroonVideoDlgLayout<TopWindow> {
 public:
     VideoDlg();
     int Run() {
@@ -25,9 +25,6 @@ public:
     String GetThumbnailPath() const { return tnPath; }
     
 private:
-    Page3 page3;
-    Button okBtn;
-    Button cancelBtn;
     Image image;
     String value;
     String tnPath;
