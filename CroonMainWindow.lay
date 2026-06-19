@@ -1,0 +1,4 @@
+LAYOUT(CroonMainWindowLayout, 640, 490)
+	ITEM(ProjectList, projects, HSizePos().VSizePos())
+	ITEM(Project, project, HSizePos().VSizePos())
+END_LAYOUT

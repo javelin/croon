@@ -70,6 +70,10 @@ typedef struct Visualization VIZ;
 #include "VideoDlg.h"
 #include "Project.h"
 #include "ProjectList.h"
+
+#define LAYOUTFILE <Croon/CroonMainWindow.lay>
+#include <CtrlCore/lay.h>
+
 #include "MainWindow.h"
 #include "WizardDlg.h"
 
