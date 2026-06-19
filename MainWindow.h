@@ -6,7 +6,7 @@
 #ifndef _Croon_MainWindow_h_
 #define _Croon_MainWindow_h_
 
-class MainWindow : public TopWindow {
+class MainWindow : public WithCroonMainWindowLayout<TopWindow> {
 public:
     MainWindow();
     ~MainWindow();
@@ -29,8 +29,6 @@ private:
     void SetTheMainMenu();
     
 private:
-    Project project;
-    ProjectList projects;
     StatusBar status;
 #ifndef PLATFORM_COCOA
     MenuBar menuBar;

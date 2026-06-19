@@ -14,6 +14,7 @@ def main() -> None:
 
     root = Path(sys.argv[1])
     lay = (root / "Croon.lay").read_text()
+    main_lay = (root / "CroonMainWindow.lay").read_text()
     for layout in [
         "LAYOUT(CroonProjectListLayout",
         "LAYOUT(CroonProjectLayout",
@@ -25,9 +26,18 @@ def main() -> None:
         if layout not in lay:
             fail(f"missing {layout}")
 
+    for layout in [
+        "LAYOUT(CroonMainWindowLayout",
+        "ITEM(ProjectList, projects",
+        "ITEM(Project, project",
+    ]:
+        if layout not in main_lay:
+            fail(f"missing {layout}")
+
     expected_bases = {
         "ProjectList.h": "WithCroonProjectListLayout<ParentCtrl>",
         "Project.h": "WithCroonProjectLayout<ParentCtrl>",
+        "MainWindow.h": "WithCroonMainWindowLayout<TopWindow>",
     }
     for rel, base in expected_bases.items():
         if base not in (root / rel).read_text():
@@ -36,6 +46,7 @@ def main() -> None:
     constructors = {
         "ProjectList.cpp": "ProjectList::ProjectList()",
         "Project.cpp": "Project::Project()",
+        "MainWindow.cpp": "MainWindow::MainWindow()",
     }
     for rel, marker in constructors.items():
         text = (root / rel).read_text()
@@ -44,6 +55,14 @@ def main() -> None:
         constructor_body = text.split(marker, 1)[-1].split("\n}\n", 1)[0]
         if "*this <<" in constructor_body:
             fail(f"{rel} still hardcodes top-level child placement")
+
+    mainwindow_h = (root / "MainWindow.h").read_text()
+    for runtime_member in ["StatusBar status;", "MenuBar menuBar;"]:
+        if runtime_member not in mainwindow_h:
+            fail(f"MainWindow.h missing runtime frame member {runtime_member}")
+    for layout_member in ["Project project;", "ProjectList projects;"]:
+        if layout_member in mainwindow_h:
+            fail(f"MainWindow.h still declares layout member {layout_member}")
 
     project_h = (root / "Project.h").read_text()
     for runtime_member in ["DocEdit lyricsEd;", "RichTextCtrl previewRT;"]:

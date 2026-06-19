@@ -6,6 +6,7 @@
 #include "Croon.h"
 
 MainWindow::MainWindow() {
+    CtrlLayout(*this);
     Title("Croon").Sizeable().Zoomable().SetMinSize(Size(Zx(640), Zy(490)));
     int x{Config::GetInt(WIN_X, -9999)},
         y{Config::GetInt(WIN_Y, -9999)},
@@ -15,8 +16,6 @@ MainWindow::MainWindow() {
     SetRect(center ? 0:x, center ? 0:y, w, h);
     if (center) CenterScreen();
     
-    *this << projects.HSizePos().VSizePos()
-            << project.HSizePos().VSizePos();
     AddFrame(status);
     status = "No project loaded.";
     
