@@ -107,11 +107,25 @@ set(CROON_NESTS "${CROON_PACKAGE_NEST},${CROON_UPPSRC}")
 
 if(CROON_UMK_EXECUTABLE)
     set(CROON_CORE_TEST_BINARY "${CMAKE_CURRENT_BINARY_DIR}/tests/CroonCoreTests")
+    set(CROON_CORE_TEST_PACKAGE "${CMAKE_CURRENT_BINARY_DIR}/tests/upp/CroonCoreTests")
+    file(GLOB CROON_CORE_TEST_HEADERS CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+    )
 
     add_custom_target(croon_core_behavior
+        COMMAND "${CMAKE_COMMAND}" -E rm -rf "${CROON_CORE_TEST_PACKAGE}"
+        COMMAND "${CMAKE_COMMAND}" -E copy_directory
+            "${CMAKE_CURRENT_SOURCE_DIR}/tests/upp/CroonCoreTests"
+            "${CROON_CORE_TEST_PACKAGE}"
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+            ${CROON_CORE_TEST_HEADERS}
+            "${CMAKE_CURRENT_SOURCE_DIR}/Croon.lay"
+            "${CMAKE_CURRENT_SOURCE_DIR}/Croon.iml"
+            "${CMAKE_CURRENT_SOURCE_DIR}/KarData.cpp"
+            "${CROON_CORE_TEST_PACKAGE}"
         COMMAND "${CMAKE_COMMAND}" -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/tests"
         COMMAND "${CROON_UMK_EXECUTABLE}"
-            "${CMAKE_CURRENT_SOURCE_DIR}/tests/upp,${CROON_PACKAGE_NEST},${CROON_UPPSRC}"
+            "${CMAKE_CURRENT_BINARY_DIR}/tests/upp,${CROON_PACKAGE_NEST},${CROON_UPPSRC}"
             CroonCoreTests
             "${CROON_BUILD_METHOD}"
             "${CROON_UMK_OPTIONS}"

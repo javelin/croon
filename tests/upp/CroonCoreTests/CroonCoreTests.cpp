@@ -63,6 +63,45 @@ CONSOLE_APP_MAIN
 	Check(freqFilter.Find("subtitles=subtitles.ass") >= 0, "freq visualization includes subtitles filter");
 	Check(Visualization::Filter("@@unknown", "subtitles.ass", true).IsVoid(), "unknown visualization returns void");
 
+	KarData song;
+	song.version = "9.9";
+	song.title = "Long Song";
+	song.artist = "The Singers";
+	song.genre = "Pop";
+	song.year = 2026;
+	song.writer = "A Writer";
+	song.owner = "A Publisher";
+	song.origVideoFile = "background.mp4";
+	song.duration = 3661.5;
+	song.timed = 2;
+	song.fontSize = 84;
+	song.dehiss = true;
+	song.timedLyrics.Add({song.duration, ""});
+	song.timedLyrics.Add({1.25, "First line"});
+	song.timedLyrics.Add({2.5, "Second line"});
+	song.parts.Add(MakeTuple(1, true, false, true));
+
+	KarData restored(song.ToJSONStr());
+	Check(restored.version == "9.9", "KarData JSON preserves version");
+	Check(restored.title == "Long Song", "KarData JSON preserves title");
+	Check(restored.artist == "The Singers", "KarData JSON preserves artist");
+	Check(restored.genre == "Pop", "KarData JSON preserves genre");
+	Check(restored.year == 2026, "KarData JSON preserves year");
+	Check(restored.writer == "A Writer", "KarData JSON preserves writer");
+	Check(restored.owner == "A Publisher", "KarData JSON preserves owner");
+	Check(restored.origVideoFile == "background.mp4", "KarData JSON preserves original video");
+	Check(restored.duration == 3661.5, "KarData JSON preserves duration");
+	Check(restored.timed == 2, "KarData JSON preserves timed count");
+	Check(restored.fontSize == 84, "KarData JSON preserves font size");
+	Check(restored.dehiss, "KarData JSON preserves dehiss");
+	Check(restored.timedLyrics.GetCount() == 3, "KarData JSON restores sentinel lyric");
+	Check(restored.timedLyrics[0].time == restored.duration, "KarData JSON sentinel uses duration");
+	Check(restored.timedLyrics[1].lyrics == "First line", "KarData JSON preserves first timed lyric");
+	Check(restored.timedLyrics[2].time == 2.5, "KarData JSON preserves second timed lyric time");
+	Check(restored.parts.GetCount() == 1, "KarData JSON preserves part count");
+	Check(restored.parts[0].a == 1 && restored.parts[0].b && !restored.parts[0].c && restored.parts[0].d,
+		"KarData JSON preserves vocal part flags");
+
 	if(failures)
 		SetExitCode(1);
 }

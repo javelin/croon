@@ -1,8 +1,12 @@
 uses
-	CtrlLib;
+	CtrlLib,
+	plugin/pcre,
+	Core/SSL;
 
 file
-	CroonCoreTests.cpp;
+	CroonCoreTests.cpp,
+	KarData.cpp,
+	CroonCoreTestSupport.cpp;
 
 mainconfig
 	"" = "";
