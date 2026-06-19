@@ -1,7 +1,7 @@
 #ifndef _Croon_LyricsPartsDlg_h_
 #define _Croon_LyricsPartsDlg_h_
 
-class LyricsPartsDlg : public WithLyricsPartsLayout<TopWindow> {
+class LyricsPartsDlg : public WithCroonLyricsPartsLayout<TopWindow> {
 public:
     LyricsPartsDlg();
     

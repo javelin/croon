@@ -15,7 +15,7 @@ def main() -> None:
     root = Path(sys.argv[1])
     lay = (root / "Croon.lay").read_text()
     for needle in [
-        "LAYOUT(ProgressLayout",
+        "LAYOUT(CroonProgressLayout",
         "ITEM(Label, monitor",
         "ITEM(ProgressIndicator, progress",
         "ITEM(Button, cancelBtn",
@@ -24,8 +24,8 @@ def main() -> None:
             fail(f"Croon.lay missing {needle}")
 
     header = (root / "ProgressDlg.h").read_text()
-    if "WithProgressLayout<TopWindow>" not in header:
-        fail("ProgressDlg is not backed by ProgressLayout")
+    if "WithCroonProgressLayout<TopWindow>" not in header:
+        fail("ProgressDlg is not backed by CroonProgressLayout")
     for old_member in ["Label monitor;", "ProgressIndicator progress;", "Button cancelBtn;"]:
         if old_member in header:
             fail(f"ProgressDlg still declares layout-owned member {old_member}")

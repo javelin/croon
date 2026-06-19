@@ -15,17 +15,17 @@ def main() -> None:
     root = Path(sys.argv[1])
     lay = (root / "Croon.lay").read_text()
     for layout in [
-        "LAYOUT(WizardPage1Layout",
-        "LAYOUT(WizardPage2Layout",
-        "LAYOUT(WizardLayout",
+        "LAYOUT(CroonWizardPage1Layout",
+        "LAYOUT(CroonWizardPage2Layout",
+        "LAYOUT(CroonWizardLayout",
     ]:
         if layout not in lay:
             fail(f"missing {layout}")
 
     expected_bases = {
-        "Page1.h": "WithWizardPage1Layout<Page>",
-        "Page2.h": "WithWizardPage2Layout<Page>",
-        "WizardDlg.h": "WithWizardLayout<TopWindow>",
+        "Page1.h": "WithCroonWizardPage1Layout<Page>",
+        "Page2.h": "WithCroonWizardPage2Layout<Page>",
+        "WizardDlg.h": "WithCroonWizardLayout<TopWindow>",
     }
     for rel, base in expected_bases.items():
         if base not in (root / rel).read_text():

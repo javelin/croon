@@ -8,7 +8,7 @@
 
 #include "Page.h"
 
-class Page2 : public WithWizardPage2Layout<Page> {
+class Page2 : public WithCroonWizardPage2Layout<Page> {
 public:
     Page2();
     void Populate() override;

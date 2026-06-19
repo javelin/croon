@@ -15,17 +15,17 @@ def main() -> None:
     root = Path(sys.argv[1])
     lay = (root / "Croon.lay").read_text()
     for layout in [
-        "LAYOUT(SettingsLayout",
-        "LAYOUT(TimingLineLayout",
-        "LAYOUT(LyricsPartsLayout",
+        "LAYOUT(CroonSettingsLayout",
+        "LAYOUT(CroonTimingLineLayout",
+        "LAYOUT(CroonLyricsPartsLayout",
     ]:
         if layout not in lay:
             fail(f"missing {layout}")
 
     checks = {
-        "SettingsDlg": "WithSettingsLayout<TopWindow>",
-        "TimingLineDlg": "WithTimingLineLayout<TopWindow>",
-        "LyricsPartsDlg": "WithLyricsPartsLayout<TopWindow>",
+        "SettingsDlg": "WithCroonSettingsLayout<TopWindow>",
+        "TimingLineDlg": "WithCroonTimingLineLayout<TopWindow>",
+        "LyricsPartsDlg": "WithCroonLyricsPartsLayout<TopWindow>",
     }
     for stem, base in checks.items():
         header = (root / f"{stem}.h").read_text()

@@ -6,7 +6,7 @@
 #ifndef _Croon_ProgressDlg_h_
 #define _Croon_ProgressDlg_h_
 
-class ProgressDlg : public WithProgressLayout<TopWindow> {
+class ProgressDlg : public WithCroonProgressLayout<TopWindow> {
 public:
     ProgressDlg();
     virtual void Close() override;

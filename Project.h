@@ -6,7 +6,7 @@
 #ifndef _Croon_Project_h_
 #define _Croon_Project_h_
 
-class Project : public WithProjectLayout<ParentCtrl> {
+class Project : public WithCroonProjectLayout<ParentCtrl> {
 public:
     Project();
     virtual ~Project() { CleanUp(); }

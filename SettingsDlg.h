@@ -6,7 +6,7 @@
 #ifndef _Croon_SettingsDlg_h_
 #define _Croon_SettingsDlg_h_
 
-class SettingsDlg : public WithSettingsLayout<TopWindow> {
+class SettingsDlg : public WithCroonSettingsLayout<TopWindow> {
 public:
     SettingsDlg();
     void Close() override;

@@ -9,6 +9,7 @@ ProgressDlg::ProgressDlg() {
     CtrlLayout(*this, "Progress");
     NoSizeable().NoZoomable().NoCloseBox();
     CenterOwner();
+    cancelBtn.Cancel();
     cancelBtn << [=] { Close(); };
     WhenAbortingProcess << [=] (bool byUser) {
         if (byUser && process.IsRunning()) {

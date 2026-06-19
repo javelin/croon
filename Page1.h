@@ -6,7 +6,7 @@
 #ifndef _Croon_Page1_h_
 #define _Croon_Page1_h_
 
-class Page1 : public WithWizardPage1Layout<Page> {
+class Page1 : public WithCroonWizardPage1Layout<Page> {
 public:
     Page1();
     Event<> WhenAudioLoaded;

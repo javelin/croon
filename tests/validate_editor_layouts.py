@@ -15,8 +15,8 @@ def main() -> None:
     root = Path(sys.argv[1])
     lay = (root / "Croon.lay").read_text()
     for layout in [
-        "LAYOUT(ProjectListLayout",
-        "LAYOUT(ProjectLayout",
+        "LAYOUT(CroonProjectListLayout",
+        "LAYOUT(CroonProjectLayout",
         "ITEM(ListCtrl, projectLst",
         "ITEM(ProjectLoader, loader",
         "ITEM(TabCtrl, tab",
@@ -26,8 +26,8 @@ def main() -> None:
             fail(f"missing {layout}")
 
     expected_bases = {
-        "ProjectList.h": "WithProjectListLayout<ParentCtrl>",
-        "Project.h": "WithProjectLayout<ParentCtrl>",
+        "ProjectList.h": "WithCroonProjectListLayout<ParentCtrl>",
+        "Project.h": "WithCroonProjectLayout<ParentCtrl>",
     }
     for rel, base in expected_bases.items():
         if base not in (root / rel).read_text():

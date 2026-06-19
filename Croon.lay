@@ -1,10 +1,10 @@
-LAYOUT(ProgressLayout, 450, 93)
+LAYOUT(CroonProgressLayout, 450, 93)
 	ITEM(Label, monitor, AlignCenter().HSizePosZ(10, 10).TopPosZ(10, 18))
 	ITEM(ProgressIndicator, progress, SetTotal(100).HSizePosZ(10, 10).TopPosZ(29, 18))
-	ITEM(Button, cancelBtn, SetLabel(t_("Cancel")).Cancel().HCenterPosZ(64, 0).TopPosZ(55, 25))
+	ITEM(Button, cancelBtn, SetLabel(t_("Cancel")).HCenterPosZ(64, 0).TopPosZ(55, 25))
 END_LAYOUT
 
-LAYOUT(SettingsLayout, 420, 347)
+LAYOUT(CroonSettingsLayout, 420, 347)
 	ITEM(Label, ffmpegLbl, SetLabel(t_("Ffmpeg Executable:")).HSizePosZ(10, 10).TopPosZ(10, 18))
 	ITEM(EditString, ffmpegEd, MaxLen(1024).SetReadOnly().HSizePosZ(10, 42).TopPosZ(30, 24))
 	ITEM(Button, ffmpegBtn, SetLabel(t_("...")).RightPosZ(10, 32).TopPosZ(30, 24))
@@ -17,21 +17,21 @@ LAYOUT(SettingsLayout, 420, 347)
 	ITEM(Button, closeBtn, Ok().SetLabel(t_("Close")).RightPosZ(10, 70).BottomPosZ(10, 25))
 END_LAYOUT
 
-LAYOUT(TimingLineLayout, 350, 80)
+LAYOUT(CroonTimingLineLayout, 350, 80)
 	ITEM(EditString, decorEd, MaxLen(MaxDecorLength).LeftPosZ(10, 40).TopPosZ(10, 25))
 	ITEM(EditString, lyricsEd, MaxLen(MaxLineLength).HSizePosZ(55, 10).TopPosZ(10, 25))
 	ITEM(Button, okBtn, Ok().SetLabel(t_("OK")).RightPosZ(95, 80).BottomPosZ(10, 25))
 	ITEM(Button, cancelBtn, Cancel().SetLabel(t_("Cancel")).RightPosZ(10, 80).BottomPosZ(10, 25))
 END_LAYOUT
 
-LAYOUT(LyricsPartsLayout, 400, 800)
+LAYOUT(CroonLyricsPartsLayout, 400, 800)
 	ITEM(LyricsPartsCtrl, lpCtrl, HSizePosZ(10, 10).VSizePosZ(10, 40))
 	ITEM(Button, clearBtn, SetLabel(t_("Clear")).LeftPosZ(10, 80).BottomPosZ(10, 25))
 	ITEM(Button, okBtn, Ok().SetLabel(t_("OK")).RightPosZ(95, 80).BottomPosZ(10, 25))
 	ITEM(Button, cancelBtn, Cancel().SetLabel(t_("Cancel")).RightPosZ(10, 80).BottomPosZ(10, 25))
 END_LAYOUT
 
-LAYOUT(WizardPage1Layout, 440, 473)
+LAYOUT(CroonWizardPage1Layout, 440, 473)
 	ITEM(Label, titleLbl, SetLabel(t_("Title")).LeftPosZ(5, 34).TopPosZ(10, 20))
 	ITEM(WithDropChoice<EditString>, titleEd, HSizePosZ(40, 5).TopPosZ(10, 20))
 	ITEM(Label, artistLbl, SetLabel(t_("Artist")).LeftPosZ(5, 34).TopPosZ(35, 20))
@@ -47,16 +47,16 @@ LAYOUT(WizardPage1Layout, 440, 473)
 	ITEM(Label, loadedAudioLbl, AlignCenter().AlignBottom().HSizePosZ().BottomPosZ(10, 50))
 END_LAYOUT
 
-LAYOUT(WizardPage2Layout, 440, 473)
+LAYOUT(CroonWizardPage2Layout, 440, 473)
 	ITEM(DocEdit, lyricsEd, HSizePosZ(5, 5).VSizePosZ(5, 5))
 END_LAYOUT
 
-LAYOUT(WizardLayout, 450, 550)
+LAYOUT(CroonWizardLayout, 450, 550)
 	ITEM(Label, pageName, SetAlign(ALIGN_CENTER).HSizePosZ(110, 110).TopPosZ(5, 25))
 	ITEM(Button, cancelBtn, Cancel().SetLabel(t_("Cancel")).RightPosZ(5, 100).BottomPosZ(15, 25))
 END_LAYOUT
 
-LAYOUT(ProjectListLayout, 640, 490)
+LAYOUT(CroonProjectListLayout, 640, 490)
 	ITEM(Button, newBtn, SetLabel(t_("New Project")).LeftPosZ(10, 100).TopPosZ(10, 25))
 	ITEM(Button, openBtn, SetLabel(t_("Open Project")).LeftPosZ(120, 100).TopPosZ(10, 25))
 	ITEM(Button, clearBtn, SetLabel(t_("Clear Projects")).RightPosZ(10, 100).TopPosZ(10, 25))
@@ -64,7 +64,7 @@ LAYOUT(ProjectListLayout, 640, 490)
 	ITEM(ProjectLoader, loader, HSizePosZ(10, 10).BottomPosZ(10, 18))
 END_LAYOUT
 
-LAYOUT(ProjectLayout, 900, 640)
+LAYOUT(CroonProjectLayout, 900, 640)
 	ITEM(Label, titleLbl, SetLabel(t_("Title")).LeftPosZ(10, 34).TopPosZ(10, 20))
 	ITEM(WithDropChoice<EditString>, titleEd, HSizePos(Zx(54), Zx(20) + 250).TopPosZ(10, 20))
 	ITEM(Label, artistLbl, SetLabel(t_("Artist")).LeftPosZ(10, 34).TopPosZ(33, 20))

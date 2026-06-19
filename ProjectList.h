@@ -38,7 +38,7 @@ private:
     Label detailsLbl;
 };
 
-class ProjectList : public WithProjectListLayout<ParentCtrl> {
+class ProjectList : public WithCroonProjectListLayout<ParentCtrl> {
 public:
     ProjectList();
     virtual ~ProjectList();

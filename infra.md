@@ -13,6 +13,9 @@
 
 - TheIDE: open `Croon.upp` from a nest containing the Croon repository and U++ `uppsrc`.
 - CMake: configure from the Croon repository root, then build the generated target that invokes `umk`.
+- Default U++ root: `/Users/mdoc/Dev/u++/upp`.
+- CMake creates a build-local U++ nest at `build/upp-nest/Croon` so the lowercase repository directory can still expose package `Croon` to `umk`.
+- If `umk` is not on `PATH`, CMake can bootstrap `/Users/mdoc/Dev/u++/upp/umk` from `/Users/mdoc/Dev/u++/upp/umkMakefile`.
 
 ## Repository Hygiene
 
