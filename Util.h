@@ -50,8 +50,8 @@ VocalPart LookaheadVocalPart(const Vector<TimeLyrics>& vtl, int startIdx,
                                      String& outLyrics);
 
 inline String FormatTime(double seconds, bool roundMs=false, char decimal='.') {
-    int hr = (int)seconds/360;
-    int min = (int)seconds/60;
+    int hr = (int)seconds/3600;
+    int min = ((int)seconds / 60) % 60;
     double sec = std::fmod(seconds, 60);
     int ms = (sec - floor(sec))*(roundMs ? 100:1000);
     String tm = Format("%02d:%02d:%02d%c%0*d", hr, min, (int)sec, decimal, roundMs ? 2:3, ms);
@@ -67,8 +67,8 @@ inline String FormatTimeSRT(double seconds) {
 }
 
 inline String FormatTime2(double seconds) {
-    int hr = (int)seconds/360;
-    int min = (int)seconds/60;
+    int hr = (int)seconds/3600;
+    int min = ((int)seconds / 60) % 60;
     int sec = (int)seconds%60;
     return Format("%02d:%02d:%02d", hr, min, sec);
 }
