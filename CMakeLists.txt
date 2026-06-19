@@ -140,6 +140,11 @@ if(CROON_UMK_EXECUTABLE)
         add_dependencies(croon croon_umk)
     endif()
     add_dependencies(croon croon_package_nest)
+
+    add_test(
+        NAME croon_app_build
+        COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_CURRENT_BINARY_DIR}" --target croon
+    )
 else()
     add_custom_target(croon
         COMMAND "${CMAKE_COMMAND}" -E echo "umk was not found and could not be bootstrapped. Reconfigure with -DUPP_UMK=/path/to/umk, add umk to PATH, or provide ${CROON_UMK_MAKEFILE}."

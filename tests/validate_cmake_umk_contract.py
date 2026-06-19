@@ -35,6 +35,8 @@ def main() -> None:
         "add_custom_target(croon_umk",
         "add_dependencies(croon croon_umk)",
         "add_dependencies(croon croon_package_nest)",
+        "NAME croon_app_build",
+        '--target croon',
         'COMMAND "${CROON_UMK_EXECUTABLE}" "${CROON_NESTS}" Croon "${CROON_BUILD_METHOD}" "${CROON_UMK_OPTIONS}"',
     ]:
         if needle not in cmake:
