@@ -123,9 +123,9 @@ CONSOLE_APP_MAIN
 	longLineData.duration = 10.0;
 	longLineData.rawLyrics = "{60} " + String('a', MaxLineLength + 1);
 	Vector<TimeLyrics> wrapped = RawToUntimedLyrics(longLineData);
-	Check(wrapped.GetCount() == 3, "RawToUntimedLyrics wraps overlong lines");
-	Check(wrapped[1].lyrics == "{60}", "RawToUntimedLyrics emits decoration-only wrapped line for overlong first word");
-	Check(wrapped[2].lyrics.GetCount() == MaxLineLength + 1, "RawToUntimedLyrics preserves overlong word");
+	Check(wrapped.GetCount() == 2, "RawToUntimedLyrics does not emit decoration-only wrapped lines");
+	Check(wrapped[1].lyrics == "{60}" + String('a', MaxLineLength + 1),
+		"RawToUntimedLyrics keeps decoration with overlong first word");
 
 	if(failures)
 		SetExitCode(1);

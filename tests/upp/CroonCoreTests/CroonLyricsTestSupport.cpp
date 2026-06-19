@@ -36,7 +36,10 @@ Vector<TimeLyrics> RawToUntimedLyrics(const KarData& data) {
 
 		String current;
 		for(String word : Split(line, ' ')) {
-			if(current.GetLength() + word.GetLength() + 1 > MaxLineLength) {
+			if(current.IsEmpty()) {
+				current = word;
+			}
+			else if(current.GetLength() + word.GetLength() + 1 > MaxLineLength) {
 				lyrics.Add(TimeLyrics(0.0f, decor + TrimBoth(current)));
 				decor.Clear();
 				current = word;

@@ -86,10 +86,12 @@ Vector<TimeLyrics> RawToUntimedLyrics(const KarData& data) {
             String _line = "";
             Vector<String> split = Split(line, ' ');
             for (int i = 0; i < split.GetCount(); i++) {
-                if (_line.GetLength() + split[i].GetLength() + 1 > MaxLineLength) {
+                if (_line.IsEmpty()) {
+                    _line = split[i];
+                }
+                else if (_line.GetLength() + split[i].GetLength() + 1 > MaxLineLength) {
                     lyrics.Add(TimeLyrics(0.0f, decor + TrimBoth(_line)));
                     decor = "";
-                    _line = "";
                     _line = split[i];
                 }
                 else {
@@ -109,7 +111,10 @@ Vector<TimeLyrics> RawToUntimedLyrics(const KarData& data) {
         String _line = "";
         Vector<String> split = Split(line, ' ');
         for (int i = 0; i < split.GetCount(); i++) {
-            if (_line.GetLength() + split[i].GetLength() + 1 > MaxLineLength) {
+            if (_line.IsEmpty()) {
+                _line = split[i];
+            }
+            else if (_line.GetLength() + split[i].GetLength() + 1 > MaxLineLength) {
                 lyrics.Add(TimeLyrics(0.0f, decor + TrimBoth(_line)));
                 decor = "";
                 _line = split[i];
