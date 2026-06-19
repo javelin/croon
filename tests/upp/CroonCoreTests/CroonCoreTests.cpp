@@ -53,7 +53,9 @@ CONSOLE_APP_MAIN
 
 	Check(CountInDuration(120) == 0.5, "CountInDuration rounds beat duration");
 	Check(FormatTime2(65.9) == "00:01:05", "FormatTime2 truncates seconds");
+	Check(FormatTime2(3661.9) == "01:01:01", "FormatTime2 handles hour rollover");
 	Check(FormatTimeASS(65.12) == "0:01:05.12", "FormatTimeASS uses ASS timestamp precision");
+	Check(FormatTimeASS(3661.5) == "1:01:01.50", "FormatTimeASS handles hour rollover");
 	Check(StripNonAlnum("A! b-2") == "Ab2", "StripNonAlnum removes punctuation and spaces");
 
 	String freqFilter = Visualization::Filter("@@freqs", "subtitles.ass", true);
