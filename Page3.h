@@ -6,7 +6,7 @@
 #ifndef _Croon_Page3_h_
 #define _Croon_Page3_h_
 
-class Page3 : public Page {
+class Page3 : public WithCroonWizardPage3Layout<Page> {
 public:
     Page3(String gatherKey = "");
     void Layout() override;
@@ -33,7 +33,6 @@ public:
     
 private:
     int vidCount;
-    TabCtrl tab;
     ListCtrl vizLst;
     ListCtrl videoLst;
     Array<VidThumbnail> vtArray;

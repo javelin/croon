@@ -51,6 +51,10 @@ LAYOUT(CroonWizardPage2Layout, 440, 473)
 	ITEM(DocEdit, lyricsEd, HSizePosZ(5, 5).VSizePosZ(5, 5))
 END_LAYOUT
 
+LAYOUT(CroonWizardPage3Layout, 440, 473)
+	ITEM(TabCtrl, tab, HSizePosZ(5, 5).VSizePosZ(5, 5))
+END_LAYOUT
+
 LAYOUT(CroonWizardLayout, 450, 550)
 	ITEM(Label, pageName, SetAlign(ALIGN_CENTER).HSizePosZ(110, 110).TopPosZ(5, 25))
 	ITEM(Button, cancelBtn, Cancel().SetLabel(t_("Cancel")).RightPosZ(5, 100).BottomPosZ(15, 25))

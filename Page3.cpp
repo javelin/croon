@@ -5,10 +5,11 @@
 
 #include "Croon.h"
 
-Page3::Page3(String gatherKey) : Page("Background Video"), vidCount(0), gatherKey(gatherKey) {
+Page3::Page3(String gatherKey) : vidCount(0), gatherKey(gatherKey) {
+    pageName = "Background Video";
+    CtrlLayout(*this);
     nextBtn.SetLabel("Save");
     videoLst.SetOrientation(ListCtrl::VerticalGrid, _Zx(200), _Zy(200));
-    *this << tab.HSizePosZ(5, 5).VSizePosZ(5, 5);
     tab.Add(videoLst.HSizePosZ(5, 5).VSizePosZ(5, 5), "Videos");
     String videoDir = Config::Get(VIDEO_DIR, GetHomeDirectory());
     Vector<String> paths = GetPaths(videoDir, "*.mp4");
