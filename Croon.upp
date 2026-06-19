@@ -16,6 +16,7 @@ file
 	Croon.iml,
 	Croon.lay,
 	CroonMainWindow.lay,
+	CroonTimingDlg.lay,
 	main.cpp,
 	AudioPlayer.h,
 	AudioPlayerBase.h,

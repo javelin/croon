@@ -5,24 +5,14 @@
 
 #include "Croon.h"
 
-TimingDlg::TimingDlg() : timingCtrl(lineHeight) {
+TimingDlg::TimingDlg() {
+    CtrlLayout(*this, "Time Lyrics");
     Title("Time Lyrics").NoZoomable().Sizeable().SetMinSize(Size(Zx(400), Zy(220)));
     SetRect(0, 0, Zx(640), Zy(800));
     CenterOwner();
-    *this << timingCtrl.HSizePosZ(10, 10).VSizePosZ(45, 60)
-            << playBtn.Ok().SetLabel("Play").LeftPosZ(10, 50).TopPosZ(10, 30)
-            << timeLbl.SetLabel("00:00.000/00:00.000").AlignRight().RightPosZ(10, 110).TopPosZ(10, 35)
-            << sliderCtrl.MinMax(0, 100).Step(1).Jump().HSizePosZ(70, 135).TopPosZ(20, 12)
-            << adjustDec.SetLabel("-").LeftPosZ(10, 25).BottomPosZ(15, 25)
-            << adjustEd.SetInc(100).MinMax(1, 1000).AlignRight().LeftPosZ(35, 60).BottomPosZ(15, 25)
-            << adjustInc.SetLabel("+").LeftPosZ(95, 25).BottomPosZ(15, 25)
-            << adjustLbl.SetLabel("Adjust All Timed").LeftPosZ(125, 100).BottomPosZ(15, 25)
-            << adjustDec.SetLabel("-").LeftPosZ(10, 25).BottomPosZ(15, 25)
-            << adjustEd.SetInc(100).MinMax(1, 1000).AlignRight().LeftPosZ(35, 60).BottomPosZ(15, 25)
-            << adjustInc.SetLabel("+").LeftPosZ(95, 25).BottomPosZ(15, 25)
-            << adjustLbl.SetLabel("Adjust All Timed").LeftPosZ(125, 100).BottomPosZ(15, 25)
-            << closeBtn.Cancel().SetLabel("Close").RightPosZ(10, 100).BottomPosZ(15, 25);
-            
+    playBtn.Ok();
+    closeBtn.Cancel();
+
     sliderCtrl.WhenSlideFinish = [=] {
         double value = (double)sliderCtrl.GetData();
         auto& player = MusicPlayer::GetPlayer();
@@ -50,12 +40,6 @@ TimingDlg::TimingDlg() : timingCtrl(lineHeight) {
     playBtn << [=] {
         TogglePlay();
         timingCtrl.SetFocus();
-    };
-    
-    sliderCtrl.WhenSlideFinish = [=] {
-        double value = (double)sliderCtrl.GetData();
-        auto& player = MusicPlayer::GetPlayer();
-        player.Seek(value/100.0f*player.Duration());
     };
     
     adjustEd.SetData(500);

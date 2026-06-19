@@ -6,7 +6,7 @@
 #ifndef _Croon_TimingDlg_h_
 #define _Croon_TimingDlg_h_
 
-class TimingDlg : public TopWindow {
+class TimingDlg : public WithCroonTimingDlgLayout<TopWindow> {
 public:
     TimingDlg();
     void Close() override;
@@ -30,15 +30,6 @@ private:
     
 private:
     KarData* data;
-    Button playBtn;
-    SliderCtrl sliderCtrl;
-    Label timeLbl;
-    Label adjustLbl;
-    EditIntSpin adjustEd;
-    Button adjustDec;
-    Button adjustInc;
-    TimingCtrl timingCtrl;
-    Button closeBtn;
     bool dirty{false};
 };
 

@@ -72,6 +72,31 @@ def main() -> None:
     croon_h = (root / "Croon.h").read_text()
     if croon_h.find('#include "ProjectLoader.h"') > croon_h.find("#include <CtrlCore/lay.h>"):
         fail("Croon.h includes layouts before ProjectLoader declaration")
+    if croon_h.find('#include "TimingCtrl.h"') > croon_h.find("<Croon/CroonTimingDlg.lay>"):
+        fail("Croon.h includes TimingDlg layout before TimingCtrl declaration")
+
+    timing_lay = (root / "CroonTimingDlg.lay").read_text()
+    for layout in [
+        "LAYOUT(CroonTimingDlgLayout",
+        "ITEM(TimingCtrl, timingCtrl",
+        "ITEM(SliderCtrl, sliderCtrl",
+    ]:
+        if layout not in timing_lay:
+            fail(f"missing {layout}")
+
+    timing_header = (root / "TimingDlg.h").read_text()
+    if "WithCroonTimingDlgLayout<TopWindow>" not in timing_header:
+        fail("TimingDlg does not inherit WithCroonTimingDlgLayout")
+
+    timing_impl = (root / "TimingDlg.cpp").read_text()
+    if "CtrlLayout(*this" not in timing_impl:
+        fail("TimingDlg constructor does not call CtrlLayout")
+    constructor_body = timing_impl.split("TimingDlg::TimingDlg()", 1)[-1].split("\n}\n", 1)[0]
+    if "*this <<" in constructor_body:
+        fail("TimingDlg still hardcodes top-level child placement")
+    for layout_member in ["Button playBtn;", "TimingCtrl timingCtrl;", "SliderCtrl sliderCtrl;"]:
+        if layout_member in timing_header:
+            fail(f"TimingDlg.h still declares layout member {layout_member}")
 
 
 if __name__ == "__main__":

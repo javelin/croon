@@ -8,7 +8,7 @@
 
 class TimingCtrl : public Ctrl {
 public:
-    TimingCtrl(int lineHeight);
+    TimingCtrl(int lineHeight = 50);
     void MouseWheel(Point, int zdelta, dword) override {
         scrollBar.Wheel(zdelta); }
     void Layout() override {

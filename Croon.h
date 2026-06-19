@@ -51,6 +51,10 @@ typedef struct Visualization VIZ;
 
 #include "LyricsPartsDlg.h"
 #include "TimingCtrl.h"
+
+#define LAYOUTFILE <Croon/CroonTimingDlg.lay>
+#include <CtrlCore/lay.h>
+
 #include "MusicPlayer.h"
 #include "ProgressDlg.h"
 #include "ExportDlg.h"

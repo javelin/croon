@@ -1,0 +1,11 @@
+LAYOUT(CroonTimingDlgLayout, 640, 800)
+	ITEM(TimingCtrl, timingCtrl, HSizePosZ(10, 10).VSizePosZ(45, 60))
+	ITEM(Button, playBtn, SetLabel(t_("Play")).LeftPosZ(10, 50).TopPosZ(10, 30))
+	ITEM(Label, timeLbl, SetLabel(t_("00:00.000/00:00.000")).AlignRight().RightPosZ(10, 110).TopPosZ(10, 35))
+	ITEM(SliderCtrl, sliderCtrl, MinMax(0, 100).Step(1).Jump().HSizePosZ(70, 135).TopPosZ(20, 12))
+	ITEM(Button, adjustDec, SetLabel(t_("-")).LeftPosZ(10, 25).BottomPosZ(15, 25))
+	ITEM(EditIntSpin, adjustEd, SetInc(100).MinMax(1, 1000).AlignRight().LeftPosZ(35, 60).BottomPosZ(15, 25))
+	ITEM(Button, adjustInc, SetLabel(t_("+")).LeftPosZ(95, 25).BottomPosZ(15, 25))
+	ITEM(Label, adjustLbl, SetLabel(t_("Adjust All Timed")).LeftPosZ(125, 100).BottomPosZ(15, 25))
+	ITEM(Button, closeBtn, SetLabel(t_("Close")).RightPosZ(10, 100).BottomPosZ(15, 25))
+END_LAYOUT
