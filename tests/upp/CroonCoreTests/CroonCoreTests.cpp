@@ -102,6 +102,31 @@ CONSOLE_APP_MAIN
 	Check(restored.parts[0].a == 1 && restored.parts[0].b && !restored.parts[0].c && restored.parts[0].d,
 		"KarData JSON preserves vocal part flags");
 
+	String decorated = ">>{120}  Sing this line  ";
+	String decor = SplitLyrics(decorated);
+	Check(decor == ">>{120}", "SplitLyrics extracts blank and tempo decoration");
+	Check(decorated == "Sing this line", "SplitLyrics trims lyric content");
+
+	KarData lyricsData;
+	lyricsData.duration = 42.0;
+	lyricsData.rawLyrics = ">>{90} First line\n@Title\n-\nSecond line";
+	Vector<TimeLyrics> untimed = RawToUntimedLyrics(lyricsData);
+	Check(untimed.GetCount() == 5, "RawToUntimedLyrics keeps sentinel plus non-empty lines");
+	Check(untimed[0].time == 42.0, "RawToUntimedLyrics sentinel uses duration");
+	Check(untimed[1].lyrics == ">>{90}First line", "RawToUntimedLyrics preserves first-line decoration");
+	Check(untimed[2].lyrics == "@Title", "RawToUntimedLyrics keeps metadata lines");
+	Check(untimed[3].lyrics == "-", "RawToUntimedLyrics keeps dash placeholders");
+	Check(TimedLyricsToRaw(untimed, true) == "First line\nSecond line",
+		"TimedLyricsToRaw removes metadata, dash placeholders, and decorations");
+
+	KarData longLineData;
+	longLineData.duration = 10.0;
+	longLineData.rawLyrics = "{60} " + String('a', MaxLineLength + 1);
+	Vector<TimeLyrics> wrapped = RawToUntimedLyrics(longLineData);
+	Check(wrapped.GetCount() == 3, "RawToUntimedLyrics wraps overlong lines");
+	Check(wrapped[1].lyrics == "{60}", "RawToUntimedLyrics emits decoration-only wrapped line for overlong first word");
+	Check(wrapped[2].lyrics.GetCount() == MaxLineLength + 1, "RawToUntimedLyrics preserves overlong word");
+
 	if(failures)
 		SetExitCode(1);
 }

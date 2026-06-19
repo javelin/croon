@@ -6,7 +6,8 @@ uses
 file
 	CroonCoreTests.cpp,
 	KarData.cpp,
-	CroonCoreTestSupport.cpp;
+	CroonCoreTestSupport.cpp,
+	CroonLyricsTestSupport.cpp;
 
 mainconfig
 	"" = "";
