@@ -26,6 +26,7 @@ def main() -> None:
         "RecentProjectService.cpp",
         "RecentProjectService.h",
         "SubtitleGenerator.h",
+        "MediaProcessRunner.h",
         "main.cpp",
         "architecture.md",
         "decisions.md",
@@ -48,7 +49,8 @@ def main() -> None:
         "ProjectSerializer.h" not in upp or
         "RecentProjectService.cpp" not in upp or
         "RecentProjectService.h" not in upp or
-        "SubtitleGenerator.h" not in upp
+        "SubtitleGenerator.h" not in upp or
+        "MediaProcessRunner.h" not in upp
     ):
         fail("Croon.upp does not list package-level Croon files")
     legacy_product = "Mu" + "se"
@@ -72,6 +74,8 @@ def main() -> None:
         fail("Croon.h does not include RecentProjectService.h")
     if '#include "SubtitleGenerator.h"' not in header:
         fail("Croon.h does not include SubtitleGenerator.h")
+    if '#include "MediaProcessRunner.h"' not in header:
+        fail("Croon.h does not include MediaProcessRunner.h")
     if "CroonImg" not in header:
         fail("Croon image class is not declared")
     if "<Croon/Croon.iml>" not in header:

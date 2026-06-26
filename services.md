@@ -10,9 +10,6 @@ This file records service boundaries expected during migration. Some services be
 - `FfmpegCommandBuilder`: deterministic command argument construction.
 - `RecentProjectService`: recent project list persistence and normalization.
 - `SubtitleGenerator`: ASS subtitle generation from timed lyrics and vocal parts.
-
-## Planned Services
-
 - `MediaProcessRunner`: process execution boundary for `ffmpeg` and related long-running tasks.
 
 ## UI Boundary

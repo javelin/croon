@@ -23,7 +23,7 @@ private:
     String ffmpeg;
     Vector<String> projects;
     int curPath;
-    LocalProcess process;
+    MediaProcessRunner process;
     String projectPath;
     String infoFilePath;
     String thumbnailPath;

@@ -45,6 +45,7 @@ typedef struct Visualization VIZ;
 #include "FfmpegCommandBuilder.h"
 #include "RecentProjectService.h"
 #include "TimingLine.h"
+#include "MediaProcessRunner.h"
 #include "ListCtrl.h"
 #include "LyricsEditor.h"
 #include "LyricsPartsCtrl.h"

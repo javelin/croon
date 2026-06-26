@@ -38,7 +38,7 @@ public:
     static const int timerId{1};
     
 protected:
-    LocalProcess process;
+    MediaProcessRunner process;
     Vector<String> procArgs;
 };
 

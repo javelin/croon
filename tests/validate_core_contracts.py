@@ -71,6 +71,17 @@ def main() -> None:
     require(subtitle_generator_h, "ToAss", "SubtitleGenerator ASS contract")
     require(subtitle_generator_h, "ToRichAss", "SubtitleGenerator rich ASS contract")
 
+    media_process_runner_h = (root / "MediaProcessRunner.h").read_text()
+    for method in [
+        "Start",
+        "Read",
+        "IsRunning",
+        "GetExitCode",
+        "Kill",
+    ]:
+        require(media_process_runner_h, method, "MediaProcessRunner process boundary")
+    require(media_process_runner_h, "LocalProcess process", "MediaProcessRunner local process ownership")
+
     util_cpp = (root / "Util.cpp").read_text()
     require(util_cpp, "String SubtitleGenerator::ToAss", "SubtitleGenerator ASS implementation")
     require(util_cpp, "String SubtitleGenerator::ToRichAss", "SubtitleGenerator rich ASS implementation")

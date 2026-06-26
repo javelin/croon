@@ -50,6 +50,7 @@ file
 	LyricsPartsDlg.h,
 	MainWindow.cpp,
 	MainWindow.h,
+	MediaProcessRunner.h,
 	MusicPlayer.h,
 	OpenProjectDlg.cpp,
 	OpenProjectDlg.h,

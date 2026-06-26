@@ -27,7 +27,7 @@ WizardDlg& GetWizardDlg() {
 void RunCroon() {
     auto ffmpegLoc = Config::Get(FFMPEG_LOCATION);
     if (ffmpegLoc.IsVoid() || ffmpegLoc.IsEmpty()) ffmpegLoc = "ffmpeg";
-    LocalProcess proc;
+    MediaProcessRunner proc;
     if (!proc.Start(ffmpegLoc)) {
         if (PromptYesNoCancel("Unable to validate ffmpeg executable. Manually look for ffmpeg?") != 1) {
             Exclamation("Croon needs ffmpeg to operate. Exiting application.");
