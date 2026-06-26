@@ -129,19 +129,7 @@ int _Zy(int zy) {
 }
 
 bool ComputeFfmpegTs(String s, double& ts, String& formatted, String key) {
-    TrimBoth(s);
-    int pos = s.Find(key);
-    if (pos > -1) {
-        auto tsStr = s.Mid(pos + key.GetLength(), 11);
-        auto vs = Split(tsStr, ':');
-        if (vs.GetCount() < 3) return false;
-        ts = StrDbl(vs[0])*360.0f;
-        ts += StrDbl(vs[1])*60.0f;
-        ts += StrDbl(vs[2]);
-        formatted = s.Mid(pos + 5, 11);
-        return true;
-    }
-    return false;
+    return FfmpegProgressParser::ParseTimestamp(s, ts, formatted, key);
 }
 
 const Vector<String>& GetGenres() {

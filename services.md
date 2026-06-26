@@ -9,6 +9,7 @@ This file records service boundaries expected during migration. Some services be
 - `ProjectSerializer`: versioned JSON serialization and deserialization for Croon project metadata.
 - `LyricsTransformer`: deterministic conversion between raw lyric text and Croon timed lyric rows.
 - `FfmpegCommandBuilder`: deterministic command argument construction.
+- `FfmpegProgressParser`: timestamp extraction from `ffmpeg` progress output.
 - `RecentProjectService`: recent project list persistence and normalization.
 - `SubtitleLineProcessor`: subtitle metadata expansion, count-in insertion, and vocal style resolution.
 - `SubtitleGenerator`: ASS subtitle generation from timed lyrics and vocal parts.

@@ -23,6 +23,8 @@ def main() -> None:
         "ConfigService.h",
         "ProjectSerializer.cpp",
         "ProjectSerializer.h",
+        "FfmpegProgressParser.cpp",
+        "FfmpegProgressParser.h",
         "LyricsTransformer.cpp",
         "LyricsTransformer.h",
         "RecentProjectService.cpp",
@@ -52,6 +54,8 @@ def main() -> None:
         "ConfigService.h" not in upp or
         "ProjectSerializer.cpp" not in upp or
         "ProjectSerializer.h" not in upp or
+        "FfmpegProgressParser.cpp" not in upp or
+        "FfmpegProgressParser.h" not in upp or
         "LyricsTransformer.cpp" not in upp or
         "LyricsTransformer.h" not in upp or
         "RecentProjectService.cpp" not in upp or
@@ -80,6 +84,8 @@ def main() -> None:
         fail("Croon.h does not include ConfigService.h")
     if '#include "ProjectSerializer.h"' not in header:
         fail("Croon.h does not include ProjectSerializer.h")
+    if '#include "FfmpegProgressParser.h"' not in header:
+        fail("Croon.h does not include FfmpegProgressParser.h")
     if '#include "LyricsTransformer.h"' not in header:
         fail("Croon.h does not include LyricsTransformer.h")
     if '#include "SubtitleLineProcessor.h"' not in header:

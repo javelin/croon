@@ -148,6 +148,17 @@ def main() -> None:
     legacy_name = "Mu" + "se"
     reject(ffmpeg_h, "filename=" + legacy_ext[1:] + ".info", "ffmpeg metadata contract")
 
+    ffmpeg_progress_parser_h = (root / "FfmpegProgressParser.h").read_text()
+    require(ffmpeg_progress_parser_h, "ParseTimestamp", "ffmpeg progress parser contract")
+
+    ffmpeg_progress_parser_cpp = (root / "FfmpegProgressParser.cpp").read_text()
+    require(ffmpeg_progress_parser_cpp, "output.Find(key)", "ffmpeg progress key lookup")
+    require(ffmpeg_progress_parser_cpp, "Split(tsStr, ':')", "ffmpeg progress timestamp split")
+    require(ffmpeg_progress_parser_cpp, "formatted = output.Mid", "ffmpeg progress formatted timestamp")
+
+    util_cpp = (root / "Util.cpp").read_text()
+    require(util_cpp, "return FfmpegProgressParser::ParseTimestamp", "ComputeFfmpegTs compatibility wrapper")
+
     for rel in [
         "Page3.cpp",
         "Project.cpp",

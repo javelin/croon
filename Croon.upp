@@ -35,6 +35,8 @@ file
 	ExportDlg.cpp,
 	ExportDlg.h,
 	FfmpegCommandBuilder.h,
+	FfmpegProgressParser.cpp,
+	FfmpegProgressParser.h,
 	Ffmpeg.h,
 	GatherDlg.cpp,
 	GatherDlg.h,
