@@ -12,7 +12,7 @@ const Color TimingLine::H1Color{0xCB, 0xE7, 0xFF};
 const Color TimingLine::H2Color{0xF8, 0xF3, 0xD9};
 
 void TimingLine::Initialize(bool withButtons) {
-    decor = SplitLyrics(lyrics);
+    decor = LyricsTransformer::SplitDecorations(lyrics);
     WantFocus(false);
     decSecBtn.WantFocus(false);
     incSecBtn.WantFocus(false);

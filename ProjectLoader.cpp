@@ -35,7 +35,7 @@ void ProjectLoader::PollProgress() {
                 WhenProjectLoaded(projectPath,
                                     data.title,
                                     data.artist,
-                                    TimedLyricsToRaw(data.timedLyrics, true),
+                                    LyricsTransformer::TimedToRaw(data.timedLyrics, true),
                                     thumbnail);
                 FileDelete(infoFilePath);
                 FileDelete(thumbnailPath);

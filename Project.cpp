@@ -23,7 +23,7 @@ Project::Project() : videoPath("") {
         SetDirty();
         KillTimeCallback(timerId);
         SetTimeCallback(1000, [=]{
-            previewRT.SetQTF(Format("[2 %s]", TimedToRichASS(KarData::GetGlobal())));
+            previewRT.SetQTF(Format("[2 %s]", SubtitleGenerator::ToRichAss(KarData::GetGlobal())));
         }, timerId);
     };
     
@@ -112,7 +112,7 @@ void Project::Populate() {
     writerEd.SetData(data.writer);
     videoImg.SetImage(data.videoThumbnail);
     videoImg.Tip(data.origVideoFile);
-    previewRT.SetQTF(Format("[2 %s]", TimedToRichASS(data)));
+    previewRT.SetQTF(Format("[2 %s]", SubtitleGenerator::ToRichAss(data)));
     
     lyricsEd.SetData(data.rawLyrics);
     exportBtn.Enable(!data.title.IsEmpty() &&
@@ -164,7 +164,7 @@ void Project::UpdateLyricsData() {
         data.rawLyrics = TrimBoth((String)~lyricsEd);
     }
     auto& vtl0 = data.timedLyrics;
-    auto vtl1 = RawToUntimedLyrics(data);
+    auto vtl1 = LyricsTransformer::RawToUntimed(data);
     if (vtl0.GetCount() != vtl1.GetCount()) {
         data.timed = 0;
         for (int i = 1, j = 1; i < vtl0.GetCount() && j < vtl1.GetCount(); ++i, ++j) {
@@ -180,7 +180,7 @@ void Project::UpdateLyricsData() {
         vtl1[i].time = vtl0[i].time;
     }
     data.timedLyrics = pick(vtl1);
-    previewRT.SetQTF(Format("[2 %s]", TimedToRichASS(data)));
+    previewRT.SetQTF(Format("[2 %s]", SubtitleGenerator::ToRichAss(data)));
     saveBtn.Enable(dirty);
 }
 
@@ -228,7 +228,7 @@ void Project::Timing() {
     TimingDlg tDlg;
     tDlg.Run(data);
     SetDirty(tDlg.IsDirty());
-    previewRT.SetQTF(Format("[2 %s]", TimedToRichASS(data)));
+    previewRT.SetQTF(Format("[2 %s]", SubtitleGenerator::ToRichAss(data)));
     lyricsEd.SetData(data.rawLyrics);
     exportBtn.Enable(!data.title.IsEmpty() &&
                         !data.artist.IsEmpty() &&

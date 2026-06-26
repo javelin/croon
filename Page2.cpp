@@ -19,13 +19,13 @@ void Page2::Populate() {
     willDownloadLyrics = willDownloadLyrics && karData.timedLyrics.IsEmpty();
     if (willDownloadLyrics) {
         String lyrics{""};
-        if (DownloadLyrics(karData.title, karData.artist, lyrics)) lyrics = TrimBoth(lyrics);
+        if (LyricsDownloadService::Download(karData.title, karData.artist, lyrics)) lyrics = TrimBoth(lyrics);
         if (lyrics.IsEmpty()) lyrics = "\n";
         lyricsEd.SetData(
                     TrimBoth(Format("%s\n%s\n%s",
-                            CleanSpacing(TrimBoth(Config::Get(LYRICS_PREFIX))),
+                            TextTools::CleanSpacing(TrimBoth(Config::Get(LYRICS_PREFIX))),
                             lyrics,
-                            CleanSpacing(TrimBoth(Config::Get(LYRICS_SUFFIX))))));
+                            TextTools::CleanSpacing(TrimBoth(Config::Get(LYRICS_SUFFIX))))));
         willDownloadLyrics = false;
     }
     else {
@@ -46,4 +46,3 @@ void Page2::SaveData() {
     auto& karData = KarData::GetGlobal();
     karData.rawLyrics = raw;
 }
-

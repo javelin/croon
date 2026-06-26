@@ -283,6 +283,32 @@ def main() -> None:
         require(text, "AppIdentity::", f"{rel} temp-prefix contract")
         reject(text, f"GetTempFileName(\"{legacy_name}_", f"{rel} temp-prefix contract")
 
+    direct_lyrics_dependencies = {
+        "ExportDlg.cpp": ["SubtitleGenerator::ToAss"],
+        "OpenProjectDlg.cpp": ["LyricsTransformer::TimedToRaw"],
+        "Page2.cpp": ["LyricsDownloadService::Download", "TextTools::CleanSpacing"],
+        "Project.cpp": ["LyricsTransformer::RawToUntimed", "SubtitleGenerator::ToRichAss"],
+        "ProjectList.cpp": ["LyricsTransformer::TimedToRaw", "TextTools::ShortenMiddle"],
+        "ProjectLoader.cpp": ["LyricsTransformer::TimedToRaw"],
+        "TimingDlg.cpp": ["LyricsTransformer::TimedToRaw"],
+        "TimingLine.cpp": ["LyricsTransformer::SplitDecorations"],
+    }
+    for rel, expected_calls in direct_lyrics_dependencies.items():
+        text = (root / rel).read_text()
+        for expected in expected_calls:
+            require(text, expected, f"{rel} direct lyric service dependency")
+        for wrapper in [
+            " DownloadLyrics(",
+            " CleanSpacing(",
+            " ShortenMiddle(",
+            "SplitLyrics(",
+            "RawToUntimedLyrics(",
+            "TimedLyricsToRaw(",
+            "TimedToASS(",
+            "TimedToRichASS(",
+        ]:
+            reject(text, wrapper, f"{rel} lyric utility wrapper dependency")
+
 
 if __name__ == "__main__":
     main()

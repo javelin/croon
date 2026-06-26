@@ -57,7 +57,7 @@ void TimingDlg::Close() {
     MusicPlayer::GetPlayer().Pause();
     if (PromptYesNoCancel("Save changes and close?") == 1) {
         data->timedLyrics = timingCtrl.GetTimedLyrics();
-        data->rawLyrics = TimedLyricsToRaw(data->timedLyrics);
+        data->rawLyrics = LyricsTransformer::TimedToRaw(data->timedLyrics);
         data->timed = timingCtrl.GetTimed();
         TopWindow::Close();
     }

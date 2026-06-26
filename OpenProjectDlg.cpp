@@ -23,7 +23,7 @@ OpenProjectDlg::OpenProjectDlg() : phase(Audio) {
                 temp.projectPath = data->projectPath;
                 temp.audioFilePath = data->audioFilePath;
                 temp.infoFilePath = data->infoFilePath;
-                temp.rawLyrics = TimedLyricsToRaw(temp.timedLyrics);
+                temp.rawLyrics = LyricsTransformer::TimedToRaw(temp.timedLyrics);
                 *data = pick(temp);
                 if (data->origVideoFile.StartsWith("@@")) {
                     data->videoFilePath = data->origVideoFile;

@@ -87,8 +87,8 @@ ExportDlg::ExportDlg() : ffmpeg(Config::Get(FFMPEG_LOCATION)) {
 void ExportDlg::ExportASS() {
     UpdateProgress();
     assFilePath = AppIdentity::TempFileName(".ass");
-    //SaveFile(assFilePath, TimedToASS(*data, Config::GetFontSize(), 4));
-    SaveFile(assFilePath, TimedToASS(*data, 4));
+    //SaveFile(assFilePath, SubtitleGenerator::ToAss(*data, Config::GetFontSize(), 4));
+    SaveFile(assFilePath, SubtitleGenerator::ToAss(*data, 4));
     SetTimeCallback(500, [=] {
         phase = Dehiss;
         StartNextProcess();

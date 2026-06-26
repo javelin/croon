@@ -72,7 +72,7 @@ ProjectList::ProjectList() {
         projectLst.WhenRightUp = [=] (int index, Ctrl* ctrl) {
             if (index < 0 || index >= projects.GetCount()) return;
             MenuBar::Execute([=](Bar& bar) {
-                bar.Add(ShortenMiddle(projects[index].path, 255), CroonImg::Icon16(), [=] {
+                bar.Add(TextTools::ShortenMiddle(projects[index].path, 255), CroonImg::Icon16(), [=] {
                     const auto& item = projects[index];
                     auto msg = Format("{{1:9 Project:: %s:: Title:: %s:: Artist:: %s}}",
                                         DeQtf(item.path),
@@ -195,7 +195,7 @@ void ProjectList::UpdateList() {
                                                 time(0),
                                                 data.title,
                                                 data.artist,
-                                                TimedLyricsToRaw(data.timedLyrics, true),
+                                                LyricsTransformer::TimedToRaw(data.timedLyrics, true),
                                                 Rescale(data.videoThumbnail, ProjectItemCtrl::GetImageSize()))));
     }
     else {
