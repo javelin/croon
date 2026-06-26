@@ -6,21 +6,10 @@
 #ifndef _Croon_Util_h_
 #define _Croon_Util_h_
 
+#include "RichTextBuilder.h"
 #include "SubtitleLineProcessor.h"
 #include "TextTools.h"
 #include "TimeFormatter.h"
-
-struct RTHelper {
-    RTHelper& Clear() { vs.Clear(); return *this; }
-    RTHelper& Fmt(String s) { vs.Add(Format("[%s ", s)); return *this; }
-    RTHelper& EFmt() { vs.Add("]"); return *this; }
-    RTHelper& EFmt(String s) { vs.Add(Format("][%s ", s)); return *this; }
-    RTHelper& NL() { vs.AddPick("&"); return *this; }
-    RTHelper& Text(String s) { vs.Add(DeQtf(s)); return *this; }
-    String ToString() const { return Join(vs, ""); }
-private:
-    Vector<String> vs;
-};
 
 String GetDataDirectory();
 inline double CountInDuration(int bpm) {

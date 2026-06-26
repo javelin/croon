@@ -83,6 +83,7 @@ file
 	ProjectSerializer.h,
 	RecentProjectService.cpp,
 	RecentProjectService.h,
+	RichTextBuilder.h,
 	SaveProjectDlg.cpp,
 	SaveProjectDlg.h,
 	SDLMixerAudioPlayer.cpp,

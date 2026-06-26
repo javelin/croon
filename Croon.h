@@ -40,6 +40,7 @@ typedef struct Visualization VIZ;
 #include "ProjectSerializer.h"
 #include "LyricsDownloadService.h"
 #include "LyricsTransformer.h"
+#include "RichTextBuilder.h"
 #include "SubtitleLineProcessor.h"
 #include "SubtitleGenerator.h"
 #include "TextTools.h"

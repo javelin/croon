@@ -14,6 +14,7 @@ This file records service boundaries expected during migration. Some services be
 - `GenreCatalog`: shared application genre reference list.
 - `LyricsDownloadService`: AZLyrics URL construction, page extraction, and download workflow.
 - `RecentProjectService`: recent project list persistence and normalization.
+- `RichTextBuilder`: QTF/RichText construction helper for shared list and subtitle previews.
 - `SubtitleLineProcessor`: subtitle metadata expansion, count-in insertion, and vocal style resolution.
 - `SubtitleGenerator`: ASS subtitle generation from timed lyrics and vocal parts.
 - `TextTools`: shared text spacing, filtering, and display-shortening helpers.

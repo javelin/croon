@@ -117,6 +117,13 @@ def main() -> None:
     require(subtitle_generator_cpp, "String SubtitleGenerator::ToAss", "SubtitleGenerator ASS implementation")
     require(subtitle_generator_cpp, "String SubtitleGenerator::ToRichAss", "SubtitleGenerator rich ASS implementation")
 
+    rich_text_builder_h = (root / "RichTextBuilder.h").read_text()
+    require(rich_text_builder_h, "struct RTHelper", "RichTextBuilder compatibility type")
+    require(rich_text_builder_h, "Fmt(String s)", "RichTextBuilder QTF format contract")
+    require(rich_text_builder_h, "EFmt(String s)", "RichTextBuilder QTF format switch contract")
+    require(rich_text_builder_h, "DeQtf(s)", "RichTextBuilder text escaping contract")
+    require(rich_text_builder_h, "Join(vs", "RichTextBuilder output contract")
+
     text_tools_h = (root / "TextTools.h").read_text()
     for method in ["CleanSpacing", "StripNonAlnum", "ShortenMiddle"]:
         require(text_tools_h, method, "TextTools contract")
@@ -162,6 +169,8 @@ def main() -> None:
     require(util_cpp, "return UiScaler::Y", "_Zy compatibility wrapper")
 
     util_h = (root / "Util.h").read_text()
+    require(util_h, '#include "RichTextBuilder.h"', "Util.h rich text dependency")
+    reject(util_h, "struct RTHelper", "Util.h rich text helper extraction")
     require(util_h, '#include "SubtitleLineProcessor.h"', "Util.h subtitle type dependency")
     require(util_h, '#include "TextTools.h"', "Util.h text helper dependency")
     require(util_h, '#include "TimeFormatter.h"', "Util.h time type dependency")
