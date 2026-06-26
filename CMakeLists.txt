@@ -124,6 +124,7 @@ if(CROON_UMK_EXECUTABLE)
             "${CMAKE_CURRENT_SOURCE_DIR}/KarData.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/ProjectSerializer.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/RecentProjectService.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/TextTools.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/TimeFormatter.cpp"
             "${CROON_CORE_TEST_PACKAGE}"
         COMMAND "${CMAKE_COMMAND}" -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/tests"

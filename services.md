@@ -15,6 +15,7 @@ This file records service boundaries expected during migration. Some services be
 - `RecentProjectService`: recent project list persistence and normalization.
 - `SubtitleLineProcessor`: subtitle metadata expansion, count-in insertion, and vocal style resolution.
 - `SubtitleGenerator`: ASS subtitle generation from timed lyrics and vocal parts.
+- `TextTools`: shared text spacing, filtering, and display-shortening helpers.
 - `TimeFormatter`: timestamp and count-in duration formatting helpers.
 - `MediaProcessRunner`: process execution boundary for `ffmpeg` and related long-running tasks.
 

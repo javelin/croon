@@ -99,6 +99,8 @@ file
 	TimingLine.h,
 	TimingLineDlg.cpp,
 	TimingLineDlg.h,
+	TextTools.cpp,
+	TextTools.h,
 	TimeFormatter.cpp,
 	TimeFormatter.h,
 	Util.cpp,

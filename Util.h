@@ -7,6 +7,7 @@
 #define _Croon_Util_h_
 
 #include "SubtitleLineProcessor.h"
+#include "TextTools.h"
 #include "TimeFormatter.h"
 
 struct RTHelper {
@@ -62,26 +63,15 @@ inline String FormatTime2(double seconds) {
 }
 
 inline String CleanSpacing(const String& s) {
-    auto vw = Split(s, ' ');
-    for (int i = 0; i < vw.GetCount(); i++) {
-        vw[i] = TrimBoth(vw[i]);
-    }
-    return Join(vw, " ");
+    return TextTools::CleanSpacing(s);
 }
 
 inline String StripNonAlnum(String s) {
-    String ret;
-    for (auto c : s) if (IsAlNum(c)) ret += c;
-    return ret;
+    return TextTools::StripNonAlnum(s);
 }
 
 inline String ShortenMiddle(String s, int max) {
-    String ret = s;
-    if (s.GetLength() > max) {
-        ret = s.Left(max/2 - 2) + "...";
-        ret += s.Right(max/2 - 2);
-    }
-    return ret;
+    return TextTools::ShortenMiddle(s, max);
 }
 
 int _Zx(int zx);

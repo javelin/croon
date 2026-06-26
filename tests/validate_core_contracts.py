@@ -107,6 +107,15 @@ def main() -> None:
     require(subtitle_generator_cpp, "String SubtitleGenerator::ToAss", "SubtitleGenerator ASS implementation")
     require(subtitle_generator_cpp, "String SubtitleGenerator::ToRichAss", "SubtitleGenerator rich ASS implementation")
 
+    text_tools_h = (root / "TextTools.h").read_text()
+    for method in ["CleanSpacing", "StripNonAlnum", "ShortenMiddle"]:
+        require(text_tools_h, method, "TextTools contract")
+
+    text_tools_cpp = (root / "TextTools.cpp").read_text()
+    require(text_tools_cpp, "TrimBoth(vw[i])", "TextTools spacing cleanup")
+    require(text_tools_cpp, "IsAlNum(c)", "TextTools alphanumeric filter")
+    require(text_tools_cpp, "\"...\"", "TextTools middle shortening")
+
     time_formatter_h = (root / "TimeFormatter.h").read_text()
     for method in ["CountInDuration", "Format", "Ass", "Srt", "Clock"]:
         require(time_formatter_h, method, "TimeFormatter contract")
@@ -132,7 +141,11 @@ def main() -> None:
 
     util_h = (root / "Util.h").read_text()
     require(util_h, '#include "SubtitleLineProcessor.h"', "Util.h subtitle type dependency")
+    require(util_h, '#include "TextTools.h"', "Util.h text helper dependency")
     require(util_h, '#include "TimeFormatter.h"', "Util.h time type dependency")
+    require(util_h, "return TextTools::CleanSpacing", "CleanSpacing compatibility wrapper")
+    require(util_h, "return TextTools::StripNonAlnum", "StripNonAlnum compatibility wrapper")
+    require(util_h, "return TextTools::ShortenMiddle", "ShortenMiddle compatibility wrapper")
     require(util_h, "return TimeFormatter::CountInDuration", "CountInDuration compatibility wrapper")
     require(util_h, "return TimeFormatter::Format", "FormatTime compatibility wrapper")
     require(util_h, "return TimeFormatter::Ass", "FormatTimeASS compatibility wrapper")
