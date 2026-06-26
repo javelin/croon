@@ -133,6 +133,12 @@ def main() -> None:
     subtitle_generator_cpp = (root / "SubtitleGenerator.cpp").read_text()
     require(subtitle_generator_cpp, "String SubtitleGenerator::ToAss", "SubtitleGenerator ASS implementation")
     require(subtitle_generator_cpp, "String SubtitleGenerator::ToRichAss", "SubtitleGenerator rich ASS implementation")
+    require(subtitle_generator_cpp, "SubtitleLineProcessor::ProcessMetadata", "SubtitleGenerator direct metadata dependency")
+    require(subtitle_generator_cpp, "SubtitleLineProcessor::ResolveStyle", "SubtitleGenerator direct style dependency")
+    require(subtitle_generator_cpp, "TimeFormatter::Ass", "SubtitleGenerator direct ASS time formatting")
+    reject(subtitle_generator_cpp, "    ProcessMetadata(data", "SubtitleGenerator utility metadata wrapper dependency")
+    reject(subtitle_generator_cpp, "String hilite = ResolveStyle", "SubtitleGenerator utility style wrapper dependency")
+    reject(subtitle_generator_cpp, "FormatTimeASS", "SubtitleGenerator utility time wrapper dependency")
 
     rich_text_builder_h = (root / "RichTextBuilder.h").read_text()
     require(rich_text_builder_h, "struct RTHelper", "RichTextBuilder compatibility type")
@@ -222,9 +228,15 @@ def main() -> None:
     require(project_serializer_h, "SupportsVersion", "ProjectSerializer version-support contract")
 
     ffmpeg_h = (root / "FfmpegCommandBuilder.h").read_text()
+    require(ffmpeg_h, '#include "LyricsTransformer.h"', "ffmpeg lyrics transformer dependency")
+    require(ffmpeg_h, '#include "TimeFormatter.h"', "ffmpeg time formatter dependency")
     require(ffmpeg_h, "AppIdentity::ProjectAttachmentMetadata()", "project attachment contract")
     require(ffmpeg_h, "AppIdentity::ProductName()", "project metadata contract")
     require(ffmpeg_h, "Vector<String>", "ffmpeg argument-vector contract")
+    require(ffmpeg_h, "LyricsTransformer::TimedToRaw", "ffmpeg lyrics metadata serialization")
+    require(ffmpeg_h, "TimeFormatter::Clock", "ffmpeg thumbnail timestamp formatting")
+    reject(ffmpeg_h, "TimedLyricsToRaw", "ffmpeg utility lyrics wrapper dependency")
+    reject(ffmpeg_h, "FormatTime2", "ffmpeg utility time wrapper dependency")
     legacy_ext = ".mu" + "se"
     legacy_name = "Mu" + "se"
     reject(ffmpeg_h, "filename=" + legacy_ext[1:] + ".info", "ffmpeg metadata contract")

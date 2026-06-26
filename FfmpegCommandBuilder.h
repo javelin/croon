@@ -6,6 +6,9 @@
 #ifndef _Croon_FfmpegCommandBuilder_h_
 #define _Croon_FfmpegCommandBuilder_h_
 
+#include "LyricsTransformer.h"
+#include "TimeFormatter.h"
+
 struct FfmpegCommandBuilder {
     static Vector<String> ConvertAudioToVorbis(String audioPath, String outputPath) {
         return {
@@ -81,7 +84,7 @@ struct FfmpegCommandBuilder {
             "-metadata", Format("genre=%s", data.genre),
             "-metadata", Format("year=%d", data.year),
             "-metadata", Format("comment=Year: %d\nOriginal Video: %s", data.year, data.origVideoFile),
-            "-metadata", Format("lyrics=%s", TimedLyricsToRaw(data.timedLyrics, true)),
+            "-metadata", Format("lyrics=%s", LyricsTransformer::TimedToRaw(data.timedLyrics, true)),
             outputPath
         };
     }
@@ -115,7 +118,7 @@ struct FfmpegCommandBuilder {
             "-metadata", Format("genre=%s", data.genre),
             "-metadata", Format("year=%d", data.year),
             "-metadata", Format("comment=Year: %d\nOriginal Video: %s", data.year, data.origVideoFile),
-            "-metadata", Format("lyrics=%s", TimedLyricsToRaw(data.timedLyrics, true)),
+            "-metadata", Format("lyrics=%s", LyricsTransformer::TimedToRaw(data.timedLyrics, true)),
             outputPath
         };
     }
@@ -125,7 +128,7 @@ struct FfmpegCommandBuilder {
             "-i",
             videoPath,
             "-ss",
-            FormatTime2(thumbnailTS),
+            TimeFormatter::Clock(thumbnailTS),
             "-frames:v",
             "1",
             outputPath
