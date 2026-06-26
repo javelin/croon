@@ -17,8 +17,8 @@ def main() -> None:
     for needle in [
         "ExportWithBackgroundVideo",
         "ExportWithVisualization",
-        '"filename=croon.info"',
-        '"APPLICATION=Croon v%s"',
+        "AppIdentity::ProjectAttachmentMetadata()",
+        "AppIdentity::ProductName()",
         '"libx264"',
         "subtitles=%s[v]",
     ]:
@@ -27,7 +27,7 @@ def main() -> None:
 
     export_cpp = (root / "ExportDlg.cpp").read_text()
     for needle in [
-        'GetTempFileName("Croon_") + ".ass"',
+        'AppIdentity::TempFileName(".ass")',
         "TimedToASS(*data, 4)",
         "Ffmpeg::ExportWithVisualization",
         "Ffmpeg::ExportWithBackgroundVideo",

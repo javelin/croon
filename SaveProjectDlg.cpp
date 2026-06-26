@@ -59,7 +59,7 @@ int SaveProjectDlg::Run(String savePath, KarData& karData) {
 }
 
 void SaveProjectDlg::StartSave() {
-    tempFilename = GetTempFileName("Croon_") + ".croon";
+    tempFilename = AppIdentity::ProjectTempFileName();
     SaveFile(data->infoFilePath, data->ToJSONStr());
     
     auto res = process.Start(ffmpeg, data->videoFilePath.StartsWith("@@") ?

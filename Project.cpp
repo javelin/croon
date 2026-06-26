@@ -139,12 +139,12 @@ void Project::SaveProjectAs() {
         String projectDir{Config::Get(PROJECT_DIR, GetHomeDirectory())};
         if (projectDir.IsEmpty()) projectDir = Config::Get(MUSIC_DIR);
         fsel <<= ::GetFileDirectory(data.projectPath);
-        fsel.Type("Croon Projects (*.croon)", "*.croon");
+        fsel.Type(AppIdentity::ProjectTypeName(), AppIdentity::ProjectGlob());
         if (fsel.ExecuteSaveAs("Save Project As")) {
             String savePath{~fsel};
-            if (!HasFileExt(savePath)) savePath += ".croon";
-            else if (ToLower(GetFileExt(savePath)) != ".croon") {
-                savePath = GetFileTitle(savePath) + ".croon";
+            if (!HasFileExt(savePath)) savePath += AppIdentity::ProjectExtension();
+            else if (ToLower(GetFileExt(savePath)) != AppIdentity::ProjectExtension()) {
+                savePath = GetFileTitle(savePath) + AppIdentity::ProjectExtension();
             }
             SaveProjectDlg saveDlg;
             if (saveDlg.Run(savePath, KarData::GetGlobal()) == IDOK) {

@@ -7,7 +7,7 @@
 
 MainWindow::MainWindow() {
     CtrlLayout(*this);
-    Title("Croon").Sizeable().Zoomable().SetMinSize(Size(Zx(640), Zy(490)));
+    Title(AppIdentity::ProductName()).Sizeable().Zoomable().SetMinSize(Size(Zx(640), Zy(490)));
     int x{Config::GetInt(WIN_X, -9999)},
         y{Config::GetInt(WIN_Y, -9999)},
         w{Config::GetInt(WIN_W, 2048)},
@@ -62,7 +62,7 @@ MainWindow::~MainWindow() {
 
 void MainWindow::SetTheMainMenu() {
     auto menuFn = [=] (Bar& menu) {
-            menu.Sub("Croon", [=](Bar& bar) {
+            menu.Sub(AppIdentity::ProductName(), [=](Bar& bar) {
                 bar.Add("New...", CtrlImg::new_doc(), [=] {
                     project.SaveProject();
                     projects.NewProject();
@@ -85,7 +85,7 @@ void MainWindow::SetTheMainMenu() {
                     sDlg.Execute();
                 });
                 bar.Separator();
-                bar.Add("Quit Croon", [=] {
+                bar.Add(Format("Quit %s", AppIdentity::ProductName()), [=] {
                     Close();
                 }).Key(K_CTRL_Q);
             });
@@ -96,7 +96,7 @@ void MainWindow::SetTheMainMenu() {
                 }).Key(K_CTRL_H);
                 bar.Separator();
                 bar.Add("About...", CroonImg::Info(),  [=]{
-                    PromptOK("Croon v1.0");
+                    PromptOK(AppIdentity::VersionText());
                 });
             });
         };

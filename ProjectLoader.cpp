@@ -3,8 +3,8 @@
 void ProjectLoader::LoadProjects() {
     projects = Split(Config::Get(PROJECT_LIST), "\n");
     curPath = 0;
-    infoFilePath = GetTempFileName("Croon_") + ".json";
-    thumbnailPath = GetTempFileName("Croon_") + ".png";
+    infoFilePath = AppIdentity::TempFileName(".json");
+    thumbnailPath = AppIdentity::TempFileName(".png");
     if (!projects.IsEmpty()) {
         SetTimeCallback(100, [=] {
             StartNextProcess();

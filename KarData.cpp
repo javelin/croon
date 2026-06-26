@@ -32,7 +32,7 @@ void KarData::Reset() {
     fontSize = Config::GetInt(FONT_SIZE, Config::DefaultFontSize);
     fontSize = std::min(Config::MaxFontSize, std::max(Config::MinFontSize, fontSize));
     dehiss = false;
-    version = VERSION;
+    version = AppIdentity::Version();
 }
 
 void KarData::Dump() const {

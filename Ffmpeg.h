@@ -174,10 +174,10 @@ struct Ffmpeg {
             "-map", "1:a:0",
             "-map_metadata:s", "-1",
             "-attach", data.infoFilePath,
-            "-metadata:s:2", "filename=croon.info",
+            "-metadata:s:2", AppIdentity::ProjectAttachmentMetadata(),
             "-metadata:s:2", "mimetype=application/json",
             "-c", "copy",
-            "-metadata", Format("APPLICATION=Croon v%s", data.version),
+            "-metadata", Format("APPLICATION=%s v%s", AppIdentity::ProductName(), data.version),
             "-f", "matroska",
             outputPath
         };
@@ -188,10 +188,10 @@ struct Ffmpeg {
             "-i", data.audioFilePath,
             "-map_metadata:s", "-1",
             "-attach", data.infoFilePath,
-            "-metadata:s:1", "filename=croon.info",
+            "-metadata:s:1", AppIdentity::ProjectAttachmentMetadata(),
             "-metadata:s:1", "mimetype=application/json",
             "-c", "copy",
-            "-metadata", Format("APPLICATION=Croon v%s", data.version),
+            "-metadata", Format("APPLICATION=%s v%s", AppIdentity::ProductName(), data.version),
             "-f", "matroska",
             outputPath
         };

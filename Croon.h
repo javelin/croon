@@ -34,6 +34,7 @@ using namespace Upp;
 typedef struct Visualization VIZ;
 
 #include "Constants.h"
+#include "AppIdentity.h"
 #include "KarData.h"
 #include "Util.h"
 #include "AudioPlayerBase.h"

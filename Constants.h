@@ -18,6 +18,4 @@ static const double CountInDelay = 2.0f;
 #define AZ_PATTERN      "<!-- Usage of azlyrics.com content by any third-party.+?-->(.+?)</div>"
 #define USER_AGENT      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36"
 
-#define VERSION         "1.0"
-
 #endif
