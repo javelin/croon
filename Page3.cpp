@@ -49,18 +49,18 @@ Page3::Page3(String gatherKey) : vidCount(0), gatherKey(gatherKey) {
     nextBtn << [=] {
         auto& data = KarData::GetGlobal();
         data.timedLyrics = RawToUntimedLyrics(data);
-        data.infoFilePath = GetTempFileName("Croon_") + ".json";
+        data.infoFilePath = AppIdentity::TempFileName(".json");
         
         FileSel fsel;
         String projectDir{Config::Get(PROJECT_DIR, GetHomeDirectory())};
         if (projectDir.IsEmpty()) projectDir = Config::Get(MUSIC_DIR);
-        fsel <<= AppendFileName(projectDir, Format("%s - %s.croon", data.artist, data.title));
-        fsel.Type("Croon Projects (*.croon)", "*.croon");
+        fsel <<= AppendFileName(projectDir, Format("%s - %s%s", data.artist, data.title, AppIdentity::ProjectExtension()));
+        fsel.Type(AppIdentity::ProjectTypeName(), AppIdentity::ProjectGlob());
         if (fsel.ExecuteSaveAs("Save Project")) {
             String savePath{~fsel};
-            if (!HasFileExt(savePath)) savePath += ".croon";
-            else if (ToLower(GetFileExt(savePath)) != ".croon") {
-                savePath = GetFileTitle(savePath) + ".croon";
+            if (!HasFileExt(savePath)) savePath += AppIdentity::ProjectExtension();
+            else if (ToLower(GetFileExt(savePath)) != AppIdentity::ProjectExtension()) {
+                savePath = GetFileTitle(savePath) + AppIdentity::ProjectExtension();
             }
             SaveProjectDlg saveDlg;
             if (saveDlg.Run(savePath, KarData::GetGlobal()) == IDOK) {

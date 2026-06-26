@@ -18,6 +18,7 @@ def main() -> None:
         "Croon.h",
         "Croon.cpp",
         "Croon.iml",
+        "AppIdentity.h",
         "main.cpp",
         "architecture.md",
         "decisions.md",
@@ -30,7 +31,7 @@ def main() -> None:
             fail(f"missing {rel}")
 
     upp = (root / "Croon.upp").read_text()
-    if "Croon.h" not in upp or "Croon.iml" not in upp:
+    if "Croon.h" not in upp or "Croon.iml" not in upp or "AppIdentity.h" not in upp:
         fail("Croon.upp does not list package-level Croon files")
     legacy_product = "Mu" + "se"
     if f"{legacy_product}." in upp or f"{legacy_product}Img" in upp:
@@ -43,6 +44,8 @@ def main() -> None:
         fail("Croon.upp links SDL2 twice on POSIX")
 
     header = (root / "Croon.h").read_text()
+    if '#include "AppIdentity.h"' not in header:
+        fail("Croon.h does not include AppIdentity.h")
     if "CroonImg" not in header:
         fail("Croon image class is not declared")
     if "<Croon/Croon.iml>" not in header:
@@ -58,6 +61,11 @@ def main() -> None:
     for expected in [".croon", "croon.info", "Croon_"]:
         if expected not in contracts:
             fail(f"contracts.md missing {expected}")
+
+    identity = (root / "AppIdentity.h").read_text()
+    for expected in [".croon", "croon.info", "Croon_", "Croon", "1.0"]:
+        if expected not in identity:
+            fail(f"AppIdentity.h missing {expected}")
 
 
 if __name__ == "__main__":

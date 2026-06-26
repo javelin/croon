@@ -20,6 +20,7 @@ file
 	CroonVideoDlg.lay,
 	CroonWizardShell.lay,
 	main.cpp,
+	AppIdentity.h,
 	AudioPlayer.h,
 	AudioPlayerBase.h,
 	Config.cpp,

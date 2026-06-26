@@ -79,8 +79,8 @@ int OpenProjectDlg::Run(String projectPath, KarData& karData) {
 }
 
 void OpenProjectDlg::ExtractAudio() {
-    data->infoFilePath = GetTempFileName("Croon_") + ".json";
-    data->audioFilePath = GetTempFileName("Croon_") + ".ogg";
+    data->infoFilePath = AppIdentity::TempFileName(".json");
+    data->audioFilePath = AppIdentity::TempFileName(".ogg");
     auto vs = Ffmpeg::ProjectExtractAudioAndInfo(data->projectPath,
                                                     data->audioFilePath,
                                                     data->infoFilePath);
@@ -95,7 +95,7 @@ void OpenProjectDlg::ExtractAudio() {
 }
 
 void OpenProjectDlg::ExtractVideo() {
-    data->videoFilePath = GetTempFileName("Croon_") + ".mp4";
+    data->videoFilePath = AppIdentity::TempFileName(".mp4");
     auto vs = Ffmpeg::ProjectExtractVideo(data->projectPath, data->videoFilePath);
     bool res = process.Start(ffmpeg, vs);
     if (!res) {
@@ -108,7 +108,7 @@ void OpenProjectDlg::ExtractVideo() {
 }
 
 void OpenProjectDlg::LoadThumbnail() {
-    data->thumbnailFilePath = GetTempFileName("Croon_") + ".png";
+    data->thumbnailFilePath = AppIdentity::TempFileName(".png");
     auto vs = Ffmpeg::GenerateThumbnail(data->videoFilePath, data->thumbnailFilePath,
                                         ThumbnailDim, ThumbnailDim);
     bool res = process.Start(ffmpeg, vs);

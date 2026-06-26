@@ -168,7 +168,7 @@ void ProjectList::OpenProject() {
     String projectDir{Config::Get(PROJECT_DIR, GetHomeDirectory())};
     if (projectDir.IsEmpty()) projectDir = Config::Get(MUSIC_DIR);
     fsel <<= projectDir;
-    fsel.Type("Croon Projects (*.croon)", "*.croon");
+    fsel.Type(AppIdentity::ProjectTypeName(), AppIdentity::ProjectGlob());
     if (fsel.ExecuteOpen("Open Project")) {
         KarData tdata;
         OpenProjectDlg opDlg;
@@ -225,4 +225,3 @@ void ProjectList::ProjectsToListCtrl() {
     }
     projectLst.FocusItem(0);
 }
-

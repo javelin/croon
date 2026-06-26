@@ -24,9 +24,22 @@ def main() -> None:
 
     root = Path(sys.argv[1])
 
+    identity_h = (root / "AppIdentity.h").read_text()
+    for needle in [
+        'ProductName() { return "Croon"; }',
+        'Version() { return "1.0"; }',
+        'ProjectExtension() { return ".croon"; }',
+        'ProjectGlob() { return "*.croon"; }',
+        'MetadataAttachmentName() { return "croon.info"; }',
+        'TempPrefix() { return "Croon_"; }',
+        'PosixDataDirectory() { return ".Croon"; }',
+        'DataDirectory() { return "Croon"; }',
+    ]:
+        require(identity_h, needle, "AppIdentity contract")
+
     util_cpp = (root / "Util.cpp").read_text()
-    require(util_cpp, '#define DATA_DIR ".Croon"', "POSIX app data contract")
-    require(util_cpp, '#define DATA_DIR "Croon"', "non-POSIX app data contract")
+    require(util_cpp, "AppIdentity::PosixDataDirectory", "POSIX app data contract")
+    require(util_cpp, "AppIdentity::DataDirectory", "non-POSIX app data contract")
 
     kar_data_cpp = (root / "KarData.cpp").read_text()
     for key in [
@@ -40,8 +53,8 @@ def main() -> None:
         require(kar_data_cpp, key, "KarData JSON contract")
 
     ffmpeg_h = (root / "Ffmpeg.h").read_text()
-    require(ffmpeg_h, '"filename=croon.info"', "project attachment contract")
-    require(ffmpeg_h, '"APPLICATION=Croon v%s"', "project metadata contract")
+    require(ffmpeg_h, "AppIdentity::ProjectAttachmentMetadata()", "project attachment contract")
+    require(ffmpeg_h, "AppIdentity::ProductName()", "project metadata contract")
     require(ffmpeg_h, "Vector<String>", "ffmpeg argument-vector contract")
     legacy_ext = ".mu" + "se"
     legacy_name = "Mu" + "se"
@@ -54,7 +67,7 @@ def main() -> None:
         "SaveProjectDlg.cpp",
     ]:
         text = (root / rel).read_text()
-        require(text, ".croon", f"{rel} project extension contract")
+        require(text, "AppIdentity::", f"{rel} project extension contract")
         reject(text, legacy_ext, f"{rel} project extension contract")
 
     for rel in [
@@ -65,7 +78,7 @@ def main() -> None:
         "SaveProjectDlg.cpp",
     ]:
         text = (root / rel).read_text()
-        require(text, "GetTempFileName(\"Croon_", f"{rel} temp-prefix contract")
+        require(text, "AppIdentity::", f"{rel} temp-prefix contract")
         reject(text, f"GetTempFileName(\"{legacy_name}_", f"{rel} temp-prefix contract")
 
 

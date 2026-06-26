@@ -7,12 +7,6 @@
 
 #define SRT_PATTERN "(\\d+)\n(.+) -->.+\n(.+)\n"
 
-#ifdef PLATFORM_POSIX
-#define DATA_DIR ".Croon"
-#else
-#define DATA_DIR "Croon"
-#endif
-
 // Reds
 #define RED_H               "&H000000FF"
 #define RED_D               "&H00000080"
@@ -52,7 +46,13 @@
 
 
 String GetDataDirectory() {
-    static String dataDir = AppendFileName(GetAppDataFolder(), DATA_DIR);
+    static String dataDir = AppendFileName(GetAppDataFolder(),
+#ifdef PLATFORM_POSIX
+                                           AppIdentity::PosixDataDirectory()
+#else
+                                           AppIdentity::DataDirectory()
+#endif
+                                           );
     if (!DirectoryExists(dataDir)) DirectoryCreate(dataDir);
     return dataDir;
 }

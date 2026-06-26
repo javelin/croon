@@ -14,7 +14,7 @@ public:
         this->thumbnailTS = thumbnailTS;
         data = &karData;
         this->outputPath = outputPath;
-        dehissedAudioFilepath = karData.dehiss ? GetTempFileName("Croon_dehissed_") + ".ogg":"";
+        dehissedAudioFilepath = karData.dehiss ? AppIdentity::TaggedTempFileName("dehissed", ".ogg"):"";
         PostCallback([=] { StartNextProcess(); });
         return RunDlg("Export Video");
     }

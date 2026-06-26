@@ -7,6 +7,7 @@ using namespace Upp;
 #include <Draw/iml_header.h>
 
 #include <Croon/Constants.h>
+#include <Croon/AppIdentity.h>
 #include <Croon/KarData.h>
 #include <Croon/Util.h>
 #include <Croon/Visualization.h>
@@ -220,4 +221,3 @@ CONSOLE_APP_MAIN
 	if(failures)
 		SetExitCode(1);
 }
-

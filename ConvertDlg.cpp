@@ -76,7 +76,7 @@ int ConvertDlg::Run(String audioPath) {
 }
 
 void ConvertDlg::StartConversion() {
-    outputPath = GetTempFileName("Croon_") + ".ogg";
+    outputPath = AppIdentity::TempFileName(".ogg");
     auto res = process.Start(ffmpeg, Ffmpeg::ConvertAudioToVorbis(audioPath, outputPath));
     if (!res) {
         Exclamation("Unable to convert audio file!");
@@ -86,4 +86,3 @@ void ConvertDlg::StartConversion() {
         PollProgress();
     }
 }
-
