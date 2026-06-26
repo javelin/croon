@@ -4,6 +4,8 @@
 
 - Primary project extension: `.croon`.
 - Project metadata attachment name: `croon.info`.
+- Current project metadata format version: `1.0`.
+- Project metadata must include a `version` field. Format changes must be represented by explicit version handling in `ProjectSerializer`.
 - Runtime app data directory name: `Croon`.
 - Temporary file prefixes should use `Croon_`.
 

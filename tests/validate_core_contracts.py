@@ -42,6 +42,10 @@ def main() -> None:
     require(util_cpp, "AppIdentity::DataDirectory", "non-POSIX app data contract")
 
     kar_data_cpp = (root / "KarData.cpp").read_text()
+    require(kar_data_cpp, "ProjectSerializer::ToJson(*this)", "KarData serialization delegation")
+    require(kar_data_cpp, "ProjectSerializer::FromJson(JSONStr)", "KarData deserialization delegation")
+
+    project_serializer_cpp = (root / "ProjectSerializer.cpp").read_text()
     for key in [
         '"version"',
         '"title"',
@@ -50,7 +54,12 @@ def main() -> None:
         '"timedLyrics"',
         '"parts"',
     ]:
-        require(kar_data_cpp, key, "KarData JSON contract")
+        require(project_serializer_cpp, key, "ProjectSerializer JSON contract")
+    require(project_serializer_cpp, "if (data.year < 0) data.year = 0", "ProjectSerializer year normalization")
+
+    project_serializer_h = (root / "ProjectSerializer.h").read_text()
+    require(project_serializer_h, "FormatVersion()", "ProjectSerializer format-version contract")
+    require(project_serializer_h, "SupportsVersion", "ProjectSerializer version-support contract")
 
     ffmpeg_h = (root / "FfmpegCommandBuilder.h").read_text()
     require(ffmpeg_h, "AppIdentity::ProjectAttachmentMetadata()", "project attachment contract")

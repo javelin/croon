@@ -68,58 +68,12 @@ void KarData::DumpTimedLyrics() const {
 }
 
 String KarData::ToJSONStr() const {
-    JsonArray tlJsa;
-    for (const auto& tl : timedLyrics) {
-        if (timedLyrics.GetIndex(tl) > 0) tlJsa << Json("time", tl.time)("lyrics", tl.lyrics);
-    }
-    JsonArray partsJsa;
-    for (const auto& part : parts) {
-        partsJsa << Json("index", part.a)("part1", part.b)("part2", part.c)("part3", part.d);
-    }
-    Json js;
-    js("version", version)
-        ("title", title)
-        ("artist", artist)
-        ("genre", genre)
-        ("year", year)
-        ("writer", writer)
-        ("owner", owner)
-        ("origVideoFile", origVideoFile)
-        ("duration", duration)
-        ("timed", timed)
-        ("fontSize", fontSize)
-        ("dehiss", dehiss)
-        ("timedLyrics", tlJsa)
-        ("parts", partsJsa);
-    return js.ToString();
+    return ProjectSerializer::ToJson(*this);
 }
 
 KarData::KarData(const String& JSONStr) {
-    Reset();
-    auto js = ParseJSON(JSONStr);
-    version = js.GetAdd("version");
-    title = js.GetAdd("title");
-    artist = js.GetAdd("artist");
-    genre = js.GetAdd("genre");
-    year = js.GetAdd("year");
-    if (year < 0) year = 0;
-    writer = js.GetAdd("writer");
-    owner = js.GetAdd("owner");
-    origVideoFile = js.GetAdd("origVideoFile");
-    duration = js.GetAdd("duration");
-    timed = js.GetAdd("timed");
-    SetFontSize(js.GetAdd("fontSize"));
-    dehiss = js.GetAdd("dehiss");
-    timedLyrics.Add({duration, ""});
-    for (auto tl : js.GetAdd("timedLyrics")) {
-        timedLyrics.Add({tl.GetAdd("time"), tl.GetAdd("lyrics")});
-    }
-    for (auto part : js.GetAdd("parts")) {
-        parts.Add({part.GetAdd("index"),
-                    part.GetAdd("part1"),
-                    part.GetAdd("part2"),
-                    part.GetAdd("part3")});
-    }
+    KarData data = ProjectSerializer::FromJson(JSONStr);
+    *this = pick(data);
 }
 
 void KarData::SetFontSize(int size) {

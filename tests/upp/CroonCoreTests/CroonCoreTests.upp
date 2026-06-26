@@ -6,10 +6,10 @@ uses
 file
 	CroonCoreTests.cpp,
 	KarData.cpp,
+	ProjectSerializer.cpp,
 	CroonCoreTestSupport.cpp,
 	CroonLyricsTestSupport.cpp,
 	CroonAssTestSupport.cpp;
 
 mainconfig
 	"" = "";
-

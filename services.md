@@ -6,7 +6,7 @@ This file records service boundaries expected during migration. Some services be
 
 - `AppIdentity`: product name, version, project extension, app data name, temp prefixes, and metadata attachment names.
 - `ConfigService`: persisted Croon settings and default values.
-- `ProjectSerializer`: JSON serialization and deserialization for Croon project metadata.
+- `ProjectSerializer`: versioned JSON serialization and deserialization for Croon project metadata.
 - `FfmpegCommandBuilder`: deterministic command argument construction.
 - `MediaProcessRunner`: process execution boundary for `ffmpeg` and related long-running tasks.
 - `SubtitleGenerator`: ASS subtitle generation from timed lyrics and vocal parts.

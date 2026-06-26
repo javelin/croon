@@ -19,6 +19,8 @@ def main() -> None:
         "Croon.cpp",
         "Croon.iml",
         "AppIdentity.h",
+        "ProjectSerializer.cpp",
+        "ProjectSerializer.h",
         "main.cpp",
         "architecture.md",
         "decisions.md",
@@ -31,7 +33,13 @@ def main() -> None:
             fail(f"missing {rel}")
 
     upp = (root / "Croon.upp").read_text()
-    if "Croon.h" not in upp or "Croon.iml" not in upp or "AppIdentity.h" not in upp:
+    if (
+        "Croon.h" not in upp or
+        "Croon.iml" not in upp or
+        "AppIdentity.h" not in upp or
+        "ProjectSerializer.cpp" not in upp or
+        "ProjectSerializer.h" not in upp
+    ):
         fail("Croon.upp does not list package-level Croon files")
     legacy_product = "Mu" + "se"
     if f"{legacy_product}." in upp or f"{legacy_product}Img" in upp:
@@ -46,6 +54,8 @@ def main() -> None:
     header = (root / "Croon.h").read_text()
     if '#include "AppIdentity.h"' not in header:
         fail("Croon.h does not include AppIdentity.h")
+    if '#include "ProjectSerializer.h"' not in header:
+        fail("Croon.h does not include ProjectSerializer.h")
     if "CroonImg" not in header:
         fail("Croon image class is not declared")
     if "<Croon/Croon.iml>" not in header:
@@ -58,7 +68,7 @@ def main() -> None:
         fail("main.cpp does not call RunCroon")
 
     contracts = (root / "contracts.md").read_text()
-    for expected in [".croon", "croon.info", "Croon_"]:
+    for expected in [".croon", "croon.info", "Croon_", "version", "ProjectSerializer"]:
         if expected not in contracts:
             fail(f"contracts.md missing {expected}")
 

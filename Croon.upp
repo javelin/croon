@@ -66,6 +66,8 @@ file
 	ProjectList.h,
 	ProjectLoader.cpp,
 	ProjectLoader.h,
+	ProjectSerializer.cpp,
+	ProjectSerializer.h,
 	SaveProjectDlg.cpp,
 	SaveProjectDlg.h,
 	SDLMixerAudioPlayer.cpp,

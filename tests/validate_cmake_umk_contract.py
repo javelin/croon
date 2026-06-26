@@ -31,6 +31,7 @@ def main() -> None:
         "add_dependencies(croon_core_behavior croon_package_nest)",
         "NAME croon_core_behavior",
         "CroonCoreTests",
+        "ProjectSerializer.cpp",
         'set(CROON_NESTS "${CROON_PACKAGE_NEST},${CROON_UPPSRC}")',
         "add_custom_target(croon_umk",
         "add_dependencies(croon croon_umk)",

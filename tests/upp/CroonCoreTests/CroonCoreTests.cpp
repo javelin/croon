@@ -9,7 +9,9 @@ using namespace Upp;
 #include <Croon/Constants.h>
 #include <Croon/AppIdentity.h>
 #include <Croon/KarData.h>
+#include <Croon/ProjectSerializer.h>
 #include <Croon/Util.h>
+#include <Croon/Config.h>
 #include <Croon/Visualization.h>
 
 typedef struct Visualization VIZ;
@@ -110,7 +112,21 @@ CONSOLE_APP_MAIN
 	song.timedLyrics.Add({2.5, "Second line"});
 	song.parts.Add(MakeTuple(1, true, false, true));
 
-	KarData restored(song.ToJSONStr());
+	Check(ProjectSerializer::FormatVersion() == AppIdentity::Version(), "ProjectSerializer format follows app identity version");
+	Check(ProjectSerializer::SupportsVersion("1.0"), "ProjectSerializer supports current .croon format");
+	Check(!ProjectSerializer::SupportsVersion("0.9"), "ProjectSerializer rejects unknown .croon format version");
+	String serialized = ProjectSerializer::ToJson(song);
+	const char *projectKeys[] = {
+		"\"version\"", "\"title\"", "\"artist\"", "\"genre\"", "\"year\"", "\"writer\"",
+		"\"owner\"", "\"origVideoFile\"", "\"duration\"", "\"timed\"", "\"fontSize\"",
+		"\"dehiss\"", "\"timedLyrics\"", "\"parts\""
+	};
+	for(const char *key : projectKeys) {
+		Check(serialized.Find(key) >= 0, String("ProjectSerializer writes ") + key);
+	}
+	Check(serialized.Find("\"rawLyrics\"") < 0, "ProjectSerializer keeps raw lyrics out of project metadata");
+
+	KarData restored = ProjectSerializer::FromJson(serialized);
 	Check(restored.version == "9.9", "KarData JSON preserves version");
 	Check(restored.title == "Long Song", "KarData JSON preserves title");
 	Check(restored.artist == "The Singers", "KarData JSON preserves artist");
@@ -130,6 +146,15 @@ CONSOLE_APP_MAIN
 	Check(restored.parts.GetCount() == 1, "KarData JSON preserves part count");
 	Check(restored.parts[0].a == 1 && restored.parts[0].b && !restored.parts[0].c && restored.parts[0].d,
 		"KarData JSON preserves vocal part flags");
+	Check(song.ToJSONStr() == serialized, "KarData ToJSONStr delegates to ProjectSerializer");
+	KarData restoredViaKarData(serialized);
+	Check(restoredViaKarData.title == restored.title && restoredViaKarData.timedLyrics.GetCount() == restored.timedLyrics.GetCount(),
+		"KarData JSON constructor delegates to ProjectSerializer");
+
+	KarData normalized = ProjectSerializer::FromJson("{\"version\":\"1.0\",\"year\":-7,\"fontSize\":999,\"timedLyrics\":[],\"parts\":[]}");
+	Check(normalized.year == 0, "ProjectSerializer normalizes negative years");
+	Check(normalized.fontSize == Config::DefaultFontSize, "ProjectSerializer keeps font-size clamping behavior");
+	Check(normalized.timedLyrics.GetCount() == 1, "ProjectSerializer restores sentinel for empty timed lyrics");
 
 	String decorated = ">>{120}  Sing this line  ";
 	String decor = SplitLyrics(decorated);
