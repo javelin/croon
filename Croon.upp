@@ -78,6 +78,7 @@ file
 	SDLMixerAudioPlayer.h,
 	SettingsDlg.cpp,
 	SettingsDlg.h,
+	SubtitleGenerator.h,
 	TimingCtrl.cpp,
 	TimingCtrl.h,
 	TimingDlg.cpp,

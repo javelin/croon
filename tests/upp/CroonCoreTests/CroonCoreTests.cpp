@@ -10,6 +10,7 @@ using namespace Upp;
 #include <Croon/AppIdentity.h>
 #include <Croon/KarData.h>
 #include <Croon/ProjectSerializer.h>
+#include <Croon/SubtitleGenerator.h>
 #include <Croon/Util.h>
 #include <Croon/ConfigService.h>
 #include <Croon/Config.h>
@@ -250,6 +251,7 @@ CONSOLE_APP_MAIN
 	Check(foundMeta, "ProcessMetadata resolves @Title metadata");
 
 	KarData emptyAss;
+	Check(SubtitleGenerator::ToAss(emptyAss).IsEmpty(), "SubtitleGenerator returns empty output without timed lyrics");
 	Check(TimedToASS(emptyAss).IsEmpty(), "TimedToASS returns empty output without timed lyrics");
 
 	KarData exportData;
@@ -260,12 +262,17 @@ CONSOLE_APP_MAIN
 	exportData.timedLyrics.Add({exportData.duration, ""});
 	exportData.timedLyrics.Add({1.0, "Sing along"});
 	exportData.parts.Add(MakeTuple(1, true, false, true));
-	String ass = TimedToASS(exportData, 2);
-	Check(ass.Find("[Script Info]") >= 0, "TimedToASS emits script info section");
-	Check(ass.Find("Export Song by Export Artist") >= 0, "TimedToASS includes project title");
-	Check(ass.Find("Style: V1,") >= 0, "TimedToASS defines V1 style");
-	Check(ass.Find("Dialogue: 0,0:00:01.00") >= 0, "TimedToASS emits timed dialogue");
-	Check(ass.Find(",V1,,0,0,0,,Sing along") >= 0, "TimedToASS uses V1 style for default vocal part");
+	String ass = SubtitleGenerator::ToAss(exportData, 2);
+	Check(ass.Find("[Script Info]") >= 0, "SubtitleGenerator emits script info section");
+	Check(ass.Find("Export Song by Export Artist") >= 0, "SubtitleGenerator includes project title");
+	Check(ass.Find("Style: V1,") >= 0, "SubtitleGenerator defines V1 style");
+	Check(ass.Find("Dialogue: 0,0:00:01.00") >= 0, "SubtitleGenerator emits timed dialogue");
+	Check(ass.Find(",V1,,0,0,0,,Sing along") >= 0, "SubtitleGenerator uses V1 style for default vocal part");
+	Check(TimedToASS(exportData, 2) == ass, "TimedToASS delegates to SubtitleGenerator");
+	Check(SubtitleGenerator::ToRichAss(exportData, 2).Find("[Script Info]") >= 0,
+		"SubtitleGenerator emits rich ASS preview");
+	Check(TimedToRichASS(exportData, 2) == SubtitleGenerator::ToRichAss(exportData, 2),
+		"TimedToRichASS delegates to SubtitleGenerator");
 
 	KarData v2Data;
 	v2Data.duration = 10.0;
@@ -275,7 +282,8 @@ CONSOLE_APP_MAIN
 	v2Data.timedLyrics.Add({v2Data.duration, ""});
 	v2Data.timedLyrics.Add({1.0, "Sing along"});
 	v2Data.parts.Add(MakeTuple(1, false, true, true));
-	Check(TimedToASS(v2Data, 2).Find(",V2,") >= 0, "TimedToASS uses V2 style for second vocal part");
+	Check(SubtitleGenerator::ToAss(v2Data, 2).Find(",V2,") >= 0,
+		"SubtitleGenerator uses V2 style for second vocal part");
 
 	KarData bucData;
 	bucData.duration = 10.0;
@@ -284,7 +292,8 @@ CONSOLE_APP_MAIN
 	bucData.fontSize = 72;
 	bucData.timedLyrics.Add({bucData.duration, ""});
 	bucData.timedLyrics.Add({1.0, "~echo"});
-	Check(TimedToASS(bucData, 2).Find(",BUC,") >= 0, "TimedToASS uses BUC style for backup vocals");
+	Check(SubtitleGenerator::ToAss(bucData, 2).Find(",BUC,") >= 0,
+		"SubtitleGenerator uses BUC style for backup vocals");
 
 	if(failures)
 		SetExitCode(1);

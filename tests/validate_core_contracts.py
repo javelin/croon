@@ -67,6 +67,16 @@ def main() -> None:
     require(recent_project_service_cpp, "TrimBoth(path)", "RecentProjectService path normalization")
     require(recent_project_service_cpp, "FindPathIndex(normalized, trimmed)", "RecentProjectService de-duplication")
 
+    subtitle_generator_h = (root / "SubtitleGenerator.h").read_text()
+    require(subtitle_generator_h, "ToAss", "SubtitleGenerator ASS contract")
+    require(subtitle_generator_h, "ToRichAss", "SubtitleGenerator rich ASS contract")
+
+    util_cpp = (root / "Util.cpp").read_text()
+    require(util_cpp, "String SubtitleGenerator::ToAss", "SubtitleGenerator ASS implementation")
+    require(util_cpp, "String SubtitleGenerator::ToRichAss", "SubtitleGenerator rich ASS implementation")
+    require(util_cpp, "return SubtitleGenerator::ToAss", "TimedToASS compatibility wrapper")
+    require(util_cpp, "return SubtitleGenerator::ToRichAss", "TimedToRichASS compatibility wrapper")
+
     kar_data_cpp = (root / "KarData.cpp").read_text()
     require(kar_data_cpp, "ProjectSerializer::ToJson(*this)", "KarData serialization delegation")
     require(kar_data_cpp, "ProjectSerializer::FromJson(JSONStr)", "KarData deserialization delegation")

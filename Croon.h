@@ -37,6 +37,7 @@ typedef struct Visualization VIZ;
 #include "AppIdentity.h"
 #include "KarData.h"
 #include "ProjectSerializer.h"
+#include "SubtitleGenerator.h"
 #include "Util.h"
 #include "AudioPlayerBase.h"
 #include "ConfigService.h"

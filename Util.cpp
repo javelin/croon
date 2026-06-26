@@ -328,7 +328,7 @@ VocalPart LookaheadVocalPart(const Vector<TimeLyrics>& vtl, int startIdx,
     return VP_V1;
 }
 
-String TimedToASS(const KarData& data, int linesToDisplay, int resX, int resY) {
+String SubtitleGenerator::ToAss(const KarData& data, int linesToDisplay, int resX, int resY) {
     if (data.timedLyrics.IsEmpty()) return "";
     Vector<TimeLyrics> vtl;
     ProcessMetadata(data, vtl, linesToDisplay);
@@ -458,7 +458,11 @@ String TimedToASS(const KarData& data, int linesToDisplay, int resX, int resY) {
     return Join(vs, "\n");
 }
 
-String TimedToRichASS(const KarData& data, int linesToDisplay, int resX, int resY) {
+String TimedToASS(const KarData& data, int linesToDisplay, int resX, int resY) {
+    return SubtitleGenerator::ToAss(data, linesToDisplay, resX, resY);
+}
+
+String SubtitleGenerator::ToRichAss(const KarData& data, int linesToDisplay, int resX, int resY) {
     if (data.timedLyrics.IsEmpty()) return "";
     Vector<TimeLyrics> vtl;
     ProcessMetadata(data, vtl, linesToDisplay);
@@ -601,6 +605,10 @@ String TimedToRichASS(const KarData& data, int linesToDisplay, int resX, int res
         lastLine = hasCountIn ? "\u00A03... 2... 1...":line;
     }
     return rth.ToString();
+}
+
+String TimedToRichASS(const KarData& data, int linesToDisplay, int resX, int resY) {
+    return SubtitleGenerator::ToRichAss(data, linesToDisplay, resX, resY);
 }
 
 Vector<String> GetPaths(String dir, String pattern) {

@@ -9,6 +9,7 @@ using namespace Upp;
 
 #include <Croon/Constants.h>
 #include <Croon/KarData.h>
+#include <Croon/SubtitleGenerator.h>
 #include <Croon/Util.h>
 
 #define RED_H               "&H000000FF"
@@ -202,7 +203,7 @@ VocalPart LookaheadVocalPart(const Vector<TimeLyrics>& vtl, int startIdx,
 	return VP_V1;
 }
 
-String TimedToASS(const KarData& data, int linesToDisplay, int resX, int resY) {
+String SubtitleGenerator::ToAss(const KarData& data, int linesToDisplay, int resX, int resY) {
 	if(data.timedLyrics.IsEmpty())
 		return "";
 	Vector<TimeLyrics> vtl;
@@ -316,4 +317,16 @@ String TimedToASS(const KarData& data, int linesToDisplay, int resX, int resY) {
 		lastLine = hasCountIn ? "\u00A03... 2... 1...":line;
 	}
 	return Join(vs, "\n");
+}
+
+String TimedToASS(const KarData& data, int linesToDisplay, int resX, int resY) {
+	return SubtitleGenerator::ToAss(data, linesToDisplay, resX, resY);
+}
+
+String SubtitleGenerator::ToRichAss(const KarData& data, int linesToDisplay, int resX, int resY) {
+	return SubtitleGenerator::ToAss(data, linesToDisplay, resX, resY);
+}
+
+String TimedToRichASS(const KarData& data, int linesToDisplay, int resX, int resY) {
+	return SubtitleGenerator::ToRichAss(data, linesToDisplay, resX, resY);
 }

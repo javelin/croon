@@ -9,11 +9,11 @@ This file records service boundaries expected during migration. Some services be
 - `ProjectSerializer`: versioned JSON serialization and deserialization for Croon project metadata.
 - `FfmpegCommandBuilder`: deterministic command argument construction.
 - `RecentProjectService`: recent project list persistence and normalization.
+- `SubtitleGenerator`: ASS subtitle generation from timed lyrics and vocal parts.
 
 ## Planned Services
 
 - `MediaProcessRunner`: process execution boundary for `ffmpeg` and related long-running tasks.
-- `SubtitleGenerator`: ASS subtitle generation from timed lyrics and vocal parts.
 
 ## UI Boundary
 
