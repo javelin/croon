@@ -12,6 +12,7 @@ This file records service boundaries expected during migration. Some services be
 - `FfmpegCommandBuilder`: deterministic command argument construction.
 - `FfmpegProgressParser`: timestamp extraction from `ffmpeg` progress output.
 - `GenreCatalog`: shared application genre reference list.
+- `LyricsDownloadService`: AZLyrics URL construction, page extraction, and download workflow.
 - `RecentProjectService`: recent project list persistence and normalization.
 - `SubtitleLineProcessor`: subtitle metadata expansion, count-in insertion, and vocal style resolution.
 - `SubtitleGenerator`: ASS subtitle generation from timed lyrics and vocal parts.

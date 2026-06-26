@@ -29,6 +29,8 @@ def main() -> None:
         "FfmpegProgressParser.h",
         "GenreCatalog.cpp",
         "GenreCatalog.h",
+        "LyricsDownloadService.cpp",
+        "LyricsDownloadService.h",
         "LyricsTransformer.cpp",
         "LyricsTransformer.h",
         "RecentProjectService.cpp",
@@ -70,6 +72,8 @@ def main() -> None:
         "FfmpegProgressParser.h" not in upp or
         "GenreCatalog.cpp" not in upp or
         "GenreCatalog.h" not in upp or
+        "LyricsDownloadService.cpp" not in upp or
+        "LyricsDownloadService.h" not in upp or
         "LyricsTransformer.cpp" not in upp or
         "LyricsTransformer.h" not in upp or
         "RecentProjectService.cpp" not in upp or
@@ -110,6 +114,8 @@ def main() -> None:
         fail("Croon.h does not include FfmpegProgressParser.h")
     if '#include "GenreCatalog.h"' not in header:
         fail("Croon.h does not include GenreCatalog.h")
+    if '#include "LyricsDownloadService.h"' not in header:
+        fail("Croon.h does not include LyricsDownloadService.h")
     if '#include "LyricsTransformer.h"' not in header:
         fail("Croon.h does not include LyricsTransformer.h")
     if '#include "SubtitleLineProcessor.h"' not in header:

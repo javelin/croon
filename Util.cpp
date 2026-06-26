@@ -68,27 +68,7 @@ Vector<String> GetPaths(String dir, String pattern) {
 }
 
 bool DownloadLyrics(String title, String artist, String& lyrics) {
-    String t = Join(Split(CleanSpacing(ToLower(StripNonAlnum(TrimBoth(title)))), ' '), "");
-    String a = ToLower(StripNonAlnum(TrimBoth(artist)));
-    a.TrimStart("the ");
-    a = Join(Split(CleanSpacing(a), ' '), "");
-    String url = Format(AZ_URL, a, t);
-    DownloadDlg dlg;
-    String* _lyrics = &lyrics;
-    dlg.WhenDownloadSuccess << [_lyrics](String content) {
-        static RegExp rx(AZ_PATTERN, RegExp::DOTALL | RegExp::MULTILINE | RegExp::UTF8);
-        if (rx.Study() && rx.Match(content)) {
-            auto vl = Split(rx.GetString(0), "<br>");
-            for (int i = 0; i < vl.GetCount(); i++) {
-                vl[i] = TrimBoth(vl[i]);
-            }
-            *_lyrics = Join(vl, "\n");
-        }
-        else {
-            *_lyrics = "";
-        }
-    };
-    return dlg.Run(url, "Downloading lyrics") == IDOK;
+    return LyricsDownloadService::Download(title, artist, lyrics);
 }
 
 int _Zx(int zx) {

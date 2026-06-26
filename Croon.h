@@ -38,6 +38,7 @@ typedef struct Visualization VIZ;
 #include "AppPaths.h"
 #include "KarData.h"
 #include "ProjectSerializer.h"
+#include "LyricsDownloadService.h"
 #include "LyricsTransformer.h"
 #include "SubtitleLineProcessor.h"
 #include "SubtitleGenerator.h"

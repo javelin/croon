@@ -78,6 +78,16 @@ def main() -> None:
     require(lyrics_transformer_cpp, "MaxLineLength", "LyricsTransformer wrapping contract")
     require(lyrics_transformer_cpp, "removeMetadata", "LyricsTransformer metadata removal contract")
 
+    lyrics_download_service_h = (root / "LyricsDownloadService.h").read_text()
+    require(lyrics_download_service_h, "BuildAzLyricsUrl", "LyricsDownloadService URL contract")
+    require(lyrics_download_service_h, "ExtractAzLyrics", "LyricsDownloadService extraction contract")
+    require(lyrics_download_service_h, "Download", "LyricsDownloadService download contract")
+
+    lyrics_download_service_cpp = (root / "LyricsDownloadService.cpp").read_text()
+    require(lyrics_download_service_cpp, "AZ_URL", "LyricsDownloadService provider URL")
+    require(lyrics_download_service_cpp, "AZ_PATTERN", "LyricsDownloadService extraction pattern")
+    require(lyrics_download_service_cpp, "DownloadDlg dlg", "LyricsDownloadService UI download workflow")
+
     subtitle_line_processor_h = (root / "SubtitleLineProcessor.h").read_text()
     require(subtitle_line_processor_h, "ProcessMetadata", "SubtitleLineProcessor metadata contract")
     require(subtitle_line_processor_h, "ResolveVocalPart", "SubtitleLineProcessor vocal-part contract")
@@ -137,6 +147,7 @@ def main() -> None:
     util_cpp = (root / "Util.cpp").read_text()
     require(util_cpp, "return AppPaths::DataDirectory", "GetDataDirectory compatibility wrapper")
     require(util_cpp, "return AppPaths::FindFiles", "GetPaths compatibility wrapper")
+    require(util_cpp, "return LyricsDownloadService::Download", "DownloadLyrics compatibility wrapper")
     require(util_cpp, "return LyricsTransformer::SplitDecorations", "SplitLyrics compatibility wrapper")
     require(util_cpp, "return LyricsTransformer::RawToUntimed", "RawToUntimedLyrics compatibility wrapper")
     require(util_cpp, "return LyricsTransformer::TimedToRaw", "TimedLyricsToRaw compatibility wrapper")
