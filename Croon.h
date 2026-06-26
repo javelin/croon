@@ -50,6 +50,7 @@ typedef struct Visualization VIZ;
 #include "AudioPlayerBase.h"
 #include "ConfigService.h"
 #include "Config.h"
+#include "DownloadDefaults.h"
 #include "FfmpegCommandBuilder.h"
 #include "FfmpegProgressParser.h"
 #include "GenreCatalog.h"

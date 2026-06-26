@@ -82,11 +82,26 @@ def main() -> None:
     require(lyrics_download_service_h, "BuildAzLyricsUrl", "LyricsDownloadService URL contract")
     require(lyrics_download_service_h, "ExtractAzLyrics", "LyricsDownloadService extraction contract")
     require(lyrics_download_service_h, "Download", "LyricsDownloadService download contract")
+    require(lyrics_download_service_h, "AzLyricsUrlFormat", "LyricsDownloadService provider URL boundary")
+    require(lyrics_download_service_h, "AzLyricsPattern", "LyricsDownloadService provider pattern boundary")
 
     lyrics_download_service_cpp = (root / "LyricsDownloadService.cpp").read_text()
-    require(lyrics_download_service_cpp, "AZ_URL", "LyricsDownloadService provider URL")
-    require(lyrics_download_service_cpp, "AZ_PATTERN", "LyricsDownloadService extraction pattern")
+    require(lyrics_download_service_cpp, "https://www.azlyrics.com/lyrics/%s/%s.html", "LyricsDownloadService provider URL")
+    require(lyrics_download_service_cpp, "<!-- Usage of azlyrics.com content", "LyricsDownloadService extraction pattern")
     require(lyrics_download_service_cpp, "DownloadDlg dlg", "LyricsDownloadService UI download workflow")
+
+    download_defaults_h = (root / "DownloadDefaults.h").read_text()
+    require(download_defaults_h, "struct DownloadDefaults", "DownloadDefaults boundary")
+    require(download_defaults_h, "UserAgent()", "DownloadDefaults user-agent contract")
+    require(download_defaults_h, "Chrome/60.0.3112.90", "DownloadDefaults legacy user-agent value")
+
+    download_dlg_h = (root / "DownloadDlg.h").read_text()
+    require(download_dlg_h, "DownloadDefaults::UserAgent()", "DownloadDlg user-agent default")
+
+    constants_h = (root / "Constants.h").read_text()
+    reject(constants_h, "AZ_URL", "Constants provider URL extraction")
+    reject(constants_h, "AZ_PATTERN", "Constants provider pattern extraction")
+    reject(constants_h, "USER_AGENT", "Constants user-agent extraction")
 
     subtitle_line_processor_h = (root / "SubtitleLineProcessor.h").read_text()
     require(subtitle_line_processor_h, "ProcessMetadata", "SubtitleLineProcessor metadata contract")

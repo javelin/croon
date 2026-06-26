@@ -7,6 +7,7 @@ This file records service boundaries expected during migration. Some services be
 - `AppIdentity`: product name, version, project extension, app data name, temp prefixes, and metadata attachment names.
 - `AppPaths`: runtime data directory creation and simple file discovery helpers.
 - `ConfigService`: persisted Croon settings and default values.
+- `DownloadDefaults`: shared HTTP download defaults such as the browser user agent.
 - `ProjectSerializer`: versioned JSON serialization and deserialization for Croon project metadata.
 - `LyricsTransformer`: deterministic conversion between raw lyric text and Croon timed lyric rows.
 - `FfmpegCommandBuilder`: deterministic command argument construction.
