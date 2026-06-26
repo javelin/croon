@@ -5,8 +5,6 @@
 
 #include "Croon.h"
 
-#define SRT_PATTERN "(\\d+)\n(.+) -->.+\n(.+)\n"
-
 String GetDataDirectory() {
     return AppPaths::DataDirectory();
 }

@@ -102,6 +102,8 @@ def main() -> None:
     reject(constants_h, "AZ_URL", "Constants provider URL extraction")
     reject(constants_h, "AZ_PATTERN", "Constants provider pattern extraction")
     reject(constants_h, "USER_AGENT", "Constants user-agent extraction")
+    reject(constants_h, "MaxASSDisplayLines", "Constants dead ASS max cleanup")
+    reject(constants_h, "MinASSDisplayLines", "Constants dead ASS min cleanup")
 
     subtitle_line_processor_h = (root / "SubtitleLineProcessor.h").read_text()
     require(subtitle_line_processor_h, "ProcessMetadata", "SubtitleLineProcessor metadata contract")
@@ -167,6 +169,7 @@ def main() -> None:
     require(ui_scaler_cpp, "return value*dy/my", "UiScaler vertical calculation")
 
     util_cpp = (root / "Util.cpp").read_text()
+    reject(util_cpp, "SRT_PATTERN", "Util.cpp dead SRT parser cleanup")
     require(util_cpp, "return AppPaths::DataDirectory", "GetDataDirectory compatibility wrapper")
     require(util_cpp, "return AppPaths::FindFiles", "GetPaths compatibility wrapper")
     require(util_cpp, "return LyricsDownloadService::Download", "DownloadLyrics compatibility wrapper")
