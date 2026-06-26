@@ -32,6 +32,7 @@ file
 	Constants.h,
 	ConvertDlg.cpp,
 	ConvertDlg.h,
+	DownloadDefaults.h,
 	DownloadDlg.cpp,
 	DownloadDlg.h,
 	ExportDlg.cpp,

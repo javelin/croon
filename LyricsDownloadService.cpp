@@ -5,16 +5,24 @@
 
 #include "Croon.h"
 
+const char* LyricsDownloadService::AzLyricsUrlFormat() {
+    return "https://www.azlyrics.com/lyrics/%s/%s.html";
+}
+
+const char* LyricsDownloadService::AzLyricsPattern() {
+    return "<!-- Usage of azlyrics.com content by any third-party.+?-->(.+?)</div>";
+}
+
 String LyricsDownloadService::BuildAzLyricsUrl(String title, String artist) {
     String t = Join(Split(TextTools::CleanSpacing(ToLower(TextTools::StripNonAlnum(TrimBoth(title)))), ' '), "");
     String a = ToLower(TextTools::StripNonAlnum(TrimBoth(artist)));
     a.TrimStart("the ");
     a = Join(Split(TextTools::CleanSpacing(a), ' '), "");
-    return Format(AZ_URL, a, t);
+    return Format(AzLyricsUrlFormat(), a, t);
 }
 
 bool LyricsDownloadService::ExtractAzLyrics(String content, String& lyrics) {
-    static RegExp rx(AZ_PATTERN, RegExp::DOTALL | RegExp::MULTILINE | RegExp::UTF8);
+    static RegExp rx(AzLyricsPattern(), RegExp::DOTALL | RegExp::MULTILINE | RegExp::UTF8);
     if (rx.Study() && rx.Match(content)) {
         auto vl = Split(rx.GetString(0), "<br>");
         for (int i = 0; i < vl.GetCount(); i++) {

@@ -23,6 +23,7 @@ def main() -> None:
         "AppPaths.h",
         "ConfigService.cpp",
         "ConfigService.h",
+        "DownloadDefaults.h",
         "ProjectSerializer.cpp",
         "ProjectSerializer.h",
         "FfmpegProgressParser.cpp",
@@ -67,6 +68,7 @@ def main() -> None:
         "AppPaths.h" not in upp or
         "ConfigService.cpp" not in upp or
         "ConfigService.h" not in upp or
+        "DownloadDefaults.h" not in upp or
         "ProjectSerializer.cpp" not in upp or
         "ProjectSerializer.h" not in upp or
         "FfmpegProgressParser.cpp" not in upp or
@@ -110,6 +112,8 @@ def main() -> None:
         fail("Croon.h does not include AppPaths.h")
     if '#include "ConfigService.h"' not in header:
         fail("Croon.h does not include ConfigService.h")
+    if '#include "DownloadDefaults.h"' not in header:
+        fail("Croon.h does not include DownloadDefaults.h")
     if '#include "ProjectSerializer.h"' not in header:
         fail("Croon.h does not include ProjectSerializer.h")
     if '#include "FfmpegProgressParser.h"' not in header:

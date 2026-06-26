@@ -10,6 +10,10 @@ struct LyricsDownloadService {
     static String BuildAzLyricsUrl(String title, String artist);
     static bool ExtractAzLyrics(String content, String& lyrics);
     static bool Download(String title, String artist, String& lyrics);
+
+private:
+    static const char* AzLyricsUrlFormat();
+    static const char* AzLyricsPattern();
 };
 
 #endif

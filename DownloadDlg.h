@@ -9,7 +9,7 @@
 class DownloadDlg : public ProgressDlg {
 public:
     DownloadDlg();
-    int Run(String url, String title="Download", String userAgent=USER_AGENT);
+    int Run(String url, String title="Download", String userAgent=DownloadDefaults::UserAgent());
     String GetContent() const { return request.GetContent(); }
     
     Event<String> WhenDownloadSuccess;
