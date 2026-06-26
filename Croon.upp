@@ -103,6 +103,8 @@ file
 	TextTools.h,
 	TimeFormatter.cpp,
 	TimeFormatter.h,
+	UiScaler.cpp,
+	UiScaler.h,
 	Util.cpp,
 	Util.h,
 	VideoDlg.cpp,
