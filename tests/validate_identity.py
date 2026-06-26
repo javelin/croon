@@ -23,6 +23,8 @@ def main() -> None:
         "ConfigService.h",
         "ProjectSerializer.cpp",
         "ProjectSerializer.h",
+        "LyricsTransformer.cpp",
+        "LyricsTransformer.h",
         "RecentProjectService.cpp",
         "RecentProjectService.h",
         "SubtitleGenerator.cpp",
@@ -48,6 +50,8 @@ def main() -> None:
         "ConfigService.h" not in upp or
         "ProjectSerializer.cpp" not in upp or
         "ProjectSerializer.h" not in upp or
+        "LyricsTransformer.cpp" not in upp or
+        "LyricsTransformer.h" not in upp or
         "RecentProjectService.cpp" not in upp or
         "RecentProjectService.h" not in upp or
         "SubtitleGenerator.cpp" not in upp or
@@ -72,6 +76,8 @@ def main() -> None:
         fail("Croon.h does not include ConfigService.h")
     if '#include "ProjectSerializer.h"' not in header:
         fail("Croon.h does not include ProjectSerializer.h")
+    if '#include "LyricsTransformer.h"' not in header:
+        fail("Croon.h does not include LyricsTransformer.h")
     if '#include "RecentProjectService.h"' not in header:
         fail("Croon.h does not include RecentProjectService.h")
     if '#include "SubtitleGenerator.h"' not in header:

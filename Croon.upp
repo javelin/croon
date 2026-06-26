@@ -42,6 +42,8 @@ file
 	KarData.h,
 	ListCtrl.cpp,
 	ListCtrl.h,
+	LyricsTransformer.cpp,
+	LyricsTransformer.h,
 	LyricsEditor.cpp,
 	LyricsEditor.h,
 	LyricsPartsCtrl.cpp,

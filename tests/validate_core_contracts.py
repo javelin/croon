@@ -67,6 +67,15 @@ def main() -> None:
     require(recent_project_service_cpp, "TrimBoth(path)", "RecentProjectService path normalization")
     require(recent_project_service_cpp, "FindPathIndex(normalized, trimmed)", "RecentProjectService de-duplication")
 
+    lyrics_transformer_h = (root / "LyricsTransformer.h").read_text()
+    require(lyrics_transformer_h, "SplitDecorations", "LyricsTransformer decoration contract")
+    require(lyrics_transformer_h, "RawToUntimed", "LyricsTransformer raw-to-timed contract")
+    require(lyrics_transformer_h, "TimedToRaw", "LyricsTransformer timed-to-raw contract")
+
+    lyrics_transformer_cpp = (root / "LyricsTransformer.cpp").read_text()
+    require(lyrics_transformer_cpp, "MaxLineLength", "LyricsTransformer wrapping contract")
+    require(lyrics_transformer_cpp, "removeMetadata", "LyricsTransformer metadata removal contract")
+
     subtitle_generator_h = (root / "SubtitleGenerator.h").read_text()
     require(subtitle_generator_h, "ToAss", "SubtitleGenerator ASS contract")
     require(subtitle_generator_h, "ToRichAss", "SubtitleGenerator rich ASS contract")
@@ -87,6 +96,9 @@ def main() -> None:
     require(subtitle_generator_cpp, "String SubtitleGenerator::ToRichAss", "SubtitleGenerator rich ASS implementation")
 
     util_cpp = (root / "Util.cpp").read_text()
+    require(util_cpp, "return LyricsTransformer::SplitDecorations", "SplitLyrics compatibility wrapper")
+    require(util_cpp, "return LyricsTransformer::RawToUntimed", "RawToUntimedLyrics compatibility wrapper")
+    require(util_cpp, "return LyricsTransformer::TimedToRaw", "TimedLyricsToRaw compatibility wrapper")
     require(util_cpp, "return SubtitleGenerator::ToAss", "TimedToASS compatibility wrapper")
     require(util_cpp, "return SubtitleGenerator::ToRichAss", "TimedToRichASS compatibility wrapper")
 
