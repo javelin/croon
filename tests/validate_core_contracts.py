@@ -163,6 +163,16 @@ def main() -> None:
     util_cpp = (root / "Util.cpp").read_text()
     require(util_cpp, "return FfmpegProgressParser::ParseTimestamp", "ComputeFfmpegTs compatibility wrapper")
 
+    genre_catalog_h = (root / "GenreCatalog.h").read_text()
+    require(genre_catalog_h, "List()", "GenreCatalog list contract")
+
+    genre_catalog_cpp = (root / "GenreCatalog.cpp").read_text()
+    for genre in ["Ballad", "OPM", "Rock n Roll", "Soft Rock"]:
+        require(genre_catalog_cpp, f'"{genre}"', "GenreCatalog reference data")
+
+    util_cpp = (root / "Util.cpp").read_text()
+    require(util_cpp, "return GenreCatalog::List", "GetGenres compatibility wrapper")
+
     for rel in [
         "Page3.cpp",
         "Project.cpp",

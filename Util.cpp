@@ -118,23 +118,5 @@ bool ComputeFfmpegTs(String s, double& ts, String& formatted, String key) {
 }
 
 const Vector<String>& GetGenres() {
-    static Vector<String> genre{
-        "Ballad",
-        "Blues",
-        "Blues Rock",
-        "Country",
-        "Folk",
-        "Heavy Metal",
-        "Hip-Hop",
-        "Pop Standard",
-        "Power Ballad",
-        "OPM",
-        "Metal",
-        "Pop",
-        "R&B",
-        "Rock",
-        "Rock n Roll",
-        "Soft Rock"
-    };
-    return genre;
+    return GenreCatalog::List();
 }

@@ -42,6 +42,8 @@ file
 	Ffmpeg.h,
 	GatherDlg.cpp,
 	GatherDlg.h,
+	GenreCatalog.cpp,
+	GenreCatalog.h,
 	KarData.cpp,
 	KarData.h,
 	ListCtrl.cpp,
