@@ -70,6 +70,8 @@ file
 	ProjectLoader.h,
 	ProjectSerializer.cpp,
 	ProjectSerializer.h,
+	RecentProjectService.cpp,
+	RecentProjectService.h,
 	SaveProjectDlg.cpp,
 	SaveProjectDlg.h,
 	SDLMixerAudioPlayer.cpp,

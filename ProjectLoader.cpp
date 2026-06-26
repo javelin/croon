@@ -1,7 +1,7 @@
 #include "Croon.h"
 
 void ProjectLoader::LoadProjects() {
-    projects = Split(Config::Get(PROJECT_LIST), "\n");
+    projects = RecentProjectService::LoadPaths();
     curPath = 0;
     infoFilePath = AppIdentity::TempFileName(".json");
     thumbnailPath = AppIdentity::TempFileName(".png");

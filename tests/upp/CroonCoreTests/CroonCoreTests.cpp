@@ -13,6 +13,7 @@ using namespace Upp;
 #include <Croon/Util.h>
 #include <Croon/ConfigService.h>
 #include <Croon/Config.h>
+#include <Croon/RecentProjectService.h>
 #include <Croon/Visualization.h>
 
 typedef struct Visualization VIZ;
@@ -95,6 +96,18 @@ CONSOLE_APP_MAIN
 	Check(freqFilter.Find("subtitles=subtitles.ass") >= 0, "freq visualization includes subtitles filter");
 	Check(Visualization::Filter("@@unknown", "subtitles.ass", true).IsVoid(), "unknown visualization returns void");
 	Check(Config::GetFontSize() == ConfigService::DefaultFontSize, "Config facade preserves default font size");
+	Vector<String> recentPaths;
+	recentPaths.Add(" /tmp/song-a.croon ");
+	recentPaths.Add("");
+	recentPaths.Add("/tmp/song-b.croon");
+	recentPaths.Add("/tmp/song-a.croon");
+	Vector<String> normalizedPaths = RecentProjectService::NormalizePaths(recentPaths);
+	Check(normalizedPaths.GetCount() == 2, "RecentProjectService removes empty and duplicate paths");
+	Check(normalizedPaths[0] == "/tmp/song-a.croon", "RecentProjectService trims paths");
+	Check(RecentProjectService::FindPathIndex(normalizedPaths, "/tmp/song-b.croon") == 1,
+		"RecentProjectService finds normalized path index");
+	Check(RecentProjectService::FindPathIndex(normalizedPaths, "/tmp/missing.croon") < 0,
+		"RecentProjectService returns negative index for missing paths");
 
 	KarData song;
 	song.version = "9.9";

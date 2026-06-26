@@ -7,6 +7,7 @@ file
 	CroonCoreTests.cpp,
 	KarData.cpp,
 	ProjectSerializer.cpp,
+	RecentProjectService.cpp,
 	CroonCoreTestSupport.cpp,
 	CroonLyricsTestSupport.cpp,
 	CroonAssTestSupport.cpp;

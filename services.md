@@ -8,12 +8,12 @@ This file records service boundaries expected during migration. Some services be
 - `ConfigService`: persisted Croon settings and default values.
 - `ProjectSerializer`: versioned JSON serialization and deserialization for Croon project metadata.
 - `FfmpegCommandBuilder`: deterministic command argument construction.
+- `RecentProjectService`: recent project list persistence and normalization.
 
 ## Planned Services
 
 - `MediaProcessRunner`: process execution boundary for `ffmpeg` and related long-running tasks.
 - `SubtitleGenerator`: ASS subtitle generation from timed lyrics and vocal parts.
-- `RecentProjectService`: recent project list persistence and normalization.
 
 ## UI Boundary
 

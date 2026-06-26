@@ -23,6 +23,8 @@ def main() -> None:
         "ConfigService.h",
         "ProjectSerializer.cpp",
         "ProjectSerializer.h",
+        "RecentProjectService.cpp",
+        "RecentProjectService.h",
         "main.cpp",
         "architecture.md",
         "decisions.md",
@@ -42,7 +44,9 @@ def main() -> None:
         "ConfigService.cpp" not in upp or
         "ConfigService.h" not in upp or
         "ProjectSerializer.cpp" not in upp or
-        "ProjectSerializer.h" not in upp
+        "ProjectSerializer.h" not in upp or
+        "RecentProjectService.cpp" not in upp or
+        "RecentProjectService.h" not in upp
     ):
         fail("Croon.upp does not list package-level Croon files")
     legacy_product = "Mu" + "se"
@@ -62,6 +66,8 @@ def main() -> None:
         fail("Croon.h does not include ConfigService.h")
     if '#include "ProjectSerializer.h"' not in header:
         fail("Croon.h does not include ProjectSerializer.h")
+    if '#include "RecentProjectService.h"' not in header:
+        fail("Croon.h does not include RecentProjectService.h")
     if "CroonImg" not in header:
         fail("Croon image class is not declared")
     if "<Croon/Croon.iml>" not in header:

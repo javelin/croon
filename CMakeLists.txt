@@ -123,6 +123,7 @@ if(CROON_UMK_EXECUTABLE)
             "${CMAKE_CURRENT_SOURCE_DIR}/Croon.iml"
             "${CMAKE_CURRENT_SOURCE_DIR}/KarData.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/ProjectSerializer.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/RecentProjectService.cpp"
             "${CROON_CORE_TEST_PACKAGE}"
         COMMAND "${CMAKE_COMMAND}" -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/tests"
         COMMAND "${CROON_UMK_EXECUTABLE}"

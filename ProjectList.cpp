@@ -135,7 +135,7 @@ ProjectList::~ProjectList() {
     for (const auto& project : projects) {
         vs.Add(project.path);
     }
-    Config::Set(PROJECT_LIST, Join(vs, "\n"));
+    RecentProjectService::SavePaths(vs);
 }
 
 void ProjectList::NewProject() {

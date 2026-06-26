@@ -24,6 +24,11 @@ String ConfigService::Get(const String&, const String& defaultValue) {
 	return defaultValue;
 }
 
+ConfigService& ConfigService::Set(const String&, String) {
+	static char serviceStorage[sizeof(ConfigService)];
+	return *reinterpret_cast<ConfigService *>(serviceStorage);
+}
+
 int ConfigService::GetInt(const String&, int defaultValue) {
 	return defaultValue;
 }

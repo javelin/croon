@@ -61,6 +61,12 @@ def main() -> None:
     require(config_service_cpp, "SerializeGlobalConfigs", "ConfigService persistence contract")
     require(config_service_cpp, "std::max(MinFontSize, std::min(MaxFontSize", "ConfigService font-size clamp")
 
+    recent_project_service_cpp = (root / "RecentProjectService.cpp").read_text()
+    require(recent_project_service_cpp, "ConfigService::Get(PROJECT_LIST)", "RecentProjectService load contract")
+    require(recent_project_service_cpp, "ConfigService::Set(PROJECT_LIST", "RecentProjectService save contract")
+    require(recent_project_service_cpp, "TrimBoth(path)", "RecentProjectService path normalization")
+    require(recent_project_service_cpp, "FindPathIndex(normalized, trimmed)", "RecentProjectService de-duplication")
+
     kar_data_cpp = (root / "KarData.cpp").read_text()
     require(kar_data_cpp, "ProjectSerializer::ToJson(*this)", "KarData serialization delegation")
     require(kar_data_cpp, "ProjectSerializer::FromJson(JSONStr)", "KarData deserialization delegation")
