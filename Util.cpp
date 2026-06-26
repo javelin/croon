@@ -92,25 +92,11 @@ bool DownloadLyrics(String title, String artist, String& lyrics) {
 }
 
 int _Zx(int zx) {
-    static int mx = 0, dx = 0;
-    if (!mx || !dx) {
-        Size m, d;
-        Ctrl::GetZoomRatio(m, d);
-        mx = m.cx;
-        dx = d.cx;
-    }
-    return zx*dx/mx;
+    return UiScaler::X(zx);
 }
 
 int _Zy(int zy) {
-    static int my = 0, dy = 0;
-    if (!my || !dy) {
-        Size m, d;
-        Ctrl::GetZoomRatio(m, d);
-        my = m.cy;
-        dy = d.cy;
-    }
-    return zy*dy/my;
+    return UiScaler::Y(zy);
 }
 
 bool ComputeFfmpegTs(String s, double& ts, String& formatted, String key) {

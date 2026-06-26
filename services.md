@@ -17,6 +17,7 @@ This file records service boundaries expected during migration. Some services be
 - `SubtitleGenerator`: ASS subtitle generation from timed lyrics and vocal parts.
 - `TextTools`: shared text spacing, filtering, and display-shortening helpers.
 - `TimeFormatter`: timestamp and count-in duration formatting helpers.
+- `UiScaler`: U++ zoom-ratio scaling helpers for layout dimensions.
 - `MediaProcessRunner`: process execution boundary for `ffmpeg` and related long-running tasks.
 
 ## UI Boundary

@@ -125,6 +125,15 @@ def main() -> None:
     require(time_formatter_cpp, "decimal", "TimeFormatter decimal separator contract")
     require(time_formatter_cpp, "Mid(1)", "TimeFormatter ASS timestamp contract")
 
+    ui_scaler_h = (root / "UiScaler.h").read_text()
+    require(ui_scaler_h, "X(int value)", "UiScaler horizontal scale contract")
+    require(ui_scaler_h, "Y(int value)", "UiScaler vertical scale contract")
+
+    ui_scaler_cpp = (root / "UiScaler.cpp").read_text()
+    require(ui_scaler_cpp, "Ctrl::GetZoomRatio", "UiScaler U++ zoom-ratio contract")
+    require(ui_scaler_cpp, "return value*dx/mx", "UiScaler horizontal calculation")
+    require(ui_scaler_cpp, "return value*dy/my", "UiScaler vertical calculation")
+
     util_cpp = (root / "Util.cpp").read_text()
     require(util_cpp, "return AppPaths::DataDirectory", "GetDataDirectory compatibility wrapper")
     require(util_cpp, "return AppPaths::FindFiles", "GetPaths compatibility wrapper")
@@ -138,6 +147,8 @@ def main() -> None:
     require(util_cpp, "return SubtitleLineProcessor::ResolveDimStyle", "ResolveDimStyle compatibility wrapper")
     require(util_cpp, "return SubtitleGenerator::ToAss", "TimedToASS compatibility wrapper")
     require(util_cpp, "return SubtitleGenerator::ToRichAss", "TimedToRichASS compatibility wrapper")
+    require(util_cpp, "return UiScaler::X", "_Zx compatibility wrapper")
+    require(util_cpp, "return UiScaler::Y", "_Zy compatibility wrapper")
 
     util_h = (root / "Util.h").read_text()
     require(util_h, '#include "SubtitleLineProcessor.h"', "Util.h subtitle type dependency")
