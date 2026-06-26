@@ -13,7 +13,7 @@ def main() -> None:
         fail("expected repository root argument")
 
     root = Path(sys.argv[1])
-    ffmpeg_h = (root / "Ffmpeg.h").read_text()
+    ffmpeg_h = (root / "FfmpegCommandBuilder.h").read_text()
     for needle in [
         "ExportWithBackgroundVideo",
         "ExportWithVisualization",
@@ -29,9 +29,9 @@ def main() -> None:
     for needle in [
         'AppIdentity::TempFileName(".ass")',
         "TimedToASS(*data, 4)",
-        "Ffmpeg::ExportWithVisualization",
-        "Ffmpeg::ExportWithBackgroundVideo",
-        "Ffmpeg::GenerateCoverImage",
+        "FfmpegCommandBuilder::ExportWithVisualization",
+        "FfmpegCommandBuilder::ExportWithBackgroundVideo",
+        "FfmpegCommandBuilder::GenerateCoverImage",
     ]:
         if needle not in export_cpp:
             fail(f"ExportDlg.cpp missing {needle}")

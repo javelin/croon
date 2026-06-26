@@ -65,7 +65,7 @@ GatherDlg::GatherDlg() {
             }
         }
         
-        procArgs = Ffmpeg::GenerateThumbnail(paths[curPath], tnPath, ThumbnailDim, ThumbnailDim);
+        procArgs = FfmpegCommandBuilder::GenerateThumbnail(paths[curPath], tnPath, ThumbnailDim, ThumbnailDim);
         
         bool res = process.Start(ffmpeg, procArgs, nullptr, nullptr);
         if (!res) {

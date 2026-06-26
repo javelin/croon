@@ -52,7 +52,7 @@ def main() -> None:
     ]:
         require(kar_data_cpp, key, "KarData JSON contract")
 
-    ffmpeg_h = (root / "Ffmpeg.h").read_text()
+    ffmpeg_h = (root / "FfmpegCommandBuilder.h").read_text()
     require(ffmpeg_h, "AppIdentity::ProjectAttachmentMetadata()", "project attachment contract")
     require(ffmpeg_h, "AppIdentity::ProductName()", "project metadata contract")
     require(ffmpeg_h, "Vector<String>", "ffmpeg argument-vector contract")

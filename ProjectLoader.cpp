@@ -68,7 +68,7 @@ void ProjectLoader::StartNextProcess() {
             if (FileExists(infoFilePath)) FileDelete(infoFilePath);
             if (FileExists(thumbnailPath)) FileDelete(thumbnailPath);
             auto res = process.Start(ffmpeg,
-                            Ffmpeg::DumpAttachmentAndGenerateThumbnail(
+                            FfmpegCommandBuilder::DumpAttachmentAndGenerateThumbnail(
                                 projectPath,
                                 infoFilePath,
                                 thumbnailPath,

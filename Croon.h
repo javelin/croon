@@ -39,7 +39,7 @@ typedef struct Visualization VIZ;
 #include "Util.h"
 #include "AudioPlayerBase.h"
 #include "Config.h"
-#include "Ffmpeg.h"
+#include "FfmpegCommandBuilder.h"
 #include "TimingLine.h"
 #include "ListCtrl.h"
 #include "LyricsEditor.h"

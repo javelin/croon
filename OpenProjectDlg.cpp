@@ -81,7 +81,7 @@ int OpenProjectDlg::Run(String projectPath, KarData& karData) {
 void OpenProjectDlg::ExtractAudio() {
     data->infoFilePath = AppIdentity::TempFileName(".json");
     data->audioFilePath = AppIdentity::TempFileName(".ogg");
-    auto vs = Ffmpeg::ProjectExtractAudioAndInfo(data->projectPath,
+    auto vs = FfmpegCommandBuilder::ProjectExtractAudioAndInfo(data->projectPath,
                                                     data->audioFilePath,
                                                     data->infoFilePath);
     bool res = process.Start(ffmpeg, vs);
@@ -96,7 +96,7 @@ void OpenProjectDlg::ExtractAudio() {
 
 void OpenProjectDlg::ExtractVideo() {
     data->videoFilePath = AppIdentity::TempFileName(".mp4");
-    auto vs = Ffmpeg::ProjectExtractVideo(data->projectPath, data->videoFilePath);
+    auto vs = FfmpegCommandBuilder::ProjectExtractVideo(data->projectPath, data->videoFilePath);
     bool res = process.Start(ffmpeg, vs);
     if (!res) {
         Exclamation(Format("Unable to load %s. Failed to open project!", Phase()));
@@ -109,7 +109,7 @@ void OpenProjectDlg::ExtractVideo() {
 
 void OpenProjectDlg::LoadThumbnail() {
     data->thumbnailFilePath = AppIdentity::TempFileName(".png");
-    auto vs = Ffmpeg::GenerateThumbnail(data->videoFilePath, data->thumbnailFilePath,
+    auto vs = FfmpegCommandBuilder::GenerateThumbnail(data->videoFilePath, data->thumbnailFilePath,
                                         ThumbnailDim, ThumbnailDim);
     bool res = process.Start(ffmpeg, vs);
     if (!res) {

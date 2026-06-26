@@ -32,6 +32,7 @@ file
 	DownloadDlg.h,
 	ExportDlg.cpp,
 	ExportDlg.h,
+	FfmpegCommandBuilder.h,
 	Ffmpeg.h,
 	GatherDlg.cpp,
 	GatherDlg.h,

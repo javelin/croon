@@ -63,8 +63,8 @@ void SaveProjectDlg::StartSave() {
     SaveFile(data->infoFilePath, data->ToJSONStr());
     
     auto res = process.Start(ffmpeg, data->videoFilePath.StartsWith("@@") ?
-                            Ffmpeg::ProjectSaveWithVisualization(*data, tempFilename) :
-                            Ffmpeg::ProjectSaveWithBackgroundVideo(*data, tempFilename));
+                            FfmpegCommandBuilder::ProjectSaveWithVisualization(*data, tempFilename) :
+                            FfmpegCommandBuilder::ProjectSaveWithBackgroundVideo(*data, tempFilename));
     if (!res) {
         Exclamation("Unable to save project!");
         Break(IDOK);

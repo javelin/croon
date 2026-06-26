@@ -97,7 +97,7 @@ void ExportDlg::ExportASS() {
 
 void ExportDlg::DehissAudio() {
     if (!dehissedAudioFilepath.IsEmpty()) {
-        args = Ffmpeg::DehissAudio(data->audioFilePath, dehissedAudioFilepath);
+        args = FfmpegCommandBuilder::DehissAudio(data->audioFilePath, dehissedAudioFilepath);
         StartExport();
     }
     else {
@@ -110,7 +110,7 @@ void ExportDlg::DehissAudio() {
 }
 
 void ExportDlg::ExportViz() {
-    args = Ffmpeg::ExportWithVisualization(*data, assFilePath, outputPath, dehissedAudioFilepath, length != 1);
+    args = FfmpegCommandBuilder::ExportWithVisualization(*data, assFilePath, outputPath, dehissedAudioFilepath, length != 1);
     if (args.IsEmpty()) {
         ErrorOK("Unknown visualization type. Unable to save video.");
         phase = Finished;
@@ -146,7 +146,7 @@ void ExportDlg::ExportBg() {
         Hide();
     }
     
-    args = Ffmpeg::ExportWithBackgroundVideo(*data, assFilePath, outputPath, dehissedAudioFilepath, length != 1);
+    args = FfmpegCommandBuilder::ExportWithBackgroundVideo(*data, assFilePath, outputPath, dehissedAudioFilepath, length != 1);
     
     if (length > 1) {
         args.Insert(15, IntStr(length));
@@ -184,7 +184,7 @@ void ExportDlg::GenThumbnail() {
     }
     auto ts = thumbnailTS < 0.0f && data->timedLyrics.GetCount() > 1 ?
                         min<double>(data->timedLyrics[1].time + 1.0f, data->duration - 1.0f):thumbnailTS;
-    auto vs = Ffmpeg::GenerateCoverImage(outputPath, tnPath, max<double>(ts, 0.0f));
+    auto vs = FfmpegCommandBuilder::GenerateCoverImage(outputPath, tnPath, max<double>(ts, 0.0f));
     if (!FileExists(tnPath) || FileDelete(tnPath)) {
         bool res = process.Start(ffmpeg, vs);
         if (!res) {

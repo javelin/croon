@@ -14,7 +14,7 @@ using namespace Upp;
 
 typedef struct Visualization VIZ;
 
-#include <Croon/Ffmpeg.h>
+#include <Croon/FfmpegCommandBuilder.h>
 
 namespace {
 
@@ -44,13 +44,41 @@ void CheckEq(const Vector<String>& actual, std::initializer_list<const char*> ex
 
 CONSOLE_APP_MAIN
 {
-	CheckEq(Ffmpeg::ConvertAudioToVorbis("song.mp3", "song.ogg"), {
+	CheckEq(FfmpegCommandBuilder::ConvertAudioToVorbis("song.mp3", "song.ogg"), {
 		"-i", "song.mp3", "-vn", "-acodec", "libvorbis", "song.ogg"
 	}, "ConvertAudioToVorbis");
 
-	CheckEq(Ffmpeg::DehissAudio("song.ogg", "clean.ogg", 42), {
+	CheckEq(FfmpegCommandBuilder::DehissAudio("song.ogg", "clean.ogg", 42), {
 		"-i", "song.ogg", "-af", "afftdn=nr=42", "clean.ogg"
 	}, "DehissAudio");
+
+	CheckEq(FfmpegCommandBuilder::GenerateThumbnail("video.mp4", "thumb.png", 256, 256), {
+		"-i", "video.mp4", "-ss", "00:00:06", "-vframes", "1",
+		"-vf", "crop='min(iw,ih)':'min(iw,ih)',scale=256:256", "thumb.png"
+	}, "GenerateThumbnail");
+
+	CheckEq(FfmpegCommandBuilder::ProjectExtractAudioAndInfo("song.croon", "song.ogg", "song.json"), {
+		"-dump_attachment:t:0", "song.json", "-i", "song.croon", "-map", "0:a:0",
+		"-c:a", "copy", "song.ogg"
+	}, "ProjectExtractAudioAndInfo");
+
+	KarData commandData;
+	commandData.version = "2.5";
+	commandData.videoFilePath = "video.mp4";
+	commandData.audioFilePath = "audio.ogg";
+	commandData.infoFilePath = "croon.json";
+	CheckEq(FfmpegCommandBuilder::ProjectSaveWithBackgroundVideo(commandData, "song.croon"), {
+		"-i", "video.mp4", "-i", "audio.ogg", "-map", "0:v:0", "-map", "1:a:0",
+		"-map_metadata:s", "-1", "-attach", "croon.json",
+		"-metadata:s:2", "filename=croon.info", "-metadata:s:2", "mimetype=application/json",
+		"-c", "copy", "-metadata", "APPLICATION=Croon v2.5", "-f", "matroska", "song.croon"
+	}, "ProjectSaveWithBackgroundVideo");
+
+	CheckEq(FfmpegCommandBuilder::ProjectSaveWithVisualization(commandData, "song.croon"), {
+		"-i", "audio.ogg", "-map_metadata:s", "-1", "-attach", "croon.json",
+		"-metadata:s:1", "filename=croon.info", "-metadata:s:1", "mimetype=application/json",
+		"-c", "copy", "-metadata", "APPLICATION=Croon v2.5", "-f", "matroska", "song.croon"
+	}, "ProjectSaveWithVisualization");
 
 	Check(CountInDuration(120) == 0.5, "CountInDuration rounds beat duration");
 	Check(FormatTime2(65.9) == "00:01:05", "FormatTime2 truncates seconds");

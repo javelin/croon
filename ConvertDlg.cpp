@@ -77,7 +77,7 @@ int ConvertDlg::Run(String audioPath) {
 
 void ConvertDlg::StartConversion() {
     outputPath = AppIdentity::TempFileName(".ogg");
-    auto res = process.Start(ffmpeg, Ffmpeg::ConvertAudioToVorbis(audioPath, outputPath));
+    auto res = process.Start(ffmpeg, FfmpegCommandBuilder::ConvertAudioToVorbis(audioPath, outputPath));
     if (!res) {
         Exclamation("Unable to convert audio file!");
         Break(IDOK);
