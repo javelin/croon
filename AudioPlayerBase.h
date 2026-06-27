@@ -6,30 +6,6 @@
 #ifndef _Croon_AudioPlayerBase_h_
 #define _Croon_AudioPlayerBase_h_
 
-enum AudioPlayerEventType {
-    APE_Type_Close,
-    APE_Type_Play,
-    APE_Type_Pause,
-    APE_Type_Seek,
-    APE_Type_Seek_Fwd,
-    APE_Type_Seek_Backwd,
-    APE_Type_Volume,
-    APE_Type_Volume_Up,
-    APE_Type_Volume_Dn
-};
-
-class AudioPlayerEvent : public Pte<AudioPlayerEvent> {
-public:
-    AudioPlayerEvent(const AudioPlayerEvent& e) : type(e.type), data(e.data) {}
-    AudioPlayerEvent(AudioPlayerEventType type) : type(type), data(0) {}
-    AudioPlayerEvent(AudioPlayerEventType type, double data) : type(type), data(data) {}
-    AudioPlayerEventType Type() const { return type; }
-    double Data() const { return data; }
-private:
-    AudioPlayerEventType type;
-    double data;
-};
-
 struct IAudioPlayer {
 	enum AudioPlayerState {
         Playing = 0,

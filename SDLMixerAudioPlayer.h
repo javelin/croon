@@ -14,7 +14,6 @@ public:
     SDLMixerAudioPlayer() : state(Closed), music(nullptr) {}
     virtual ~SDLMixerAudioPlayer() { if (music) { Mix_FreeMusic(music); Mix_CloseAudio(); } }
     bool Open(const String& filename) override;
-    double GetPosition();
     bool Pause() override;
     bool Play() override;
     bool Seek(double seconds) override;
