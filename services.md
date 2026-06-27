@@ -26,3 +26,7 @@ This file records service boundaries expected during migration. Some services be
 ## UI Boundary
 
 UI classes should bind controls to services and models. Static control placement belongs in `.lay` files when the screen is form-like or dialog-like. Custom runtime controls may expose stable methods that UI shells call after `CtrlLayout`.
+
+## Compatibility Facade
+
+- `Util`: legacy compatibility facade for older call sites and tests. New production code should call the extracted services directly.

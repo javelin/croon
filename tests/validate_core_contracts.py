@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import re
 import sys
 from pathlib import Path
 
@@ -18,11 +19,57 @@ def reject(text: str, needle: str, label: str) -> None:
         fail(f"{label} still contains {needle!r}")
 
 
+def validate_no_production_utility_wrapper_calls(root: Path) -> None:
+    wrappers = [
+        "CleanSpacing",
+        "ComputeFfmpegTs",
+        "DownloadLyrics",
+        "FormatTime",
+        "FormatTime2",
+        "FormatTimeASS",
+        "FormatTimeSRT",
+        "GetDataDirectory",
+        "GetGenres",
+        "GetPaths",
+        "LookaheadVocalPart",
+        "RawToUntimedLyrics",
+        "ReplaceMetadata",
+        "ResolveCountInStyle",
+        "ResolveDimStyle",
+        "ResolveStyle",
+        "ResolveVocalPart",
+        "ShortenMiddle",
+        "SplitLyrics",
+        "StripNonAlnum",
+        "TimedLyricsToRaw",
+        "TimedToASS",
+        "TimedToRichASS",
+        "_Zx",
+        "_Zy",
+    ]
+    pattern = re.compile(r"(?<![:A-Za-z0-9_])(" + "|".join(map(re.escape, wrappers)) + r")\s*\(")
+    allowed = {
+        "SubtitleLineProcessor.cpp",
+        "SubtitleLineProcessor.h",
+        "TextTools.h",
+        "Util.cpp",
+        "Util.h",
+    }
+    for path in sorted(root.glob("*")):
+        if path.suffix not in {".cpp", ".h"} or path.name in allowed:
+            continue
+        text = path.read_text()
+        for match in pattern.finditer(text):
+            line = text.count("\n", 0, match.start()) + 1
+            fail(f"{path.name}:{line} calls compatibility wrapper {match.group(1)}")
+
+
 def main() -> None:
     if len(sys.argv) != 2:
         fail("expected repository root argument")
 
     root = Path(sys.argv[1])
+    validate_no_production_utility_wrapper_calls(root)
 
     identity_h = (root / "AppIdentity.h").read_text()
     for needle in [
@@ -104,6 +151,10 @@ def main() -> None:
     reject(constants_h, "USER_AGENT", "Constants user-agent extraction")
     reject(constants_h, "MaxASSDisplayLines", "Constants dead ASS max cleanup")
     reject(constants_h, "MinASSDisplayLines", "Constants dead ASS min cleanup")
+
+    services_md = (root / "services.md").read_text()
+    require(services_md, "## Compatibility Facade", "services compatibility documentation")
+    require(services_md, "`Util`: legacy compatibility facade", "Util compatibility documentation")
 
     subtitle_line_processor_h = (root / "SubtitleLineProcessor.h").read_text()
     require(subtitle_line_processor_h, "ProcessMetadata", "SubtitleLineProcessor metadata contract")
