@@ -46,7 +46,6 @@ typedef struct Visualization VIZ;
 #include "TextTools.h"
 #include "TimeFormatter.h"
 #include "UiScaler.h"
-#include "Util.h"
 #include "AudioPlayerBase.h"
 #include "ConfigService.h"
 #include "Config.h"

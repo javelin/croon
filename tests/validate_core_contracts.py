@@ -156,13 +156,16 @@ def main() -> None:
     require(services_md, "## Compatibility Facade", "services compatibility documentation")
     require(services_md, "`Util`: legacy compatibility facade", "Util compatibility documentation")
 
+    croon_h = (root / "Croon.h").read_text()
+    reject(croon_h, '#include "Util.h"', "Croon.h compatibility facade exposure")
+
     subtitle_line_processor_h = (root / "SubtitleLineProcessor.h").read_text()
     require(subtitle_line_processor_h, "ProcessMetadata", "SubtitleLineProcessor metadata contract")
     require(subtitle_line_processor_h, "ResolveVocalPart", "SubtitleLineProcessor vocal-part contract")
     require(subtitle_line_processor_h, "ResolveStyle", "SubtitleLineProcessor style contract")
 
     subtitle_line_processor_cpp = (root / "SubtitleLineProcessor.cpp").read_text()
-    require(subtitle_line_processor_cpp, "CountInDuration", "SubtitleLineProcessor count-in contract")
+    require(subtitle_line_processor_cpp, "TimeFormatter::CountInDuration", "SubtitleLineProcessor count-in contract")
     require(subtitle_line_processor_cpp, "ReplaceMetadata", "SubtitleLineProcessor metadata replacement")
     require(subtitle_line_processor_cpp, "LookaheadVocalPart", "SubtitleLineProcessor count-in lookahead")
 

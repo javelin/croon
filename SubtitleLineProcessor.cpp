@@ -60,7 +60,7 @@ void SubtitleLineProcessor::ProcessMetadata(const KarData& data, Vector<TimeLyri
         }
         if (lyrics.IsEmpty()) continue;
         if (bpm > 0) {
-            auto countIn = CountInDuration(bpm);
+            auto countIn = TimeFormatter::CountInDuration(bpm);
             auto totalDec = countIn*3 + CountInDelay;
             if (ts - totalDec > lastTs) {
                 for (int i = 0; i < blanks; ++i) vtl.Add({ts - totalDec, blankLine, -1});
