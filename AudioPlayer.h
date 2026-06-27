@@ -19,7 +19,7 @@ public:
     }
     const String& LastError() const override { return player.LastError(); }
     bool Open(const String& filename) override { return player.Open(filename); }
-    bool Reopen() override {}
+    bool Reopen() override { return player.Reopen(); }
     bool Pause() override { return player.Pause(); }
     bool Play() override { return player.Play(); }
     bool Seek(double seconds) override { return player.Seek(seconds); };

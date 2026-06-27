@@ -110,6 +110,9 @@ def main() -> None:
     require(config_service_cpp, "SerializeGlobalConfigs", "ConfigService persistence contract")
     require(config_service_cpp, "std::max(MinFontSize, std::min(MaxFontSize", "ConfigService font-size clamp")
 
+    audio_player_h = (root / "AudioPlayer.h").read_text()
+    require(audio_player_h, "bool Reopen() override { return player.Reopen(); }", "AudioPlayer reopen delegation")
+
     recent_project_service_cpp = (root / "RecentProjectService.cpp").read_text()
     require(recent_project_service_cpp, "ConfigService::Get(PROJECT_LIST)", "RecentProjectService load contract")
     require(recent_project_service_cpp, "ConfigService::Set(PROJECT_LIST", "RecentProjectService save contract")
