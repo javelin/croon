@@ -89,7 +89,7 @@ void TimingDlg::PollProgress() {
 }
 
 void TimingDlg::Populate() {
-    timeLbl.SetLabel("00:00.000/" + FormatTime(data->duration));
+    timeLbl.SetLabel("00:00.000/" + TimeFormatter::Format(data->duration));
     timingCtrl.SetTimedLyrics(data->timedLyrics, data->duration);
     timingCtrl.SetFocus();
 }
@@ -105,7 +105,7 @@ void TimingDlg::SetProgress(double position) {
         sliderCtrl.SetData(0);
         timingCtrl.SetMusicPosition(0.0f, 0.0f);
     }
-    timeLbl.SetLabel((FormatTime(position).Mid(3) + "/") + FormatTime(duration).Mid(3));
+    timeLbl.SetLabel((TimeFormatter::Format(position).Mid(3) + "/") + TimeFormatter::Format(duration).Mid(3));
 }
 
 void TimingDlg::TogglePlay() {

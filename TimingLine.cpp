@@ -80,7 +80,7 @@ void TimingLine::LeftDouble(Point pos, dword) {
 }
 
 void TimingLine::DisplayTime() {
-    timeLbl.SetLabel(FormatTime(position).Mid(3));
+    timeLbl.SetLabel(TimeFormatter::Format(position).Mid(3));
 }
 
 void TimingLine::Normal() {

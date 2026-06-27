@@ -24,7 +24,7 @@ void LyricsEditor::Populate() {
     lyricsList.AddColumn("Lyrics", 1000).Edit(editor);
     for (auto& tl : data.timedLyrics) {
         if (data.timedLyrics.GetIndex(tl) > 0) {
-            lyricsList.Add(FormatTime(tl.time), tl.lyrics);
+            lyricsList.Add(TimeFormatter::Format(tl.time), tl.lyrics);
         }
     }
     lyricsList.WhenStartEdit << [=] {

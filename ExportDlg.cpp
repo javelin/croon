@@ -45,7 +45,7 @@ ExportDlg::ExportDlg() : ffmpeg(Config::Get(FFMPEG_LOCATION)) {
     WhenProcessOutput << [=] (String output) {
         if (phase == Dehiss || phase == ExportVideo) {
             double tPos;
-            if (ComputeFfmpegTs(output, tPos, renderTime)) {
+            if (FfmpegProgressParser::ParseTimestamp(output, tPos, renderTime)) {
                 progressVal = (int)tPos;
             }
         }

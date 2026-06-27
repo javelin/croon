@@ -14,14 +14,14 @@ ConvertDlg::ConvertDlg() {
             output += part;
             String dummy;
             double tPos = 0.0f;
-            if (ComputeFfmpegTs(output, tPos, dummy, "Duration: ")) {
+            if (FfmpegProgressParser::ParseTimestamp(output, tPos, dummy, "Duration: ")) {
                 duration = tPos;
                 gotDuration = true;
             }
         }
         else if (duration > 0.0f) {
             double tPos = 0.0f;
-            if (ComputeFfmpegTs(part, tPos, renderTime)) {
+            if (FfmpegProgressParser::ParseTimestamp(part, tPos, renderTime)) {
                 progressVal = (int)(tPos/duration*100.0f);
             }
         }

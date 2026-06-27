@@ -309,6 +309,26 @@ def main() -> None:
         ]:
             reject(text, wrapper, f"{rel} lyric utility wrapper dependency")
 
+    direct_time_progress_dependencies = {
+        "ConvertDlg.cpp": ["FfmpegProgressParser::ParseTimestamp"],
+        "ExportDlg.cpp": ["FfmpegProgressParser::ParseTimestamp"],
+        "LyricsEditor.cpp": ["TimeFormatter::Format"],
+        "TimingDlg.cpp": ["TimeFormatter::Format"],
+        "TimingLine.cpp": ["TimeFormatter::Format"],
+    }
+    for rel, expected_calls in direct_time_progress_dependencies.items():
+        text = (root / rel).read_text()
+        for expected in expected_calls:
+            require(text, expected, f"{rel} direct time/progress dependency")
+        for wrapper in [
+            "ComputeFfmpegTs(",
+            " FormatTime(",
+            "FormatTimeASS(",
+            "FormatTimeSRT(",
+            "FormatTime2(",
+        ]:
+            reject(text, wrapper, f"{rel} time/progress utility wrapper dependency")
+
 
 if __name__ == "__main__":
     main()
