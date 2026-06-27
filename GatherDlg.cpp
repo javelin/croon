@@ -29,7 +29,7 @@ GatherDlg::GatherDlg() {
             return;
         }
         
-        String tnPath = AppendFileName(GetDataDirectory(), GetFileName(paths[curPath]));
+        String tnPath = AppendFileName(AppPaths::DataDirectory(), GetFileName(paths[curPath]));
         tnPath.Replace(".mp4", ".thumbnail.png");
         bool existing = FileExists(tnPath);
         auto fn = [=]() {
@@ -91,7 +91,7 @@ GatherDlg::GatherDlg() {
 }
 
 int GatherDlg::Run(String videoDir) {
-    paths = GetPaths(videoDir, "*.mp4");
+    paths = AppPaths::FindFiles(videoDir, "*.mp4");
     if (paths.IsEmpty()) {
         PromptOK("No videos found.");
     }
@@ -113,4 +113,3 @@ int GatherDlg::Run(String videoDir) {
     }
     return IDCANCEL;
 }
-

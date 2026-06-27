@@ -329,6 +329,24 @@ def main() -> None:
         ]:
             reject(text, wrapper, f"{rel} time/progress utility wrapper dependency")
 
+    direct_path_catalog_dependencies = {
+        "ConfigService.cpp": ["AppPaths::DataDirectory"],
+        "GatherDlg.cpp": ["AppPaths::DataDirectory", "AppPaths::FindFiles"],
+        "Page1.cpp": ["GenreCatalog::List"],
+        "Page3.cpp": ["AppPaths::DataDirectory", "AppPaths::FindFiles"],
+        "Project.cpp": ["GenreCatalog::List"],
+    }
+    for rel, expected_calls in direct_path_catalog_dependencies.items():
+        text = (root / rel).read_text()
+        for expected in expected_calls:
+            require(text, expected, f"{rel} direct path/catalog dependency")
+        for wrapper in [
+            "GetDataDirectory(",
+            "GetPaths(",
+            "GetGenres(",
+        ]:
+            reject(text, wrapper, f"{rel} path/catalog utility wrapper dependency")
+
 
 if __name__ == "__main__":
     main()

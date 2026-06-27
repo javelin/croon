@@ -11,7 +11,7 @@ Page1::Page1() {
     prevBtn.Disable();
     enablePrev = false;
     
-    for (const auto& genre : GetGenres()) genreEd.AddList(genre);
+    for (const auto& genre : GenreCatalog::List()) genreEd.AddList(genre);
     genreEd.AlwaysDrop();
     
     auto fn = [=] {

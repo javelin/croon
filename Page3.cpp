@@ -12,10 +12,10 @@ Page3::Page3(String gatherKey) : vidCount(0), gatherKey(gatherKey) {
     videoLst.SetOrientation(ListCtrl::VerticalGrid, _Zx(200), _Zy(200));
     tab.Add(videoLst.HSizePosZ(5, 5).VSizePosZ(5, 5), "Videos");
     String videoDir = Config::Get(VIDEO_DIR, GetHomeDirectory());
-    Vector<String> paths = GetPaths(videoDir, "*.mp4");
+    Vector<String> paths = AppPaths::FindFiles(videoDir, "*.mp4");
     
     for (int i = 0; i < paths.GetCount(); ++i) {
-        String tnPath = AppendFileName(GetDataDirectory(), GetFileName(paths[i]));
+        String tnPath = AppendFileName(AppPaths::DataDirectory(), GetFileName(paths[i]));
         tnPath.Replace(".mp4", ".thumbnail.png");
         
         Image img;

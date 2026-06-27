@@ -7,7 +7,7 @@
 
 #define CONFIG_FILE "config"
 
-ConfigService ConfigService::service(AppendFileName(GetDataDirectory(), CONFIG_FILE));
+ConfigService ConfigService::service(AppendFileName(AppPaths::DataDirectory(), CONFIG_FILE));
 
 const int ConfigService::DefaultFontSize=72;
 const int ConfigService::MinFontSize=70;

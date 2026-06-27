@@ -8,7 +8,7 @@
 Project::Project() : videoPath("") {
     CtrlLayout(*this);
     
-    for (const auto& genre : GetGenres()) genreEd.AddList(genre);
+    for (const auto& genre : GenreCatalog::List()) genreEd.AddList(genre);
             
     exportOpts.Add(30, "30-secs, 180p")
                 .Add(60, "1-min, 180p")
