@@ -7,8 +7,8 @@
 
 TimingDlg::TimingDlg() {
     CtrlLayout(*this, "Time Lyrics");
-    Title("Time Lyrics").NoZoomable().Sizeable().SetMinSize(Size(Zx(400), Zy(220)));
-    SetRect(0, 0, Zx(640), Zy(800));
+    Title("Time Lyrics").NoZoomable().Sizeable().SetMinSize(Size(UiScaler::X(400), UiScaler::Y(220)));
+    SetRect(0, 0, UiScaler::X(640), UiScaler::Y(800));
     CenterOwner();
     playBtn.Ok();
     closeBtn.Cancel();

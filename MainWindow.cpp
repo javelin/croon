@@ -7,7 +7,7 @@
 
 MainWindow::MainWindow() {
     CtrlLayout(*this);
-    Title(AppIdentity::ProductName()).Sizeable().Zoomable().SetMinSize(Size(Zx(640), Zy(490)));
+    Title(AppIdentity::ProductName()).Sizeable().Zoomable().SetMinSize(Size(UiScaler::X(640), UiScaler::Y(490)));
     int x{Config::GetInt(WIN_X, -9999)},
         y{Config::GetInt(WIN_Y, -9999)},
         w{Config::GetInt(WIN_W, 2048)},
