@@ -142,7 +142,7 @@ void ListCtrl::SetSizeHint(int hintW, int hintH) {
     }
     sizeHint.cx = hintW;
     sizeHint.cy = hintH;
-    scrollBar.SetLine(IsVertical() ? Zy(sizeHint.cy):Zx(sizeHint.cx));
+    scrollBar.SetLine(IsVertical() ? UiScaler::Y(sizeHint.cy):UiScaler::X(sizeHint.cx));
     if (IsVertical())
     ComputeTotal();
     Refresh();
