@@ -10,6 +10,7 @@ using namespace Upp;
 #include <Croon/Constants.h>
 #include <Croon/KarData.h>
 #include <Croon/SubtitleGenerator.h>
+#include <Croon/TimeFormatter.h>
 #include <Croon/Util.h>
 
 #define RED_H               "&H000000FF"
@@ -83,7 +84,7 @@ void ProcessMetadata(const KarData& data, Vector<TimeLyrics>& vtl, int linesToDi
 		if(lyrics.IsEmpty())
 			continue;
 		if(bpm > 0) {
-			auto countIn = CountInDuration(bpm);
+			auto countIn = TimeFormatter::CountInDuration(bpm);
 			auto totalDec = countIn*3 + CountInDelay;
 			if(ts - totalDec > lastTs) {
 				for(int i = 0; i < blanks; ++i)
@@ -277,8 +278,8 @@ String SubtitleGenerator::ToAss(const KarData& data, int linesToDisplay, int res
 				VocalPart nextPart = ResolveVocalPart(ntl.partIndex, data.parts);
 				String dimStyle = ResolveDimStyle(nextPart, nextLine, ntl.isMeta);
 				vs.AddPick(Format("Dialogue: 0,%s,%s,%s,,0,0,0,,%s%s",
-				                    FormatTimeASS(startTS),
-				                    FormatTimeASS(endTS),
+				                    TimeFormatter::Ass(startTS),
+				                    TimeFormatter::Ass(endTS),
 				                    dimStyle,
 				                    hasCountIn ? "":"{\\fad(150,100)}",
 				                    nextLine));
@@ -290,8 +291,8 @@ String SubtitleGenerator::ToAss(const KarData& data, int linesToDisplay, int res
 		singLine.Replace("\\)", ")");
 		String hilite = ResolveStyle(part, singLine, hasCountIn, incomingLyrics, tl.isMeta);
 		vs.AddPick(Format("Dialogue: 0,%s,%s,%s,,0,0,0,,%s",
-		                    FormatTimeASS(startTS),
-		                    FormatTimeASS(endTS),
+		                    TimeFormatter::Ass(startTS),
+		                    TimeFormatter::Ass(endTS),
 		                    hilite,
 		                    singLine));
 
@@ -310,8 +311,8 @@ String SubtitleGenerator::ToAss(const KarData& data, int linesToDisplay, int res
 				grayLine = grayLine.Mid(1);
 			}
 			vs.AddPick(Format("Dialogue: 0,%s,%s,Grayed,,0,0,0,,%s",
-			                    FormatTimeASS(startTS),
-			                    FormatTimeASS(endTS),
+			                    TimeFormatter::Ass(startTS),
+			                    TimeFormatter::Ass(endTS),
 			                    grayLine));
 		}
 		lastLine = hasCountIn ? "\u00A03... 2... 1...":line;
