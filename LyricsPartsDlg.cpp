@@ -1,7 +1,7 @@
 #include "Croon.h"
 
 LyricsPartsDlg::LyricsPartsDlg() {
-    Title("Assign Lyrics Parts").NoZoomable().Sizeable().SetMinSize(Size(Zx(400), Zy(220)));
+    Title("Assign Lyrics Parts").NoZoomable().Sizeable().SetMinSize(Size(UiScaler::X(400), UiScaler::Y(220)));
     CtrlLayout(*this);
     CenterOwner();
     

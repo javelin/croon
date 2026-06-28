@@ -7,7 +7,7 @@
 
 VideoDlg::VideoDlg() {
     CtrlLayout(*this);
-    Title("Background Video").NoZoomable().Sizeable().SetRect(0, 0, Zx(450), Zy(550));
+    Title("Background Video").NoZoomable().Sizeable().SetRect(0, 0, UiScaler::X(450), UiScaler::Y(550));
     CenterScreen();
     okBtn.Ok();
     cancelBtn.Cancel();
