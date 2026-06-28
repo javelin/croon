@@ -11,6 +11,8 @@ using namespace Upp;
 #include <Croon/KarData.h>
 #include <Croon/ProjectSerializer.h>
 #include <Croon/SubtitleGenerator.h>
+#include <Croon/TextTools.h>
+#include <Croon/TimeFormatter.h>
 #include <Croon/Util.h>
 #include <Croon/ConfigService.h>
 #include <Croon/Config.h>
@@ -83,12 +85,12 @@ CONSOLE_APP_MAIN
 		"-c", "copy", "-metadata", "APPLICATION=Croon v2.5", "-f", "matroska", "song.croon"
 	}, "ProjectSaveWithVisualization");
 
-	Check(CountInDuration(120) == 0.5, "CountInDuration rounds beat duration");
-	Check(FormatTime2(65.9) == "00:01:05", "FormatTime2 truncates seconds");
-	Check(FormatTime2(3661.9) == "01:01:01", "FormatTime2 handles hour rollover");
-	Check(FormatTimeASS(65.12) == "0:01:05.12", "FormatTimeASS uses ASS timestamp precision");
-	Check(FormatTimeASS(3661.5) == "1:01:01.50", "FormatTimeASS handles hour rollover");
-	Check(StripNonAlnum("A! b-2") == "Ab2", "StripNonAlnum removes punctuation and spaces");
+	Check(TimeFormatter::CountInDuration(120) == 0.5, "TimeFormatter rounds beat duration");
+	Check(TimeFormatter::Clock(65.9) == "00:01:05", "TimeFormatter truncates clock seconds");
+	Check(TimeFormatter::Clock(3661.9) == "01:01:01", "TimeFormatter handles hour rollover");
+	Check(TimeFormatter::Ass(65.12) == "0:01:05.12", "TimeFormatter uses ASS timestamp precision");
+	Check(TimeFormatter::Ass(3661.5) == "1:01:01.50", "TimeFormatter handles ASS hour rollover");
+	Check(TextTools::StripNonAlnum("A! b-2") == "Ab2", "TextTools removes punctuation and spaces");
 
 	String freqFilter = Visualization::Filter("@@freqs", "subtitles.ass", true);
 	Check(freqFilter.Find("showfreqs") >= 0, "freq visualization uses showfreqs");

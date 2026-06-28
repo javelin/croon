@@ -239,6 +239,14 @@ def main() -> None:
     require(time_formatter_cpp, "decimal", "TimeFormatter decimal separator contract")
     require(time_formatter_cpp, "Mid(1)", "TimeFormatter ASS timestamp contract")
 
+    core_tests_cpp = (root / "tests" / "upp" / "CroonCoreTests" / "CroonCoreTests.cpp").read_text()
+    require(core_tests_cpp, "TimeFormatter::CountInDuration", "core tests direct time formatter dependency")
+    require(core_tests_cpp, "TimeFormatter::Clock", "core tests direct clock formatter dependency")
+    require(core_tests_cpp, "TimeFormatter::Ass", "core tests direct ASS formatter dependency")
+    require(core_tests_cpp, "TextTools::StripNonAlnum", "core tests direct text tools dependency")
+    for wrapper in ["Check(CountInDuration(", "Check(FormatTime2(", "Check(FormatTimeASS(", "Check(StripNonAlnum("]:
+        reject(core_tests_cpp, wrapper, "core tests time/text compatibility wrapper dependency")
+
     ui_scaler_h = (root / "UiScaler.h").read_text()
     require(ui_scaler_h, "X(int value)", "UiScaler horizontal scale contract")
     require(ui_scaler_h, "Y(int value)", "UiScaler vertical scale contract")
