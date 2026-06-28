@@ -5,14 +5,14 @@
 
 #include "Croon.h"
 
-TimingCtrl::TimingCtrl(int lineHght) : lineHeight(Zy(lineHght)), position(0.0f), listPos(0), timed(0) {
+TimingCtrl::TimingCtrl(int lineHght) : lineHeight(UiScaler::Y(lineHght)), position(0.0f), listPos(0), timed(0) {
 	scrollBar.Vert().AutoHide();
 	AddFrame(BlackFrame());
 	AddFrame(scrollBar);
 	scrollBar.WhenScroll = [=] {
 		int pos = scrollBar.Get();
 		for(int i = 0; i < lines.GetCount(); i++){
-			lines[i].TopPos(lineHeight*i - pos + Zy(10), lineHeight - Zy(5));
+			lines[i].TopPos(lineHeight*i - pos + UiScaler::Y(10), lineHeight - UiScaler::Y(5));
 		}
 	};
 	scrollBar.SetLine(lineHeight);
@@ -169,11 +169,11 @@ void TimingCtrl::LyricsToLines() {
 
 void TimingCtrl::AddLinesToList() {
     for (int i = 0; i < lines.GetCount(); ++i) {
-        Add(lines[i].HSizePosZ(10, 10).TopPos(Zy(10) + (i * lineHeight), lineHeight - Zy(5)));
+        Add(lines[i].HSizePosZ(10, 10).TopPos(UiScaler::Y(10) + (i * lineHeight), lineHeight - UiScaler::Y(5)));
     }
     
     scrollBar.SetPage(GetSize().cy);
-    scrollBar.SetTotal(Zy(20) + lines.GetCount()*lineHeight);
+    scrollBar.SetTotal(UiScaler::Y(20) + lines.GetCount()*lineHeight);
 }
 
 void TimingCtrl::RemoveLinesFromList() {
@@ -221,7 +221,7 @@ void TimingCtrl::SetFocusLine() {
 
 void TimingCtrl::ScrollToLineAndCenter(int row) {
     auto height = GetSize().cy;
-    auto pos = lineHeight*row + Zy(10) - (height/2 - (lineHeight - Zy(5))/2);
+    auto pos = lineHeight*row + UiScaler::Y(10) - (height/2 - (lineHeight - UiScaler::Y(5))/2);
     scrollBar.Set(pos);
 }
 
