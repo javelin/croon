@@ -427,14 +427,20 @@ def main() -> None:
     direct_ui_scaler_dependencies = [
         "ListCtrl.cpp",
         "ListCtrl.h",
+        "OpenProjectDlg.cpp",
         "Page3.cpp",
         "ProjectList.h",
+        "SaveProjectDlg.cpp",
     ]
     for rel in direct_ui_scaler_dependencies:
         text = (root / rel).read_text()
         require(text, "UiScaler::", f"{rel} direct UI scaler dependency")
         reject(text, "_Zx(", f"{rel} UI scaler utility wrapper dependency")
         reject(text, "_Zy(", f"{rel} UI scaler utility wrapper dependency")
+    for rel in ["OpenProjectDlg.cpp", "SaveProjectDlg.cpp"]:
+        text = (root / rel).read_text()
+        reject(text, "Zx(", f"{rel} raw horizontal scaler dependency")
+        reject(text, "Zy(", f"{rel} raw vertical scaler dependency")
 
 
 if __name__ == "__main__":

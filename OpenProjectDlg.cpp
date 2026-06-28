@@ -11,7 +11,7 @@
 
 OpenProjectDlg::OpenProjectDlg() : phase(Audio) {
     ffmpeg = Config::Get(FFMPEG_LOCATION);
-    SetRect(0, 0, Zx(450), Zy(70));
+    SetRect(0, 0, UiScaler::X(450), UiScaler::Y(70));
     CenterOwner();
     cancelBtn.Disable();
     cancelBtn.Hide();
