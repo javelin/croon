@@ -102,8 +102,8 @@ protected:
     bool IsVertical() const { return orientation < Horizontal; }
     bool IsGrid() const { return orientation == VerticalGrid || orientation == HorizontalGrid; }
     
-    int ItemWidth() const { return Zx(sizeHint.cx == 0 ? UiScaler::X(DefaultDim):sizeHint.cx) + margin*2; }
-    int ItemHeight() const { return Zy(sizeHint.cy == 0 ? UiScaler::Y(DefaultDim):sizeHint.cy) + margin*2; }
+    int ItemWidth() const { return UiScaler::X(sizeHint.cx == 0 ? UiScaler::X(DefaultDim):sizeHint.cx) + margin*2; }
+    int ItemHeight() const { return UiScaler::Y(sizeHint.cy == 0 ? UiScaler::Y(DefaultDim):sizeHint.cy) + margin*2; }
     int ItemsPerLine() const {
         return IsGrid() ? max(IsVertical() ? GetSize().cx/ItemWidth():GetSize().cy/ItemHeight(), 1):1; }
     int TotalLines() const {

@@ -442,7 +442,7 @@ def main() -> None:
         require(text, "UiScaler::", f"{rel} direct UI scaler dependency")
         reject(text, "_Zx(", f"{rel} UI scaler utility wrapper dependency")
         reject(text, "_Zy(", f"{rel} UI scaler utility wrapper dependency")
-    for rel in ["LyricsPartsDlg.cpp", "MainWindow.cpp", "OpenProjectDlg.cpp", "ProjectList.h", "SaveProjectDlg.cpp", "TimingDlg.cpp", "TimingCtrl.cpp", "VideoDlg.cpp"]:
+    for rel in ["ListCtrl.cpp", "ListCtrl.h", "LyricsPartsDlg.cpp", "MainWindow.cpp", "OpenProjectDlg.cpp", "ProjectList.h", "SaveProjectDlg.cpp", "TimingDlg.cpp", "TimingCtrl.cpp", "VideoDlg.cpp"]:
         text = (root / rel).read_text()
         reject(text, "Zx(", f"{rel} raw horizontal scaler dependency")
         reject(text, "Zy(", f"{rel} raw vertical scaler dependency")
