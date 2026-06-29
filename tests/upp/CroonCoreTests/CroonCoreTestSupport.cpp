@@ -8,7 +8,6 @@ using namespace Upp;
 
 #include <Croon/Constants.h>
 #include <Croon/KarData.h>
-#include <Croon/Util.h>
 #include <Croon/ConfigService.h>
 #include <Croon/Config.h>
 

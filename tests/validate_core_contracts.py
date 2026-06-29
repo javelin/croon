@@ -241,6 +241,8 @@ def main() -> None:
 
     core_tests_cpp = (root / "tests" / "upp" / "CroonCoreTests" / "CroonCoreTests.cpp").read_text()
     ass_test_support_cpp = (root / "tests" / "upp" / "CroonCoreTests" / "CroonAssTestSupport.cpp").read_text()
+    core_test_support_cpp = (root / "tests" / "upp" / "CroonCoreTests" / "CroonCoreTestSupport.cpp").read_text()
+    lyrics_test_support_cpp = (root / "tests" / "upp" / "CroonCoreTests" / "CroonLyricsTestSupport.cpp").read_text()
     require(core_tests_cpp, "TimeFormatter::CountInDuration", "core tests direct time formatter dependency")
     require(core_tests_cpp, "TimeFormatter::Clock", "core tests direct clock formatter dependency")
     require(core_tests_cpp, "TimeFormatter::Ass", "core tests direct ASS formatter dependency")
@@ -251,6 +253,13 @@ def main() -> None:
     require(ass_test_support_cpp, "TimeFormatter::Ass", "ASS test support direct time formatter dependency")
     for wrapper in ["auto countIn = CountInDuration(", "FormatTimeASS("]:
         reject(ass_test_support_cpp, wrapper, "ASS test support time compatibility wrapper dependency")
+    require(ass_test_support_cpp, "#include <Croon/SubtitleLineProcessor.h>", "ASS test support direct subtitle line dependency")
+    for rel, text in {
+        "CroonCoreTestSupport.cpp": core_test_support_cpp,
+        "CroonLyricsTestSupport.cpp": lyrics_test_support_cpp,
+        "CroonAssTestSupport.cpp": ass_test_support_cpp,
+    }.items():
+        reject(text, "#include <Croon/Util.h>", f"{rel} compatibility facade include")
 
     ui_scaler_h = (root / "UiScaler.h").read_text()
     require(ui_scaler_h, "X(int value)", "UiScaler horizontal scale contract")
