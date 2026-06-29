@@ -34,6 +34,7 @@ def main() -> None:
         "ProjectSerializer.cpp",
         "RecentProjectService.cpp",
         "LyricsTransformer.cpp",
+        "SubtitleLineProcessor.cpp",
         'set(CROON_NESTS "${CROON_PACKAGE_NEST},${CROON_UPPSRC}")',
         "add_custom_target(croon_umk",
         "add_dependencies(croon croon_umk)",

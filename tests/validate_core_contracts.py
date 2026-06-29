@@ -250,11 +250,19 @@ def main() -> None:
     require(core_tests_cpp, "TextTools::StripNonAlnum", "core tests direct text tools dependency")
     require(core_tests_cpp, "LyricsTransformer::RawToUntimed", "core tests direct raw lyric transformer dependency")
     require(core_tests_cpp, "LyricsTransformer::TimedToRaw", "core tests direct timed lyric transformer dependency")
+    require(core_tests_cpp, "SubtitleLineProcessor::ReplaceMetadata", "core tests direct metadata replacement dependency")
+    require(core_tests_cpp, "SubtitleLineProcessor::ResolveVocalPart", "core tests direct vocal part dependency")
+    require(core_tests_cpp, "SubtitleLineProcessor::ResolveStyle", "core tests direct style dependency")
+    require(core_tests_cpp, "SubtitleLineProcessor::ProcessMetadata", "core tests direct metadata processing dependency")
     require(core_tests_upp, "LyricsTransformer.cpp", "core tests lyrics transformer implementation")
+    require(core_tests_upp, "SubtitleLineProcessor.cpp", "core tests subtitle line processor implementation")
     for wrapper in ["Check(CountInDuration(", "Check(FormatTime2(", "Check(FormatTimeASS(", "Check(StripNonAlnum("]:
         reject(core_tests_cpp, wrapper, "core tests time/text compatibility wrapper dependency")
     for wrapper in ["RawToUntimedLyrics(", "TimedLyricsToRaw("]:
         reject(core_tests_cpp, wrapper, "core tests lyric compatibility wrapper dependency")
+    for wrapper in ["ReplaceMetadata(", "ResolveVocalPart(", "ResolveCountInStyle(", "ResolveStyle(", "ProcessMetadata("]:
+        reject(core_tests_cpp, "Check(" + wrapper, "core tests subtitle-line compatibility wrapper dependency")
+        reject(core_tests_cpp, "\t" + wrapper, "core tests subtitle-line compatibility wrapper dependency")
     require(ass_test_support_cpp, "TimeFormatter::CountInDuration", "ASS test support direct count-in dependency")
     require(ass_test_support_cpp, "TimeFormatter::Ass", "ASS test support direct time formatter dependency")
     for wrapper in ["auto countIn = CountInDuration(", "FormatTimeASS("]:

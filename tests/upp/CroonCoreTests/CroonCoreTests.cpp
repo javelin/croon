@@ -12,6 +12,7 @@ using namespace Upp;
 #include <Croon/LyricsTransformer.h>
 #include <Croon/ProjectSerializer.h>
 #include <Croon/SubtitleGenerator.h>
+#include <Croon/SubtitleLineProcessor.h>
 #include <Croon/TextTools.h>
 #include <Croon/TimeFormatter.h>
 #include <Croon/Util.h>
@@ -202,34 +203,34 @@ CONSOLE_APP_MAIN
 	metaData.title = "Song (Title)";
 	metaData.artist = "Artist";
 	String titleLine = "@Title";
-	ReplaceMetadata(titleLine, metaData);
-	Check(titleLine == "Song \\(Title\\)", "ReplaceMetadata escapes parentheses in title");
+	SubtitleLineProcessor::ReplaceMetadata(titleLine, metaData);
+	Check(titleLine == "Song \\(Title\\)", "SubtitleLineProcessor escapes parentheses in title");
 	String dashLine = "-";
-	ReplaceMetadata(dashLine, metaData);
-	Check(dashLine == "\u00A0", "ReplaceMetadata converts dash placeholder to nbsp");
+	SubtitleLineProcessor::ReplaceMetadata(dashLine, metaData);
+	Check(dashLine == "\u00A0", "SubtitleLineProcessor converts dash placeholder to nbsp");
 
 	Vector<Tuple<int, bool, bool, bool>> vocalParts;
 	vocalParts.Add(MakeTuple(1, true, false, true));
 	vocalParts.Add(MakeTuple(2, false, true, true));
 	vocalParts.Add(MakeTuple(3, true, true, true));
-	Check(ResolveVocalPart(-1, vocalParts) == VP_V1, "ResolveVocalPart defaults missing index to V1");
-	Check(ResolveVocalPart(1, vocalParts) == VP_V1, "ResolveVocalPart maps V1-only part");
-	Check(ResolveVocalPart(2, vocalParts) == VP_V2, "ResolveVocalPart maps V2-only part");
-	Check(ResolveVocalPart(3, vocalParts) == VP_B, "ResolveVocalPart maps dual-voice part");
+	Check(SubtitleLineProcessor::ResolveVocalPart(-1, vocalParts) == VP_V1, "SubtitleLineProcessor defaults missing index to V1");
+	Check(SubtitleLineProcessor::ResolveVocalPart(1, vocalParts) == VP_V1, "SubtitleLineProcessor maps V1-only part");
+	Check(SubtitleLineProcessor::ResolveVocalPart(2, vocalParts) == VP_V2, "SubtitleLineProcessor maps V2-only part");
+	Check(SubtitleLineProcessor::ResolveVocalPart(3, vocalParts) == VP_B, "SubtitleLineProcessor maps dual-voice part");
 
-	Check(ResolveCountInStyle(VP_V2, "Sing now") == "CountInV2", "ResolveCountInStyle uses vocal part color");
-	Check(ResolveCountInStyle(VP_V1, "~echo") == "BUC", "ResolveCountInStyle honors backup override");
+	Check(SubtitleLineProcessor::ResolveCountInStyle(VP_V2, "Sing now") == "CountInV2", "SubtitleLineProcessor uses vocal part color");
+	Check(SubtitleLineProcessor::ResolveCountInStyle(VP_V1, "~echo") == "BUC", "SubtitleLineProcessor honors backup override");
 
 	String backupLine = "~echo";
-	Check(ResolveStyle(VP_V1, backupLine, false) == "BUC", "ResolveStyle maps backup vocals to BUC");
-	Check(backupLine.Find("{\\i1}") >= 0, "ResolveStyle wraps backup vocals in italic");
+	Check(SubtitleLineProcessor::ResolveStyle(VP_V1, backupLine, false) == "BUC", "SubtitleLineProcessor maps backup vocals to BUC");
+	Check(backupLine.Find("{\\i1}") >= 0, "SubtitleLineProcessor wraps backup vocals in italic");
 
 	String miscLine = "(note)";
-	Check(ResolveStyle(VP_V1, miscLine, false) == "MC", "ResolveStyle maps parenthetical lines to MC");
+	Check(SubtitleLineProcessor::ResolveStyle(VP_V1, miscLine, false) == "MC", "SubtitleLineProcessor maps parenthetical lines to MC");
 
 	String metaLine = "@Title";
-	Check(ResolveStyle(VP_V1, metaLine, false, "", true) == "MC", "ResolveStyle maps metadata to MC");
-	Check(!metaLine.StartsWith("@"), "ResolveStyle strips metadata prefix");
+	Check(SubtitleLineProcessor::ResolveStyle(VP_V1, metaLine, false, "", true) == "MC", "SubtitleLineProcessor maps metadata to MC");
+	Check(!metaLine.StartsWith("@"), "SubtitleLineProcessor strips metadata prefix");
 
 	KarData processed;
 	processed.duration = 20.0;
@@ -238,8 +239,8 @@ CONSOLE_APP_MAIN
 	processed.timedLyrics.Add({10.0, ">>>{60} First line"});
 	processed.timedLyrics.Add({15.0, "@Title"});
 	Vector<TimeLyrics> processedLines;
-	ProcessMetadata(processed, processedLines, 4);
-	Check(processedLines.GetCount() >= 4, "ProcessMetadata inserts blanks and count-in lines");
+	SubtitleLineProcessor::ProcessMetadata(processed, processedLines, 4);
+	Check(processedLines.GetCount() >= 4, "SubtitleLineProcessor inserts blanks and count-in lines");
 	bool foundCountIn = false;
 	bool foundMeta = false;
 	for(const TimeLyrics& line : processedLines) {
@@ -248,8 +249,8 @@ CONSOLE_APP_MAIN
 		if(line.isMeta && line.lyrics == processed.title)
 			foundMeta = true;
 	}
-	Check(foundCountIn, "ProcessMetadata emits count-in marker");
-	Check(foundMeta, "ProcessMetadata resolves @Title metadata");
+	Check(foundCountIn, "SubtitleLineProcessor emits count-in marker");
+	Check(foundMeta, "SubtitleLineProcessor resolves @Title metadata");
 
 	KarData emptyAss;
 	Check(SubtitleGenerator::ToAss(emptyAss).IsEmpty(), "SubtitleGenerator returns empty output without timed lyrics");

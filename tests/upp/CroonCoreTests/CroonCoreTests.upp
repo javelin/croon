@@ -9,6 +9,7 @@ file
 	ProjectSerializer.cpp,
 	RecentProjectService.cpp,
 	LyricsTransformer.cpp,
+	SubtitleLineProcessor.cpp,
 	TextTools.cpp,
 	TimeFormatter.cpp,
 	CroonCoreTestSupport.cpp,

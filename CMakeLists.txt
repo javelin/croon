@@ -125,6 +125,7 @@ if(CROON_UMK_EXECUTABLE)
             "${CMAKE_CURRENT_SOURCE_DIR}/LyricsTransformer.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/ProjectSerializer.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/RecentProjectService.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/SubtitleLineProcessor.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/TextTools.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/TimeFormatter.cpp"
             "${CROON_CORE_TEST_PACKAGE}"
