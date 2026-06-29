@@ -10,8 +10,8 @@ using namespace Upp;
 #include <Croon/Constants.h>
 #include <Croon/KarData.h>
 #include <Croon/SubtitleGenerator.h>
+#include <Croon/SubtitleLineProcessor.h>
 #include <Croon/TimeFormatter.h>
-#include <Croon/Util.h>
 
 #define RED_H               "&H000000FF"
 #define RED_D               "&H00000080"
@@ -29,7 +29,7 @@ using namespace Upp;
 #define MAIZE_D             "&H0053CFDC"
 #define GRAY                "&H00808080"
 
-String& ReplaceMetadata(String& line, const KarData& data, bool replaceDash) {
+String& ReplaceMetadata(String& line, const KarData& data, bool replaceDash=true) {
 	auto copyright{data.owner.IsEmpty() ? String(""):
 	                                    Format("Copyright \u00A9 %s%s",
 	                                            data.year > 0 ? IntStr(data.year) + " ":"",

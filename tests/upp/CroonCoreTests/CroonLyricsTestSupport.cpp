@@ -9,7 +9,6 @@ using namespace Upp;
 
 #include <Croon/Constants.h>
 #include <Croon/KarData.h>
-#include <Croon/Util.h>
 
 String SplitLyrics(String& line) {
 	String decor;
@@ -73,4 +72,3 @@ String TimedLyricsToRaw(const Vector<TimeLyrics>& vtl, bool removeMetadata) {
 	}
 	return Join(lines, "\n");
 }
-
