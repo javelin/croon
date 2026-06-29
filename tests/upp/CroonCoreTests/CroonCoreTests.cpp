@@ -9,6 +9,7 @@ using namespace Upp;
 #include <Croon/Constants.h>
 #include <Croon/AppIdentity.h>
 #include <Croon/KarData.h>
+#include <Croon/LyricsTransformer.h>
 #include <Croon/ProjectSerializer.h>
 #include <Croon/SubtitleGenerator.h>
 #include <Croon/TextTools.h>
@@ -180,22 +181,22 @@ CONSOLE_APP_MAIN
 	KarData lyricsData;
 	lyricsData.duration = 42.0;
 	lyricsData.rawLyrics = ">>{90} First line\n@Title\n-\nSecond line";
-	Vector<TimeLyrics> untimed = RawToUntimedLyrics(lyricsData);
-	Check(untimed.GetCount() == 5, "RawToUntimedLyrics keeps sentinel plus non-empty lines");
-	Check(untimed[0].time == 42.0, "RawToUntimedLyrics sentinel uses duration");
-	Check(untimed[1].lyrics == ">>{90}First line", "RawToUntimedLyrics preserves first-line decoration");
-	Check(untimed[2].lyrics == "@Title", "RawToUntimedLyrics keeps metadata lines");
-	Check(untimed[3].lyrics == "-", "RawToUntimedLyrics keeps dash placeholders");
-	Check(TimedLyricsToRaw(untimed, true) == "First line\nSecond line",
-		"TimedLyricsToRaw removes metadata, dash placeholders, and decorations");
+	Vector<TimeLyrics> untimed = LyricsTransformer::RawToUntimed(lyricsData);
+	Check(untimed.GetCount() == 5, "LyricsTransformer keeps sentinel plus non-empty lines");
+	Check(untimed[0].time == 42.0, "LyricsTransformer sentinel uses duration");
+	Check(untimed[1].lyrics == ">>{90}First line", "LyricsTransformer preserves first-line decoration");
+	Check(untimed[2].lyrics == "@Title", "LyricsTransformer keeps metadata lines");
+	Check(untimed[3].lyrics == "-", "LyricsTransformer keeps dash placeholders");
+	Check(LyricsTransformer::TimedToRaw(untimed, true) == "First line\nSecond line",
+		"LyricsTransformer removes metadata, dash placeholders, and decorations");
 
 	KarData longLineData;
 	longLineData.duration = 10.0;
 	longLineData.rawLyrics = "{60} " + String('a', MaxLineLength + 1);
-	Vector<TimeLyrics> wrapped = RawToUntimedLyrics(longLineData);
-	Check(wrapped.GetCount() == 2, "RawToUntimedLyrics does not emit decoration-only wrapped lines");
+	Vector<TimeLyrics> wrapped = LyricsTransformer::RawToUntimed(longLineData);
+	Check(wrapped.GetCount() == 2, "LyricsTransformer does not emit decoration-only wrapped lines");
 	Check(wrapped[1].lyrics == "{60}" + String('a', MaxLineLength + 1),
-		"RawToUntimedLyrics keeps decoration with overlong first word");
+		"LyricsTransformer keeps decoration with overlong first word");
 
 	KarData metaData;
 	metaData.title = "Song (Title)";

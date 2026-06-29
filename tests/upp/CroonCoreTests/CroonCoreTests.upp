@@ -8,6 +8,7 @@ file
 	KarData.cpp,
 	ProjectSerializer.cpp,
 	RecentProjectService.cpp,
+	LyricsTransformer.cpp,
 	TextTools.cpp,
 	TimeFormatter.cpp,
 	CroonCoreTestSupport.cpp,

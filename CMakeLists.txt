@@ -122,6 +122,7 @@ if(CROON_UMK_EXECUTABLE)
             "${CMAKE_CURRENT_SOURCE_DIR}/Croon.lay"
             "${CMAKE_CURRENT_SOURCE_DIR}/Croon.iml"
             "${CMAKE_CURRENT_SOURCE_DIR}/KarData.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/LyricsTransformer.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/ProjectSerializer.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/RecentProjectService.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/TextTools.cpp"
