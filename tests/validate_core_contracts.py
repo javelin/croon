@@ -248,6 +248,7 @@ def main() -> None:
     require(core_tests_cpp, "TimeFormatter::Clock", "core tests direct clock formatter dependency")
     require(core_tests_cpp, "TimeFormatter::Ass", "core tests direct ASS formatter dependency")
     require(core_tests_cpp, "TextTools::StripNonAlnum", "core tests direct text tools dependency")
+    require(core_tests_cpp, "LyricsTransformer::SplitDecorations", "core tests direct lyric decoration splitter dependency")
     require(core_tests_cpp, "LyricsTransformer::RawToUntimed", "core tests direct raw lyric transformer dependency")
     require(core_tests_cpp, "LyricsTransformer::TimedToRaw", "core tests direct timed lyric transformer dependency")
     require(core_tests_cpp, "SubtitleLineProcessor::ReplaceMetadata", "core tests direct metadata replacement dependency")
@@ -258,7 +259,7 @@ def main() -> None:
     require(core_tests_upp, "SubtitleLineProcessor.cpp", "core tests subtitle line processor implementation")
     for wrapper in ["Check(CountInDuration(", "Check(FormatTime2(", "Check(FormatTimeASS(", "Check(StripNonAlnum("]:
         reject(core_tests_cpp, wrapper, "core tests time/text compatibility wrapper dependency")
-    for wrapper in ["RawToUntimedLyrics(", "TimedLyricsToRaw("]:
+    for wrapper in ["SplitLyrics(", "RawToUntimedLyrics(", "TimedLyricsToRaw("]:
         reject(core_tests_cpp, wrapper, "core tests lyric compatibility wrapper dependency")
     for wrapper in ["ReplaceMetadata(", "ResolveVocalPart(", "ResolveCountInStyle(", "ResolveStyle(", "ProcessMetadata("]:
         reject(core_tests_cpp, "Check(" + wrapper, "core tests subtitle-line compatibility wrapper dependency")

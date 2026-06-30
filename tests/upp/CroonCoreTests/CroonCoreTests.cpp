@@ -175,9 +175,9 @@ CONSOLE_APP_MAIN
 	Check(normalized.timedLyrics.GetCount() == 1, "ProjectSerializer restores sentinel for empty timed lyrics");
 
 	String decorated = ">>{120}  Sing this line  ";
-	String decor = SplitLyrics(decorated);
-	Check(decor == ">>{120}", "SplitLyrics extracts blank and tempo decoration");
-	Check(decorated == "Sing this line", "SplitLyrics trims lyric content");
+	String decor = LyricsTransformer::SplitDecorations(decorated);
+	Check(decor == ">>{120}", "LyricsTransformer extracts blank and tempo decoration");
+	Check(decorated == "Sing this line", "LyricsTransformer trims lyric content");
 
 	KarData lyricsData;
 	lyricsData.duration = 42.0;
