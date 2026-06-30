@@ -13,7 +13,6 @@ file
 	TextTools.cpp,
 	TimeFormatter.cpp,
 	CroonCoreTestSupport.cpp,
-	CroonLyricsTestSupport.cpp,
 	CroonAssTestSupport.cpp;
 
 mainconfig
