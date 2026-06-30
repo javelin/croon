@@ -15,7 +15,6 @@ using namespace Upp;
 #include <Croon/SubtitleLineProcessor.h>
 #include <Croon/TextTools.h>
 #include <Croon/TimeFormatter.h>
-#include <Croon/Util.h>
 #include <Croon/ConfigService.h>
 #include <Croon/Config.h>
 #include <Croon/RecentProjectService.h>
@@ -254,7 +253,6 @@ CONSOLE_APP_MAIN
 
 	KarData emptyAss;
 	Check(SubtitleGenerator::ToAss(emptyAss).IsEmpty(), "SubtitleGenerator returns empty output without timed lyrics");
-	Check(TimedToASS(emptyAss).IsEmpty(), "TimedToASS returns empty output without timed lyrics");
 
 	KarData exportData;
 	exportData.duration = 10.0;
@@ -270,11 +268,8 @@ CONSOLE_APP_MAIN
 	Check(ass.Find("Style: V1,") >= 0, "SubtitleGenerator defines V1 style");
 	Check(ass.Find("Dialogue: 0,0:00:01.00") >= 0, "SubtitleGenerator emits timed dialogue");
 	Check(ass.Find(",V1,,0,0,0,,Sing along") >= 0, "SubtitleGenerator uses V1 style for default vocal part");
-	Check(TimedToASS(exportData, 2) == ass, "TimedToASS delegates to SubtitleGenerator");
 	Check(SubtitleGenerator::ToRichAss(exportData, 2).Find("[Script Info]") >= 0,
 		"SubtitleGenerator emits rich ASS preview");
-	Check(TimedToRichASS(exportData, 2) == SubtitleGenerator::ToRichAss(exportData, 2),
-		"TimedToRichASS delegates to SubtitleGenerator");
 
 	KarData v2Data;
 	v2Data.duration = 10.0;

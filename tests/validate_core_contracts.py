@@ -255,12 +255,17 @@ def main() -> None:
     require(core_tests_cpp, "SubtitleLineProcessor::ResolveVocalPart", "core tests direct vocal part dependency")
     require(core_tests_cpp, "SubtitleLineProcessor::ResolveStyle", "core tests direct style dependency")
     require(core_tests_cpp, "SubtitleLineProcessor::ProcessMetadata", "core tests direct metadata processing dependency")
+    require(core_tests_cpp, "SubtitleGenerator::ToAss", "core tests direct ASS generator dependency")
+    require(core_tests_cpp, "SubtitleGenerator::ToRichAss", "core tests direct rich ASS generator dependency")
     require(core_tests_upp, "LyricsTransformer.cpp", "core tests lyrics transformer implementation")
     require(core_tests_upp, "SubtitleLineProcessor.cpp", "core tests subtitle line processor implementation")
+    reject(core_tests_cpp, "#include <Croon/Util.h>", "core tests compatibility facade include")
     for wrapper in ["Check(CountInDuration(", "Check(FormatTime2(", "Check(FormatTimeASS(", "Check(StripNonAlnum("]:
         reject(core_tests_cpp, wrapper, "core tests time/text compatibility wrapper dependency")
     for wrapper in ["SplitLyrics(", "RawToUntimedLyrics(", "TimedLyricsToRaw("]:
         reject(core_tests_cpp, wrapper, "core tests lyric compatibility wrapper dependency")
+    for wrapper in ["TimedToASS(", "TimedToRichASS("]:
+        reject(core_tests_cpp, wrapper, "core tests ASS compatibility wrapper dependency")
     for wrapper in ["ReplaceMetadata(", "ResolveVocalPart(", "ResolveCountInStyle(", "ResolveStyle(", "ProcessMetadata("]:
         reject(core_tests_cpp, "Check(" + wrapper, "core tests subtitle-line compatibility wrapper dependency")
         reject(core_tests_cpp, "\t" + wrapper, "core tests subtitle-line compatibility wrapper dependency")
