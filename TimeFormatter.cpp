@@ -3,7 +3,13 @@
  * Author: Mark Documento
  */
 
-#include "Croon.h"
+#include <Core/Core.h>
+
+#include <cmath>
+
+using namespace Upp;
+
+#include "TimeFormatter.h"
 
 double TimeFormatter::CountInDuration(int bpm) {
     auto dur = 60.0f/bpm;

@@ -239,6 +239,8 @@ def main() -> None:
         require(time_formatter_h, method, "TimeFormatter contract")
 
     time_formatter_cpp = (root / "TimeFormatter.cpp").read_text()
+    reject(time_formatter_cpp, '#include "Croon.h"', "TimeFormatter app shell dependency")
+    require(time_formatter_cpp, '#include "TimeFormatter.h"', "TimeFormatter direct self dependency")
     require(time_formatter_cpp, "std::round(dur*100.0f)/100.0f", "TimeFormatter count-in rounding")
     require(time_formatter_cpp, "decimal", "TimeFormatter decimal separator contract")
     require(time_formatter_cpp, "Mid(1)", "TimeFormatter ASS timestamp contract")
