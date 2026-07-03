@@ -230,6 +230,8 @@ def main() -> None:
         require(text_tools_h, method, "TextTools contract")
 
     text_tools_cpp = (root / "TextTools.cpp").read_text()
+    reject(text_tools_cpp, '#include "Croon.h"', "TextTools app shell dependency")
+    require(text_tools_cpp, '#include "TextTools.h"', "TextTools direct self dependency")
     require(text_tools_cpp, "TrimBoth(vw[i])", "TextTools spacing cleanup")
     require(text_tools_cpp, "IsAlNum(c)", "TextTools alphanumeric filter")
     require(text_tools_cpp, "\"...\"", "TextTools middle shortening")

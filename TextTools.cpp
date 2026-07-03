@@ -3,7 +3,11 @@
  * Author: Mark Documento
  */
 
-#include "Croon.h"
+#include <Core/Core.h>
+
+using namespace Upp;
+
+#include "TextTools.h"
 
 String TextTools::CleanSpacing(const String& text) {
     auto vw = Split(text, ' ');
