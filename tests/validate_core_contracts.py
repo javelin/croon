@@ -85,6 +85,9 @@ def main() -> None:
         require(identity_h, needle, "AppIdentity contract")
 
     app_paths_cpp = (root / "AppPaths.cpp").read_text()
+    reject(app_paths_cpp, '#include "Croon.h"', "AppPaths app shell dependency")
+    require(app_paths_cpp, '#include "AppIdentity.h"', "AppPaths direct identity dependency")
+    require(app_paths_cpp, '#include "AppPaths.h"', "AppPaths direct self dependency")
     require(app_paths_cpp, "AppIdentity::PosixDataDirectory", "POSIX app data contract")
     require(app_paths_cpp, "AppIdentity::DataDirectory", "non-POSIX app data contract")
     require(app_paths_cpp, "DirectoryCreate(dataDir)", "AppPaths data directory creation")

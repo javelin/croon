@@ -3,7 +3,12 @@
  * Author: Mark Documento
  */
 
-#include "Croon.h"
+#include <Core/Core.h>
+
+using namespace Upp;
+
+#include "AppIdentity.h"
+#include "AppPaths.h"
 
 String AppPaths::DataDirectory() {
     static String dataDir = AppendFileName(GetAppDataFolder(),
