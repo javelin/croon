@@ -3,7 +3,12 @@
  * Author: Mark Documento
  */
 
-#include "Croon.h"
+#include <Core/Core.h>
+
+using namespace Upp;
+
+#include "ConfigService.h"
+#include "Config.h"
 
 Config Config::config;
 

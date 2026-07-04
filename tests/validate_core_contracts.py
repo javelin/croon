@@ -99,6 +99,12 @@ def main() -> None:
     require(config_h, "ConfigService::GetInt(key, defaultValue)", "Config int get delegation")
     require(config_h, "ConfigService::GetFontSize()", "Config font-size delegation")
 
+    config_cpp = (root / "Config.cpp").read_text()
+    reject(config_cpp, '#include "Croon.h"', "Config app shell dependency")
+    require(config_cpp, '#include "ConfigService.h"\n#include "Config.h"', "Config ordered direct dependencies")
+    require(config_cpp, "Config Config::config", "Config singleton storage")
+    require(config_cpp, "ConfigService::DefaultFontSize", "Config default font-size delegation")
+
     config_service_cpp = (root / "ConfigService.cpp").read_text()
     reject(config_service_cpp, '#include "Croon.h"', "ConfigService app shell dependency")
     require(config_service_cpp, '#include "AppPaths.h"', "ConfigService direct app paths dependency")
