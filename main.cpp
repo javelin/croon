@@ -3,7 +3,11 @@
  * Author: Mark Documento
  */
 
-#include "Croon.h"
+#include <CtrlLib/CtrlLib.h>
+
+using namespace Upp;
+
+void RunCroon();
 
 GUI_APP_MAIN
 {
