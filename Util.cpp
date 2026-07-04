@@ -3,7 +3,22 @@
  * Author: Mark Documento
  */
 
-#include "Croon.h"
+#include <Draw/Draw.h>
+#include <RichText/RichText.h>
+
+using namespace Upp;
+
+#include "AppPaths.h"
+#include "Constants.h"
+#include "FfmpegProgressParser.h"
+#include "GenreCatalog.h"
+#include "KarData.h"
+#include "LyricsDownloadService.h"
+#include "LyricsTransformer.h"
+#include "SubtitleGenerator.h"
+#include "SubtitleLineProcessor.h"
+#include "UiScaler.h"
+#include "Util.h"
 
 String GetDataDirectory() {
     return AppPaths::DataDirectory();
