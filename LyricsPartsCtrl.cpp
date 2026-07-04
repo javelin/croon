@@ -1,4 +1,8 @@
-#include "Croon.h"
+#include <CtrlLib/CtrlLib.h>
+
+using namespace Upp;
+
+#include "LyricsPartsCtrl.h"
 
 void LyricsPartsCtrl::Paint(Draw& w) {
 	Size sz = GetSize();

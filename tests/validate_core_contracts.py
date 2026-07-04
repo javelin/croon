@@ -591,6 +591,23 @@ def main() -> None:
     ]:
         require(list_ctrl_cpp, needle, "ListCtrl behavior contract")
 
+    lyrics_parts_ctrl_cpp = (root / "LyricsPartsCtrl.cpp").read_text()
+    reject(lyrics_parts_ctrl_cpp, '#include "Croon.h"', "LyricsPartsCtrl app shell dependency")
+    for needle in [
+        "#include <CtrlLib/CtrlLib.h>",
+        '#include "LyricsPartsCtrl.h"',
+    ]:
+        require(lyrics_parts_ctrl_cpp, needle, "LyricsPartsCtrl direct dependency")
+    for needle in [
+        "void LyricsPartsCtrl::Paint",
+        "w.Clip(clipr)",
+        "w.DrawText",
+        "w.DrawLine",
+        "Color(255, 220, 120)",
+        "SColorText()",
+    ]:
+        require(lyrics_parts_ctrl_cpp, needle, "LyricsPartsCtrl paint contract")
+
 
 if __name__ == "__main__":
     main()
