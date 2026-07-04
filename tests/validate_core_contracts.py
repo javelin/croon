@@ -142,6 +142,10 @@ def main() -> None:
     require(lyrics_transformer_h, "TimedToRaw", "LyricsTransformer timed-to-raw contract")
 
     lyrics_transformer_cpp = (root / "LyricsTransformer.cpp").read_text()
+    reject(lyrics_transformer_cpp, '#include "Croon.h"', "LyricsTransformer app shell dependency")
+    require(lyrics_transformer_cpp, "#include <Draw/Draw.h>", "LyricsTransformer direct image type dependency")
+    require(lyrics_transformer_cpp, '#include "LyricsTransformer.h"', "LyricsTransformer direct self dependency")
+    require(lyrics_transformer_cpp, '#include "KarData.h"', "LyricsTransformer direct data dependency")
     require(lyrics_transformer_cpp, "MaxLineLength", "LyricsTransformer wrapping contract")
     require(lyrics_transformer_cpp, "removeMetadata", "LyricsTransformer metadata removal contract")
 

@@ -3,7 +3,14 @@
  * Author: Mark Documento
  */
 
-#include "Croon.h"
+#include <Draw/Draw.h>
+#include <plugin/pcre/Pcre.h>
+
+using namespace Upp;
+
+#include "Constants.h"
+#include "KarData.h"
+#include "LyricsTransformer.h"
 
 String LyricsTransformer::SplitDecorations(String& line) {
     String decor;
