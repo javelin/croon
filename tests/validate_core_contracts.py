@@ -670,6 +670,16 @@ def main() -> None:
     ]:
         require(timing_ctrl_cpp, needle, "TimingCtrl timing behavior contract")
 
+    main_cpp = (root / "main.cpp").read_text()
+    reject(main_cpp, '#include "Croon.h"', "main app shell dependency")
+    for needle in [
+        "#include <CtrlLib/CtrlLib.h>",
+        "void RunCroon();",
+        "GUI_APP_MAIN",
+        "RunCroon();",
+    ]:
+        require(main_cpp, needle, "main entry-point contract")
+
 
 if __name__ == "__main__":
     main()
