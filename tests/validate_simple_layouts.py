@@ -73,6 +73,42 @@ def main() -> None:
         if needle not in timing_line_impl:
             fail(f"TimingLineDlg.cpp missing behavior {needle}")
 
+    lyrics_parts_impl = (root / "LyricsPartsDlg.cpp").read_text()
+    if '#include "Croon.h"' in lyrics_parts_impl:
+        fail("LyricsPartsDlg.cpp still depends on Croon.h")
+    for needle in [
+        "#include <CtrlLib/CtrlLib.h>",
+        "#define IMAGECLASS CroonImg",
+        "#define IMAGEFILE <Croon/Croon.iml>",
+        "#include <Draw/iml_header.h>",
+        '#include "Constants.h"',
+        '#include "ConfigService.h"\n#include "Config.h"',
+        '#include "UiScaler.h"',
+        '#include "LyricsPartsCtrl.h"',
+        '#include "ListCtrl.h"',
+        '#include "AppIdentity.h"',
+        '#include "KarData.h"\n#include "Visualization.h"\n#include "FfmpegCommandBuilder.h"',
+        '#include "LyricsTransformer.h"',
+        '#include "MediaProcessRunner.h"',
+        '#include "RecentProjectService.h"',
+        '#include "ProjectLoader.h"',
+        "#define LAYOUTFILE <Croon/Croon.lay>",
+        "#include <CtrlCore/lay.h>",
+        '#include "LyricsPartsDlg.h"',
+    ]:
+        if needle not in lyrics_parts_impl:
+            fail(f"LyricsPartsDlg.cpp missing direct dependency {needle}")
+    for needle in [
+        "CtrlLayout(*this)",
+        "PromptYesNo(\"Discard changes and cancel?\")",
+        "lpCtrl.ClearParts()",
+        "lpCtrl.WhenToggle",
+        "data->timedLyrics",
+        "lpCtrl.SetLyricsAndParts",
+    ]:
+        if needle not in lyrics_parts_impl:
+            fail(f"LyricsPartsDlg.cpp missing behavior {needle}")
+
     croon_h = (root / "Croon.h").read_text()
     if croon_h.find('#include "LyricsPartsCtrl.h"') > croon_h.find("#include <CtrlCore/lay.h>"):
         fail("Croon.h includes layouts before custom control declarations")
