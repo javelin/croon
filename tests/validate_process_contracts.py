@@ -35,8 +35,40 @@ def main() -> None:
             fail(f"ProgressDlg still declares layout-owned member {old_member}")
 
     impl = (root / "ProgressDlg.cpp").read_text()
+    if '#include "Croon.h"' in impl:
+        fail("ProgressDlg.cpp still depends on Croon.h")
+    for needle in [
+        "#include <CtrlLib/CtrlLib.h>",
+        "#define IMAGECLASS CroonImg",
+        "#define IMAGEFILE <Croon/Croon.iml>",
+        "#include <Draw/iml_header.h>",
+        '#include "Constants.h"',
+        '#include "ConfigService.h"\n#include "Config.h"',
+        '#include "UiScaler.h"',
+        '#include "LyricsPartsCtrl.h"',
+        '#include "ListCtrl.h"',
+        '#include "AppIdentity.h"',
+        '#include "KarData.h"\n#include "Visualization.h"\n#include "FfmpegCommandBuilder.h"',
+        '#include "LyricsTransformer.h"',
+        '#include "MediaProcessRunner.h"',
+        '#include "RecentProjectService.h"',
+        '#include "ProjectLoader.h"',
+        "#define LAYOUTFILE <Croon/Croon.lay>",
+        "#include <CtrlCore/lay.h>",
+        '#include "ProgressDlg.h"',
+    ]:
+        if needle not in impl:
+            fail(f"ProgressDlg.cpp missing direct dependency {needle}")
     if "CtrlLayout(*this, \"Progress\")" not in impl:
         fail("ProgressDlg constructor does not apply Designer layout")
+    for needle in [
+        "process.IsRunning()",
+        "process.Kill()",
+        "process.Read(output)",
+        "process.GetExitCode()",
+    ]:
+        if needle not in impl:
+            fail(f"ProgressDlg.cpp missing process boundary {needle}")
     process_text = "".join((root / rel).read_text() for rel in [
         "ConvertDlg.cpp",
         "ExportDlg.cpp",
