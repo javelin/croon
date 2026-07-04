@@ -152,6 +152,29 @@ def main() -> None:
     require(recent_project_service_cpp, "TrimBoth(path)", "RecentProjectService path normalization")
     require(recent_project_service_cpp, "FindPathIndex(normalized, trimmed)", "RecentProjectService de-duplication")
 
+    project_loader_cpp = (root / "ProjectLoader.cpp").read_text()
+    reject(project_loader_cpp, '#include "Croon.h"', "ProjectLoader app shell dependency")
+    for needle in [
+        "#include <CtrlLib/CtrlLib.h>",
+        "#define IMAGECLASS CroonImg",
+        "#define IMAGEFILE <Croon/Croon.iml>",
+        "#include <Draw/iml_header.h>",
+        '#include "AppIdentity.h"',
+        '#include "ConfigService.h"\n#include "Config.h"',
+        '#include "KarData.h"\n#include "Visualization.h"\n#include "FfmpegCommandBuilder.h"',
+        '#include "LyricsTransformer.h"',
+        '#include "MediaProcessRunner.h"',
+        '#include "RecentProjectService.h"',
+        '#include "ProjectLoader.h"',
+    ]:
+        require(project_loader_cpp, needle, "ProjectLoader direct dependency")
+    require(project_loader_cpp, "RecentProjectService::LoadPaths()", "ProjectLoader recent-project load contract")
+    require(project_loader_cpp, "AppIdentity::TempFileName", "ProjectLoader temp-file identity contract")
+    require(project_loader_cpp, "FfmpegCommandBuilder::DumpAttachmentAndGenerateThumbnail", "ProjectLoader ffmpeg command contract")
+    require(project_loader_cpp, "KarData data{LoadFile(infoFilePath)}", "ProjectLoader metadata load contract")
+    require(project_loader_cpp, "LyricsTransformer::TimedToRaw", "ProjectLoader lyric preview contract")
+    require(project_loader_cpp, "process.Start(ffmpeg", "ProjectLoader media process boundary")
+
     lyrics_transformer_h = (root / "LyricsTransformer.h").read_text()
     require(lyrics_transformer_h, "SplitDecorations", "LyricsTransformer decoration contract")
     require(lyrics_transformer_h, "RawToUntimed", "LyricsTransformer raw-to-timed contract")
