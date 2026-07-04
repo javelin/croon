@@ -3,7 +3,12 @@
  * Author: Mark Documento
  */
 
-#include "Croon.h"
+#include <CtrlLib/CtrlLib.h>
+
+using namespace Upp;
+
+#include "Constants.h"
+#include "VidThumbnail.h"
 
 const int VidThumbnail::Width = ThumbnailDim;
 const int VidThumbnail::Height = ThumbnailDim;

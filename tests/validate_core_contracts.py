@@ -321,6 +321,14 @@ def main() -> None:
     require(ui_scaler_cpp, "return value*dx/mx", "UiScaler horizontal calculation")
     require(ui_scaler_cpp, "return value*dy/my", "UiScaler vertical calculation")
 
+    vid_thumbnail_cpp = (root / "VidThumbnail.cpp").read_text()
+    reject(vid_thumbnail_cpp, '#include "Croon.h"', "VidThumbnail app shell dependency")
+    require(vid_thumbnail_cpp, "#include <CtrlLib/CtrlLib.h>", "VidThumbnail direct CtrlLib dependency")
+    require(vid_thumbnail_cpp, '#include "Constants.h"', "VidThumbnail direct thumbnail constants dependency")
+    require(vid_thumbnail_cpp, '#include "VidThumbnail.h"', "VidThumbnail direct self dependency")
+    require(vid_thumbnail_cpp, "const int VidThumbnail::Width = ThumbnailDim", "VidThumbnail width contract")
+    require(vid_thumbnail_cpp, "imgCtrl.SetImage(Rescale(image, sz))", "VidThumbnail rescale contract")
+
     util_cpp = (root / "Util.cpp").read_text()
     reject(util_cpp, '#include "Croon.h"', "Util.cpp app shell dependency")
     require(util_cpp, '#include "Util.h"', "Util.cpp direct facade header dependency")
