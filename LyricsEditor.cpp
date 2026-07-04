@@ -3,7 +3,14 @@
  * Author: Mark Documento
  */
 
-#include "Croon.h"
+#include <CtrlLib/CtrlLib.h>
+#include <GridCtrl/GridCtrl.h>
+
+using namespace Upp;
+
+#include "KarData.h"
+#include "TimeFormatter.h"
+#include "LyricsEditor.h"
 
 LyricsEditorLine::LyricsEditorLine(const TimeLyrics& tl) {
     *this << lineEd.SetFrame(NullFrame()).HSizePos().VSizePos();

@@ -608,6 +608,25 @@ def main() -> None:
     ]:
         require(lyrics_parts_ctrl_cpp, needle, "LyricsPartsCtrl paint contract")
 
+    lyrics_editor_cpp = (root / "LyricsEditor.cpp").read_text()
+    reject(lyrics_editor_cpp, '#include "Croon.h"', "LyricsEditor app shell dependency")
+    for needle in [
+        "#include <CtrlLib/CtrlLib.h>",
+        "#include <GridCtrl/GridCtrl.h>",
+        '#include "KarData.h"',
+        '#include "TimeFormatter.h"',
+        '#include "LyricsEditor.h"',
+    ]:
+        require(lyrics_editor_cpp, needle, "LyricsEditor direct dependency")
+    for needle in [
+        "lineEd.WhenEnter = Proxy(WhenEnter)",
+        "KarData::GetGlobal()",
+        "lyricsList.AddColumn",
+        "TimeFormatter::Format(tl.time)",
+        "editor.CancelSelection()",
+    ]:
+        require(lyrics_editor_cpp, needle, "LyricsEditor behavior contract")
+
 
 if __name__ == "__main__":
     main()
