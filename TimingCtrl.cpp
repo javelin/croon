@@ -3,7 +3,15 @@
  * Author: Mark Documento
  */
 
-#include "Croon.h"
+#include <CtrlLib/CtrlLib.h>
+
+using namespace Upp;
+
+#include "Constants.h"
+#include "KarData.h"
+#include "UiScaler.h"
+#include "TimingLine.h"
+#include "TimingCtrl.h"
 
 TimingCtrl::TimingCtrl(int lineHght) : lineHeight(UiScaler::Y(lineHght)), position(0.0f), listPos(0), timed(0) {
 	scrollBar.Vert().AutoHide();

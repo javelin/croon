@@ -647,6 +647,29 @@ def main() -> None:
     ]:
         require(lyrics_editor_cpp, needle, "LyricsEditor behavior contract")
 
+    timing_ctrl_cpp = (root / "TimingCtrl.cpp").read_text()
+    reject(timing_ctrl_cpp, '#include "Croon.h"', "TimingCtrl app shell dependency")
+    for needle in [
+        "#include <CtrlLib/CtrlLib.h>",
+        '#include "Constants.h"',
+        '#include "KarData.h"',
+        '#include "UiScaler.h"',
+        '#include "TimingLine.h"',
+        '#include "TimingCtrl.h"',
+    ]:
+        require(timing_ctrl_cpp, needle, "TimingCtrl direct dependency")
+    for needle in [
+        "MaxLineLength",
+        "TimingLine(\"(INTRO)\"",
+        "WhenTiming(position)",
+        "ScrollToLineAndCenter",
+        "Vector<TimeLyrics> TimingCtrl::GetTimedLyrics",
+        "void TimingCtrl::SetTimedLyrics",
+        "void TimingCtrl::Adjust",
+        "void TimingCtrl::PlayBackDone",
+    ]:
+        require(timing_ctrl_cpp, needle, "TimingCtrl timing behavior contract")
+
 
 if __name__ == "__main__":
     main()
