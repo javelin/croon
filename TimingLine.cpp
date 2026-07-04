@@ -3,9 +3,38 @@
  * Author: Mark Documento
  */
 
-#include "Croon.h"
+#include <CtrlLib/CtrlLib.h>
+
 #include <iomanip>
 #include <sstream>
+
+using namespace Upp;
+
+#define IMAGECLASS CroonImg
+#define IMAGEFILE <Croon/Croon.iml>
+#include <Draw/iml_header.h>
+
+#include "Constants.h"
+#include "ConfigService.h"
+#include "Config.h"
+#include "UiScaler.h"
+#include "LyricsPartsCtrl.h"
+#include "ListCtrl.h"
+#include "AppIdentity.h"
+#include "KarData.h"
+#include "Visualization.h"
+#include "FfmpegCommandBuilder.h"
+#include "LyricsTransformer.h"
+#include "MediaProcessRunner.h"
+#include "RecentProjectService.h"
+#include "ProjectLoader.h"
+#include "TimeFormatter.h"
+#include "TimingLine.h"
+
+#define LAYOUTFILE <Croon/Croon.lay>
+#include <CtrlCore/lay.h>
+
+#include "TimingLineDlg.h"
 
 const Color TimingLine::NColor{0xF4, 0xF4, 0xF4};
 const Color TimingLine::H1Color{0xCB, 0xE7, 0xFF};

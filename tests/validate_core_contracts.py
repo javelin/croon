@@ -680,6 +680,41 @@ def main() -> None:
     ]:
         require(main_cpp, needle, "main entry-point contract")
 
+    timing_line_cpp = (root / "TimingLine.cpp").read_text()
+    reject(timing_line_cpp, '#include "Croon.h"', "TimingLine app shell dependency")
+    for needle in [
+        "#include <CtrlLib/CtrlLib.h>",
+        "#define IMAGECLASS CroonImg",
+        "#define IMAGEFILE <Croon/Croon.iml>",
+        "#include <Draw/iml_header.h>",
+        '#include "Constants.h"',
+        '#include "ConfigService.h"\n#include "Config.h"',
+        '#include "UiScaler.h"',
+        '#include "LyricsPartsCtrl.h"',
+        '#include "ListCtrl.h"',
+        '#include "AppIdentity.h"',
+        '#include "KarData.h"\n#include "Visualization.h"\n#include "FfmpegCommandBuilder.h"',
+        '#include "LyricsTransformer.h"',
+        '#include "MediaProcessRunner.h"',
+        '#include "RecentProjectService.h"',
+        '#include "ProjectLoader.h"',
+        '#include "TimeFormatter.h"',
+        '#include "TimingLine.h"',
+        "#define LAYOUTFILE <Croon/Croon.lay>",
+        "#include <CtrlCore/lay.h>",
+        '#include "TimingLineDlg.h"',
+    ]:
+        require(timing_line_cpp, needle, "TimingLine direct dependency")
+    for needle in [
+        "LyricsTransformer::SplitDecorations",
+        "PromptYesNoCancel",
+        "TimingLineDlg tlDlg",
+        "TimeFormatter::Format(position)",
+        "frame.SetColor",
+        "WhenTimeButtonsDisabled()",
+    ]:
+        require(timing_line_cpp, needle, "TimingLine behavior contract")
+
 
 if __name__ == "__main__":
     main()
