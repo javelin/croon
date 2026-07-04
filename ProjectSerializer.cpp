@@ -3,7 +3,13 @@
  * Author: Mark Documento
  */
 
-#include "Croon.h"
+#include <Draw/Draw.h>
+
+using namespace Upp;
+
+#include "AppIdentity.h"
+#include "KarData.h"
+#include "ProjectSerializer.h"
 
 String ProjectSerializer::ToJson(const KarData& data) {
     JsonArray tlJsa;

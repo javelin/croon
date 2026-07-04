@@ -350,6 +350,10 @@ def main() -> None:
     require(kar_data_cpp, "ProjectSerializer::FromJson(JSONStr)", "KarData deserialization delegation")
 
     project_serializer_cpp = (root / "ProjectSerializer.cpp").read_text()
+    reject(project_serializer_cpp, '#include "Croon.h"', "ProjectSerializer app shell dependency")
+    require(project_serializer_cpp, '#include "AppIdentity.h"', "ProjectSerializer direct identity dependency")
+    require(project_serializer_cpp, '#include "KarData.h"', "ProjectSerializer direct data dependency")
+    require(project_serializer_cpp, '#include "ProjectSerializer.h"', "ProjectSerializer direct self dependency")
     for key in [
         '"version"',
         '"title"',
