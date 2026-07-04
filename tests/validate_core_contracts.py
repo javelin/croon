@@ -135,6 +135,26 @@ def main() -> None:
     reject(sdl_mixer_audio_player_h, "initialized", "SDLMixerAudioPlayer dead initialized flag")
     reject(sdl_mixer_audio_player_h, "GetPosition", "SDLMixerAudioPlayer dead position declaration")
     reject(sdl_mixer_audio_player_cpp, "initialized", "SDLMixerAudioPlayer dead initialized storage")
+    reject(sdl_mixer_audio_player_cpp, '#include "Croon.h"', "SDLMixerAudioPlayer app shell dependency")
+    for needle in [
+        "#include <Core/Core.h>",
+        "#include <atomic>",
+        "#include <SDL2/SDL.h>",
+        "#include <SDL2/SDL_mixer.h>",
+        '#include "AudioPlayerBase.h"',
+        '#include "SDLMixerAudioPlayer.h"',
+    ]:
+        require(sdl_mixer_audio_player_cpp, needle, "SDLMixerAudioPlayer direct dependency")
+    for needle in [
+        "SDL_Init(SDL_INIT_AUDIO)",
+        "Mix_OpenAudio",
+        "Mix_LoadMUS",
+        "Mix_PlayMusic",
+        "Mix_SetMusicPosition",
+        "Mix_HaltMusic",
+        "WhenError(LastError())",
+    ]:
+        require(sdl_mixer_audio_player_cpp, needle, "SDLMixerAudioPlayer playback contract")
 
     croon_h = (root / "Croon.h").read_text()
     reject(croon_h, "typedef struct Visualization VIZ", "Croon.h visualization alias")
