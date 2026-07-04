@@ -3,7 +3,11 @@
  * Author: Mark Documento
  */
 
-#include "Croon.h"
+#include <CtrlLib/CtrlLib.h>
+
+using namespace Upp;
+
+#include "UiScaler.h"
 
 int UiScaler::X(int value) {
     static int mx = 0, dx = 0;

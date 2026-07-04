@@ -314,6 +314,9 @@ def main() -> None:
     require(ui_scaler_h, "Y(int value)", "UiScaler vertical scale contract")
 
     ui_scaler_cpp = (root / "UiScaler.cpp").read_text()
+    reject(ui_scaler_cpp, '#include "Croon.h"', "UiScaler app shell dependency")
+    require(ui_scaler_cpp, "#include <CtrlLib/CtrlLib.h>", "UiScaler direct CtrlLib dependency")
+    require(ui_scaler_cpp, '#include "UiScaler.h"', "UiScaler direct self dependency")
     require(ui_scaler_cpp, "Ctrl::GetZoomRatio", "UiScaler U++ zoom-ratio contract")
     require(ui_scaler_cpp, "return value*dx/mx", "UiScaler horizontal calculation")
     require(ui_scaler_cpp, "return value*dy/my", "UiScaler vertical calculation")
