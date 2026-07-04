@@ -346,6 +346,11 @@ def main() -> None:
     require(util_h, "return TimeFormatter::Clock", "FormatTime2 compatibility wrapper")
 
     kar_data_cpp = (root / "KarData.cpp").read_text()
+    reject(kar_data_cpp, '#include "Croon.h"', "KarData app shell dependency")
+    require(kar_data_cpp, '#include "AppIdentity.h"', "KarData direct identity dependency")
+    require(kar_data_cpp, '#include "ConfigService.h"\n#include "Config.h"', "KarData ordered config dependencies")
+    require(kar_data_cpp, '#include "KarData.h"', "KarData direct self dependency")
+    require(kar_data_cpp, '#include "ProjectSerializer.h"', "KarData direct serializer dependency")
     require(kar_data_cpp, "ProjectSerializer::ToJson(*this)", "KarData serialization delegation")
     require(kar_data_cpp, "ProjectSerializer::FromJson(JSONStr)", "KarData deserialization delegation")
 

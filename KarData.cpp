@@ -3,7 +3,18 @@
  * Author: Mark Documento
  */
 
-#include "Croon.h"
+#include <Draw/Draw.h>
+
+#include <algorithm>
+#include <iostream>
+
+using namespace Upp;
+
+#include "AppIdentity.h"
+#include "ConfigService.h"
+#include "Config.h"
+#include "KarData.h"
+#include "ProjectSerializer.h"
 
 KarData _karData;
 KarData& KarData::GetGlobal() { return _karData; }
