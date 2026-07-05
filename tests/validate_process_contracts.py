@@ -79,6 +79,44 @@ def main() -> None:
     if "process.Start" not in process_text:
         fail("process dialogs no longer start external processes")
 
+    download_impl = (root / "DownloadDlg.cpp").read_text()
+    if '#include "Croon.h"' in download_impl:
+        fail("DownloadDlg.cpp still depends on Croon.h")
+    for needle in [
+        "#include <CtrlLib/CtrlLib.h>",
+        "#define IMAGECLASS CroonImg",
+        "#define IMAGEFILE <Croon/Croon.iml>",
+        "#include <Draw/iml_header.h>",
+        '#include "Constants.h"',
+        '#include "ConfigService.h"\n#include "Config.h"',
+        '#include "UiScaler.h"',
+        '#include "LyricsPartsCtrl.h"',
+        '#include "ListCtrl.h"',
+        '#include "AppIdentity.h"',
+        '#include "KarData.h"\n#include "Visualization.h"\n#include "FfmpegCommandBuilder.h"',
+        '#include "LyricsTransformer.h"',
+        '#include "MediaProcessRunner.h"',
+        '#include "RecentProjectService.h"',
+        '#include "ProjectLoader.h"',
+        "#define LAYOUTFILE <Croon/Croon.lay>",
+        "#include <CtrlCore/lay.h>",
+        '#include "ProgressDlg.h"',
+        '#include "DownloadDefaults.h"',
+        '#include "DownloadDlg.h"',
+    ]:
+        if needle not in download_impl:
+            fail(f"DownloadDlg.cpp missing direct dependency {needle}")
+    for needle in [
+        "request.Abort()",
+        "HttpRequest::FINISHED - HttpRequest::BEGIN",
+        "request.Url(url).UserAgent(userAgent).New()",
+        "request.Do()",
+        "request.IsSuccess()",
+        "WhenDownloadSuccess(request.GetContent())",
+    ]:
+        if needle not in download_impl:
+            fail(f"DownloadDlg.cpp missing download workflow {needle}")
+
     loader_h = (root / "ProjectLoader.h").read_text()
     if "MediaProcessRunner process;" not in loader_h:
         fail("ProjectLoader does not use MediaProcessRunner")
