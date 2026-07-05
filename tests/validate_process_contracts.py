@@ -79,6 +79,43 @@ def main() -> None:
     if "process.Start" not in process_text:
         fail("process dialogs no longer start external processes")
 
+    convert_impl = (root / "ConvertDlg.cpp").read_text()
+    if '#include "Croon.h"' in convert_impl:
+        fail("ConvertDlg.cpp still depends on Croon.h")
+    for needle in [
+        "#include <CtrlLib/CtrlLib.h>",
+        "#define IMAGECLASS CroonImg",
+        "#define IMAGEFILE <Croon/Croon.iml>",
+        "#include <Draw/iml_header.h>",
+        '#include "Constants.h"',
+        '#include "ConfigService.h"\n#include "Config.h"',
+        '#include "UiScaler.h"',
+        '#include "LyricsPartsCtrl.h"',
+        '#include "ListCtrl.h"',
+        '#include "AppIdentity.h"',
+        '#include "KarData.h"\n#include "Visualization.h"\n#include "FfmpegCommandBuilder.h"',
+        '#include "LyricsTransformer.h"',
+        '#include "MediaProcessRunner.h"',
+        '#include "RecentProjectService.h"',
+        '#include "ProjectLoader.h"',
+        "#define LAYOUTFILE <Croon/Croon.lay>",
+        "#include <CtrlCore/lay.h>",
+        '#include "ProgressDlg.h"',
+        '#include "FfmpegProgressParser.h"',
+        '#include "ConvertDlg.h"',
+    ]:
+        if needle not in convert_impl:
+            fail(f"ConvertDlg.cpp missing direct dependency {needle}")
+    for needle in [
+        "Config::Get(FFMPEG_LOCATION)",
+        "FfmpegProgressParser::ParseTimestamp",
+        "AppIdentity::TempFileName(\".ogg\")",
+        "FfmpegCommandBuilder::ConvertAudioToVorbis(audioPath, outputPath)",
+        "process.Start(ffmpeg",
+    ]:
+        if needle not in convert_impl:
+            fail(f"ConvertDlg.cpp missing conversion workflow {needle}")
+
     download_impl = (root / "DownloadDlg.cpp").read_text()
     if '#include "Croon.h"' in download_impl:
         fail("DownloadDlg.cpp still depends on Croon.h")
