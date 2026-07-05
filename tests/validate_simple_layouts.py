@@ -109,6 +109,43 @@ def main() -> None:
         if needle not in lyrics_parts_impl:
             fail(f"LyricsPartsDlg.cpp missing behavior {needle}")
 
+    settings_impl = (root / "SettingsDlg.cpp").read_text()
+    if '#include "Croon.h"' in settings_impl:
+        fail("SettingsDlg.cpp still depends on Croon.h")
+    for needle in [
+        "#include <CtrlLib/CtrlLib.h>",
+        "#include <algorithm>",
+        "#define IMAGECLASS CroonImg",
+        "#define IMAGEFILE <Croon/Croon.iml>",
+        "#include <Draw/iml_header.h>",
+        '#include "Constants.h"',
+        '#include "ConfigService.h"\n#include "Config.h"',
+        '#include "UiScaler.h"',
+        '#include "LyricsPartsCtrl.h"',
+        '#include "ListCtrl.h"',
+        '#include "AppIdentity.h"',
+        '#include "KarData.h"\n#include "Visualization.h"\n#include "FfmpegCommandBuilder.h"',
+        '#include "LyricsTransformer.h"',
+        '#include "MediaProcessRunner.h"',
+        '#include "RecentProjectService.h"',
+        '#include "ProjectLoader.h"',
+        "#define LAYOUTFILE <Croon/Croon.lay>",
+        "#include <CtrlCore/lay.h>",
+        '#include "SettingsDlg.h"',
+    ]:
+        if needle not in settings_impl:
+            fail(f"SettingsDlg.cpp missing direct dependency {needle}")
+    for needle in [
+        'CtrlLayout(*this, "Settings")',
+        "Config::Get(FFMPEG_LOCATION)",
+        "std::min(Config::MaxFontSize, std::max(Config::MinFontSize, fontSize))",
+        "fs.ExecuteOpen(\"Find Ffmpeg Executable...\")",
+        "Config::Set(LYRICS_PREFIX",
+        "Config::Set(FONT_SIZE",
+    ]:
+        if needle not in settings_impl:
+            fail(f"SettingsDlg.cpp missing behavior {needle}")
+
     croon_h = (root / "Croon.h").read_text()
     if croon_h.find('#include "LyricsPartsCtrl.h"') > croon_h.find("#include <CtrlCore/lay.h>"):
         fail("Croon.h includes layouts before custom control declarations")
