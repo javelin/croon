@@ -3,7 +3,41 @@
  * Author: Mark Documento
  */
 
-#include "Croon.h"
+#include <CtrlLib/CtrlLib.h>
+
+using namespace Upp;
+
+#define IMAGECLASS CroonImg
+#define IMAGEFILE <Croon/Croon.iml>
+#include <Draw/iml_header.h>
+
+#include "Constants.h"
+#include "ConfigService.h"
+#include "Config.h"
+#include "UiScaler.h"
+#include "LyricsPartsCtrl.h"
+#include "ListCtrl.h"
+#include "AppIdentity.h"
+#include "AppPaths.h"
+#include "KarData.h"
+#include "Visualization.h"
+#include "FfmpegCommandBuilder.h"
+#include "LyricsTransformer.h"
+#include "MediaProcessRunner.h"
+#include "RecentProjectService.h"
+#include "ProjectLoader.h"
+#include "Page.h"
+
+#define LAYOUTFILE <Croon/Croon.lay>
+#include <CtrlCore/lay.h>
+
+#include "ProgressDlg.h"
+#include "GatherDlg.h"
+#include "SaveProjectDlg.h"
+#include "VidThumbnail.h"
+#include "Page3.h"
+
+GatherDlg& GetGatherDlg();
 
 Page3::Page3(String gatherKey) : vidCount(0), gatherKey(gatherKey) {
     pageName = "Background Video";

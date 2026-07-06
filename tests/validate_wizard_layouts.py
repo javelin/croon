@@ -132,6 +132,37 @@ def main() -> None:
             fail(f"Page2.cpp missing behavior {needle}")
 
     page3_impl = (root / "Page3.cpp").read_text()
+    if '#include "Croon.h"' in page3_impl:
+        fail("Page3.cpp still depends on Croon.h")
+    for needle in [
+        "#include <CtrlLib/CtrlLib.h>",
+        "#define IMAGECLASS CroonImg",
+        "#define IMAGEFILE <Croon/Croon.iml>",
+        "#include <Draw/iml_header.h>",
+        '#include "Constants.h"',
+        '#include "ConfigService.h"\n#include "Config.h"',
+        '#include "UiScaler.h"',
+        '#include "LyricsPartsCtrl.h"',
+        '#include "ListCtrl.h"',
+        '#include "AppIdentity.h"',
+        '#include "AppPaths.h"',
+        '#include "KarData.h"\n#include "Visualization.h"\n#include "FfmpegCommandBuilder.h"',
+        '#include "LyricsTransformer.h"',
+        '#include "MediaProcessRunner.h"',
+        '#include "RecentProjectService.h"',
+        '#include "ProjectLoader.h"',
+        '#include "Page.h"',
+        "#define LAYOUTFILE <Croon/Croon.lay>",
+        "#include <CtrlCore/lay.h>",
+        '#include "ProgressDlg.h"',
+        '#include "GatherDlg.h"',
+        '#include "SaveProjectDlg.h"',
+        '#include "VidThumbnail.h"',
+        '#include "Page3.h"',
+        "GatherDlg& GetGatherDlg();",
+    ]:
+        if needle not in page3_impl:
+            fail(f"Page3.cpp missing direct dependency {needle}")
     if "Page3::Page3(String gatherKey)" not in page3_impl:
         fail("Page3 dynamic constructor was unexpectedly removed")
     constructor_body = page3_impl.split("Page3::Page3(String gatherKey)", 1)[-1].split("\n}\n", 1)[0]
@@ -141,6 +172,20 @@ def main() -> None:
     page3_header = (root / "Page3.h").read_text()
     if "TabCtrl tab;" in page3_header:
         fail("Page3.h still declares layout member TabCtrl tab")
+    for needle in [
+        "AppPaths::FindFiles(videoDir, \"*.mp4\")",
+        "AppPaths::DataDirectory()",
+        "Visualization::Thumbnail(\"@@freqs\")",
+        "GetGatherDlg().WhenVideoAdded",
+        "LyricsTransformer::RawToUntimed(data)",
+        "AppIdentity::TempFileName(\".json\")",
+        "SaveProjectDlg saveDlg",
+        "Config::Set(PROJECT_DIR",
+        "new VidThumbnail(path, img)",
+        "WhenSelected(path, tnPath, img)",
+    ]:
+        if needle not in page3_impl:
+            fail(f"Page3.cpp missing video/save workflow {needle}")
 
     wizard_header = (root / "WizardDlg.h").read_text()
     for layout_member in ["Page1 page1;", "Page2 page2;", "Page3 page3;"]:
