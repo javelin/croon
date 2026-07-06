@@ -64,6 +64,84 @@ def main() -> None:
         if layout_member in mainwindow_h:
             fail(f"MainWindow.h still declares layout member {layout_member}")
 
+    mainwindow_impl = (root / "MainWindow.cpp").read_text()
+    if '#include "Croon.h"' in mainwindow_impl:
+        fail("MainWindow.cpp still depends on Croon.h")
+    for needle in [
+        "#include <CtrlLib/CtrlLib.h>",
+        "#include <atomic>",
+        "#include <ctime>",
+        "#include <filesystem>",
+        "#include <SDL2/SDL.h>",
+        "#include <SDL2/SDL_mixer.h>",
+        '#include "Constants.h"',
+        '#include "AppIdentity.h"',
+        '#include "AppPaths.h"',
+        '#include "ConfigService.h"\n#include "Config.h"',
+        '#include "KarData.h"',
+        '#include "LyricsTransformer.h"',
+        '#include "SubtitleGenerator.h"',
+        '#include "TimeFormatter.h"',
+        '#include "UiScaler.h"',
+        '#include "GenreCatalog.h"',
+        '#include "RichTextBuilder.h"',
+        '#include "TextTools.h"',
+        '#include "Visualization.h"\n#include "FfmpegCommandBuilder.h"',
+        '#include "FfmpegProgressParser.h"',
+        '#include "MediaProcessRunner.h"',
+        '#include "RecentProjectService.h"',
+        '#include "ListCtrl.h"',
+        '#include "LyricsPartsCtrl.h"',
+        '#include "ProjectLoader.h"',
+        '#include "Page.h"',
+        '#include "LyricsDownloadService.h"',
+        "#define LAYOUTFILE <Croon/Croon.lay>",
+        "#include <CtrlCore/lay.h>",
+        '#include "ProgressDlg.h"',
+        '#include "ConvertDlg.h"',
+        '#include "OpenProjectDlg.h"',
+        '#include "SaveProjectDlg.h"',
+        '#include "ExportDlg.h"',
+        '#include "LyricsPartsDlg.h"',
+        '#include "TimingLine.h"',
+        '#include "TimingCtrl.h"',
+        "#define LAYOUTFILE <Croon/CroonTimingDlg.lay>",
+        '#include "AudioPlayerBase.h"',
+        '#include "AudioPlayer.h"',
+        '#include "SDLMixerAudioPlayer.h"',
+        '#include "MusicPlayer.h"',
+        '#include "TimingDlg.h"',
+        '#include "GatherDlg.h"',
+        '#include "VidThumbnail.h"',
+        '#include "Page1.h"',
+        '#include "Page2.h"',
+        '#include "Page3.h"',
+        "#define LAYOUTFILE <Croon/CroonWizardShell.lay>",
+        "#define LAYOUTFILE <Croon/CroonVideoDlg.lay>",
+        '#include "VideoDlg.h"',
+        '#include "WizardDlg.h"',
+        '#include "Project.h"',
+        '#include "ProjectList.h"',
+        "#define LAYOUTFILE <Croon/CroonMainWindow.lay>",
+        '#include "SettingsDlg.h"',
+        '#include "MainWindow.h"',
+    ]:
+        if needle not in mainwindow_impl:
+            fail(f"MainWindow.cpp missing direct dependency {needle}")
+    for needle in [
+        "Title(AppIdentity::ProductName())",
+        "Config::GetInt(WIN_X",
+        "project.WhenProjectSaved",
+        "projects.WhenOpeningProject",
+        "projects.WhenLoadingProject",
+        "projects.WhenProjectLoaded",
+        "SettingsDlg sDlg",
+        "project.MainMenu()(menu)",
+        "PromptOK(AppIdentity::VersionText())",
+    ]:
+        if needle not in mainwindow_impl:
+            fail(f"MainWindow.cpp missing main-window workflow {needle}")
+
     project_h = (root / "Project.h").read_text()
     for runtime_member in ["DocEdit lyricsEd;", "RichTextCtrl previewRT;"]:
         if runtime_member not in project_h:
