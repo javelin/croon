@@ -3,7 +3,69 @@
  * Author: Mark Documento
  */
 
-#include "Croon.h"
+#include <CtrlLib/CtrlLib.h>
+
+#include <atomic>
+#include <ctime>
+#ifdef PLATFORM_POSIX
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
+#else
+#include <SDL.h>
+#include <SDL_mixer.h>
+#endif
+
+using namespace Upp;
+
+#define IMAGECLASS CroonImg
+#define IMAGEFILE <Croon/Croon.iml>
+#include <Draw/iml_header.h>
+
+#include "Constants.h"
+#include "AppIdentity.h"
+#include "ConfigService.h"
+#include "Config.h"
+#include "UiScaler.h"
+#include "KarData.h"
+#include "LyricsTransformer.h"
+#include "RichTextBuilder.h"
+#include "TextTools.h"
+#include "Visualization.h"
+#include "FfmpegCommandBuilder.h"
+#include "MediaProcessRunner.h"
+#include "RecentProjectService.h"
+#include "ListCtrl.h"
+#include "ProjectLoader.h"
+#include "LyricsPartsCtrl.h"
+#include "GenreCatalog.h"
+#include "LyricsDownloadService.h"
+#include "AppPaths.h"
+#include "Page.h"
+
+#define LAYOUTFILE <Croon/Croon.lay>
+#include <CtrlCore/lay.h>
+
+#include "ProgressDlg.h"
+#include "ConvertDlg.h"
+#include "OpenProjectDlg.h"
+#include "AudioPlayerBase.h"
+#include "AudioPlayer.h"
+#include "SDLMixerAudioPlayer.h"
+#include "MusicPlayer.h"
+#include "GatherDlg.h"
+#include "SaveProjectDlg.h"
+#include "VidThumbnail.h"
+#include "Page1.h"
+#include "Page2.h"
+#include "Page3.h"
+
+#define LAYOUTFILE <Croon/CroonWizardShell.lay>
+#include <CtrlCore/lay.h>
+
+#include "WizardDlg.h"
+#include "ProjectList.h"
+
+WizardDlg& GetWizardDlg();
 
 ProjectItemCtrl::ProjectItemCtrl(const ProjectItem& item) :
                     item(item) {

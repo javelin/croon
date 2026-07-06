@@ -69,6 +69,70 @@ def main() -> None:
         if runtime_member not in project_h:
             fail(f"Project.h missing runtime tab member {runtime_member}")
 
+    project_list_impl = (root / "ProjectList.cpp").read_text()
+    if '#include "Croon.h"' in project_list_impl:
+        fail("ProjectList.cpp still depends on Croon.h")
+    for needle in [
+        "#include <CtrlLib/CtrlLib.h>",
+        "#include <atomic>",
+        "#include <ctime>",
+        "#include <SDL2/SDL.h>",
+        "#include <SDL2/SDL_mixer.h>",
+        '#include "Constants.h"',
+        '#include "AppIdentity.h"',
+        '#include "ConfigService.h"\n#include "Config.h"',
+        '#include "UiScaler.h"',
+        '#include "KarData.h"',
+        '#include "LyricsTransformer.h"',
+        '#include "RichTextBuilder.h"',
+        '#include "TextTools.h"',
+        '#include "Visualization.h"\n#include "FfmpegCommandBuilder.h"',
+        '#include "MediaProcessRunner.h"',
+        '#include "RecentProjectService.h"',
+        '#include "ListCtrl.h"',
+        '#include "ProjectLoader.h"',
+        '#include "LyricsPartsCtrl.h"',
+        '#include "GenreCatalog.h"',
+        '#include "LyricsDownloadService.h"',
+        '#include "AppPaths.h"',
+        '#include "Page.h"',
+        "#define LAYOUTFILE <Croon/Croon.lay>",
+        "#include <CtrlCore/lay.h>",
+        '#include "ProgressDlg.h"',
+        '#include "ConvertDlg.h"',
+        '#include "OpenProjectDlg.h"',
+        '#include "AudioPlayerBase.h"',
+        '#include "AudioPlayer.h"',
+        '#include "SDLMixerAudioPlayer.h"',
+        '#include "MusicPlayer.h"',
+        '#include "GatherDlg.h"',
+        '#include "SaveProjectDlg.h"',
+        '#include "VidThumbnail.h"',
+        '#include "Page1.h"',
+        '#include "Page2.h"',
+        '#include "Page3.h"',
+        "#define LAYOUTFILE <Croon/CroonWizardShell.lay>",
+        '#include "WizardDlg.h"',
+        '#include "ProjectList.h"',
+        "WizardDlg& GetWizardDlg();",
+    ]:
+        if needle not in project_list_impl:
+            fail(f"ProjectList.cpp missing direct dependency {needle}")
+    for needle in [
+        "RTHelper rth",
+        "loader.WhenProjectLoaded",
+        "OpenProjectDlg opDlg",
+        "MusicPlayer::GetPlayer().Open(data.audioFilePath)",
+        "RecentProjectService::SavePaths(vs)",
+        "ConvertDlg conDlg",
+        "GetWizardDlg()",
+        "AppIdentity::ProjectTypeName()",
+        "TextTools::ShortenMiddle(projects[index].path, 255)",
+        "LyricsTransformer::TimedToRaw(data.timedLyrics, true)",
+    ]:
+        if needle not in project_list_impl:
+            fail(f"ProjectList.cpp missing project-list workflow {needle}")
+
     croon_h = (root / "Croon.h").read_text()
     if croon_h.find('#include "ProjectLoader.h"') > croon_h.find("#include <CtrlCore/lay.h>"):
         fail("Croon.h includes layouts before ProjectLoader declaration")
