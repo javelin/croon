@@ -249,7 +249,8 @@ def main() -> None:
         '#include "LyricsPartsCtrl.h"',
         '#include "ListCtrl.h"',
         '#include "AppIdentity.h"',
-        '#include "KarData.h"\n#include "Visualization.h"\n#include "FfmpegCommandBuilder.h"',
+        '#include "KarData.h"\n#include "ProjectSerializer.h"',
+        '#include "ProjectSerializer.h"\n#include "Visualization.h"\n#include "FfmpegCommandBuilder.h"',
         '#include "LyricsTransformer.h"',
         '#include "MediaProcessRunner.h"',
         '#include "RecentProjectService.h"',
@@ -263,7 +264,10 @@ def main() -> None:
             fail(f"OpenProjectDlg.cpp missing direct dependency {needle}")
     for needle in [
         "Config::Get(FFMPEG_LOCATION)",
-        "KarData temp{LoadFile(data->infoFilePath)}",
+        "String metadata = LoadFile(data->infoFilePath)",
+        "ProjectSerializer::SupportsJson(metadata)",
+        "ProjectSerializer::ReadVersion(metadata)",
+        "KarData temp{metadata}",
         "LyricsTransformer::TimedToRaw(temp.timedLyrics)",
         "Visualization::Thumbnail(data->origVideoFile)",
         "FfmpegCommandBuilder::ProjectExtractAudioAndInfo",

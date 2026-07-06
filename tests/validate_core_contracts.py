@@ -561,6 +561,7 @@ def main() -> None:
     require(project_serializer_h, "NormalizeReadVersion", "ProjectSerializer legacy read-version normalization contract")
     require(project_serializer_h, "SupportsVersion", "ProjectSerializer version-support contract")
     require(project_serializer_h, "ReadVersion", "ProjectSerializer direct version-read contract")
+    require(project_serializer_h, "SupportsJson", "ProjectSerializer JSON support contract")
 
     ffmpeg_h = (root / "FfmpegCommandBuilder.h").read_text()
     reject(ffmpeg_h, "VIZ::", "ffmpeg visualization alias dependency")

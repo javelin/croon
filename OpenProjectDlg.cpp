@@ -19,6 +19,7 @@ using namespace Upp;
 #include "ListCtrl.h"
 #include "AppIdentity.h"
 #include "KarData.h"
+#include "ProjectSerializer.h"
 #include "Visualization.h"
 #include "FfmpegCommandBuilder.h"
 #include "LyricsTransformer.h"
@@ -46,7 +47,14 @@ OpenProjectDlg::OpenProjectDlg() : phase(Audio) {
     WhenProcessEnded << [=] (int code) {
         if (code == 0) {
             if (phase == Audio) {
-                KarData temp{LoadFile(data->infoFilePath)};
+                String metadata = LoadFile(data->infoFilePath);
+                if (!ProjectSerializer::SupportsJson(metadata)) {
+                    Exclamation(Format("Unable to open project metadata version %s. This Croon version supports project metadata version %s.",
+                                        ProjectSerializer::ReadVersion(metadata),
+                                        ProjectSerializer::FormatVersion()));
+                    return true;
+                }
+                KarData temp{metadata};
                 temp.projectPath = data->projectPath;
                 temp.audioFilePath = data->audioFilePath;
                 temp.infoFilePath = data->infoFilePath;

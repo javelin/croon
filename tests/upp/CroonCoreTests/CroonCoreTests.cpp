@@ -141,6 +141,12 @@ CONSOLE_APP_MAIN
 		"ProjectSerializer preserves unsupported explicit metadata version on direct read");
 	Check(!ProjectSerializer::SupportsVersion(ProjectSerializer::ReadVersion("{\"version\":\"9.9\",\"timedLyrics\":[],\"parts\":[]}")),
 		"ProjectSerializer reports unsupported direct-read metadata versions");
+	Check(ProjectSerializer::SupportsJson("{\"version\":\"1.0\",\"timedLyrics\":[],\"parts\":[]}"),
+		"ProjectSerializer supports current project metadata JSON");
+	Check(ProjectSerializer::SupportsJson("{\"timedLyrics\":[],\"parts\":[]}"),
+		"ProjectSerializer supports legacy unversioned project metadata JSON");
+	Check(!ProjectSerializer::SupportsJson("{\"version\":\"9.9\",\"timedLyrics\":[],\"parts\":[]}"),
+		"ProjectSerializer rejects unsupported explicit project metadata JSON");
 	String serialized = ProjectSerializer::ToJson(song);
 	const char *projectKeys[] = {
 		"\"version\"", "\"title\"", "\"artist\"", "\"genre\"", "\"year\"", "\"writer\"",
