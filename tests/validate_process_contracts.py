@@ -154,6 +154,48 @@ def main() -> None:
         if needle not in download_impl:
             fail(f"DownloadDlg.cpp missing download workflow {needle}")
 
+    export_impl = (root / "ExportDlg.cpp").read_text()
+    if '#include "Croon.h"' in export_impl:
+        fail("ExportDlg.cpp still depends on Croon.h")
+    for needle in [
+        "#include <CtrlLib/CtrlLib.h>",
+        "#define IMAGECLASS CroonImg",
+        "#define IMAGEFILE <Croon/Croon.iml>",
+        "#include <Draw/iml_header.h>",
+        '#include "Constants.h"',
+        '#include "ConfigService.h"\n#include "Config.h"',
+        '#include "UiScaler.h"',
+        '#include "LyricsPartsCtrl.h"',
+        '#include "ListCtrl.h"',
+        '#include "AppIdentity.h"',
+        '#include "KarData.h"\n#include "Visualization.h"\n#include "FfmpegCommandBuilder.h"',
+        '#include "LyricsTransformer.h"',
+        '#include "MediaProcessRunner.h"',
+        '#include "RecentProjectService.h"',
+        '#include "ProjectLoader.h"',
+        "#define LAYOUTFILE <Croon/Croon.lay>",
+        "#include <CtrlCore/lay.h>",
+        '#include "ProgressDlg.h"',
+        '#include "FfmpegProgressParser.h"',
+        '#include "SubtitleGenerator.h"',
+        '#include "ExportDlg.h"',
+    ]:
+        if needle not in export_impl:
+            fail(f"ExportDlg.cpp missing direct dependency {needle}")
+    for needle in [
+        "Config::Get(FFMPEG_LOCATION)",
+        "FfmpegProgressParser::ParseTimestamp",
+        "AppIdentity::TempFileName(\".ass\")",
+        "SubtitleGenerator::ToAss(*data, 4)",
+        "FfmpegCommandBuilder::DehissAudio",
+        "FfmpegCommandBuilder::ExportWithVisualization",
+        "FfmpegCommandBuilder::ExportWithBackgroundVideo",
+        "FfmpegCommandBuilder::GenerateCoverImage",
+        "process.Start(ffmpeg",
+    ]:
+        if needle not in export_impl:
+            fail(f"ExportDlg.cpp missing export workflow {needle}")
+
     gather_impl = (root / "GatherDlg.cpp").read_text()
     if '#include "Croon.h"' in gather_impl:
         fail("GatherDlg.cpp still depends on Croon.h")
