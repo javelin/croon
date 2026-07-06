@@ -3,7 +3,34 @@
  * Author: Mark Documento
  */
 
-#include "Croon.h"
+#include <CtrlLib/CtrlLib.h>
+
+using namespace Upp;
+
+#define IMAGECLASS CroonImg
+#define IMAGEFILE <Croon/Croon.iml>
+#include <Draw/iml_header.h>
+
+#include "Constants.h"
+#include "ConfigService.h"
+#include "Config.h"
+#include "UiScaler.h"
+#include "LyricsPartsCtrl.h"
+#include "ListCtrl.h"
+#include "AppIdentity.h"
+#include "KarData.h"
+#include "Visualization.h"
+#include "FfmpegCommandBuilder.h"
+#include "LyricsTransformer.h"
+#include "MediaProcessRunner.h"
+#include "RecentProjectService.h"
+#include "ProjectLoader.h"
+
+#define LAYOUTFILE <Croon/Croon.lay>
+#include <CtrlCore/lay.h>
+
+#include "ProgressDlg.h"
+#include "OpenProjectDlg.h"
 
 #define _PATTERN_1 "Input #0.+?("
 #define _PATTERN_2 ")\\s*?:\\s*(.+?)\n"

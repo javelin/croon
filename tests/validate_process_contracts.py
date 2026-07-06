@@ -193,6 +193,46 @@ def main() -> None:
         if needle not in gather_impl:
             fail(f"GatherDlg.cpp missing thumbnail discovery workflow {needle}")
 
+    open_impl = (root / "OpenProjectDlg.cpp").read_text()
+    if '#include "Croon.h"' in open_impl:
+        fail("OpenProjectDlg.cpp still depends on Croon.h")
+    for needle in [
+        "#include <CtrlLib/CtrlLib.h>",
+        "#define IMAGECLASS CroonImg",
+        "#define IMAGEFILE <Croon/Croon.iml>",
+        "#include <Draw/iml_header.h>",
+        '#include "Constants.h"',
+        '#include "ConfigService.h"\n#include "Config.h"',
+        '#include "UiScaler.h"',
+        '#include "LyricsPartsCtrl.h"',
+        '#include "ListCtrl.h"',
+        '#include "AppIdentity.h"',
+        '#include "KarData.h"\n#include "Visualization.h"\n#include "FfmpegCommandBuilder.h"',
+        '#include "LyricsTransformer.h"',
+        '#include "MediaProcessRunner.h"',
+        '#include "RecentProjectService.h"',
+        '#include "ProjectLoader.h"',
+        "#define LAYOUTFILE <Croon/Croon.lay>",
+        "#include <CtrlCore/lay.h>",
+        '#include "ProgressDlg.h"',
+        '#include "OpenProjectDlg.h"',
+    ]:
+        if needle not in open_impl:
+            fail(f"OpenProjectDlg.cpp missing direct dependency {needle}")
+    for needle in [
+        "Config::Get(FFMPEG_LOCATION)",
+        "KarData temp{LoadFile(data->infoFilePath)}",
+        "LyricsTransformer::TimedToRaw(temp.timedLyrics)",
+        "Visualization::Thumbnail(data->origVideoFile)",
+        "FfmpegCommandBuilder::ProjectExtractAudioAndInfo",
+        "FfmpegCommandBuilder::ProjectExtractVideo",
+        "FfmpegCommandBuilder::GenerateThumbnail",
+        "StreamRaster::LoadFileAny(data->thumbnailFilePath)",
+        "process.Start(ffmpeg",
+    ]:
+        if needle not in open_impl:
+            fail(f"OpenProjectDlg.cpp missing project-open workflow {needle}")
+
     save_impl = (root / "SaveProjectDlg.cpp").read_text()
     if '#include "Croon.h"' in save_impl:
         fail("SaveProjectDlg.cpp still depends on Croon.h")
