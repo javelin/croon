@@ -69,6 +69,77 @@ def main() -> None:
         if runtime_member not in project_h:
             fail(f"Project.h missing runtime tab member {runtime_member}")
 
+    project_impl = (root / "Project.cpp").read_text()
+    if '#include "Croon.h"' in project_impl:
+        fail("Project.cpp still depends on Croon.h")
+    for needle in [
+        "#include <CtrlLib/CtrlLib.h>",
+        "#include <atomic>",
+        "#include <filesystem>",
+        "#include <SDL2/SDL.h>",
+        "#include <SDL2/SDL_mixer.h>",
+        '#include "Constants.h"',
+        '#include "AppIdentity.h"',
+        '#include "AppPaths.h"',
+        '#include "ConfigService.h"\n#include "Config.h"',
+        '#include "KarData.h"',
+        '#include "LyricsTransformer.h"',
+        '#include "SubtitleGenerator.h"',
+        '#include "TimeFormatter.h"',
+        '#include "UiScaler.h"',
+        '#include "GenreCatalog.h"',
+        '#include "Visualization.h"\n#include "FfmpegCommandBuilder.h"',
+        '#include "FfmpegProgressParser.h"',
+        '#include "MediaProcessRunner.h"',
+        '#include "RecentProjectService.h"',
+        '#include "ListCtrl.h"',
+        '#include "LyricsPartsCtrl.h"',
+        '#include "ProjectLoader.h"',
+        '#include "Page.h"',
+        '#include "LyricsDownloadService.h"',
+        '#include "TextTools.h"',
+        "#define LAYOUTFILE <Croon/Croon.lay>",
+        "#include <CtrlCore/lay.h>",
+        '#include "ProgressDlg.h"',
+        '#include "SaveProjectDlg.h"',
+        '#include "ExportDlg.h"',
+        '#include "ConvertDlg.h"',
+        '#include "LyricsPartsDlg.h"',
+        '#include "TimingLine.h"',
+        '#include "TimingCtrl.h"',
+        "#define LAYOUTFILE <Croon/CroonTimingDlg.lay>",
+        '#include "AudioPlayerBase.h"',
+        '#include "AudioPlayer.h"',
+        '#include "SDLMixerAudioPlayer.h"',
+        '#include "MusicPlayer.h"',
+        '#include "TimingDlg.h"',
+        '#include "GatherDlg.h"',
+        '#include "VidThumbnail.h"',
+        '#include "Page3.h"',
+        "#define LAYOUTFILE <Croon/CroonVideoDlg.lay>",
+        '#include "VideoDlg.h"',
+        '#include "Project.h"',
+        "VideoDlg& GetVideoDlg();",
+    ]:
+        if needle not in project_impl:
+            fail(f"Project.cpp missing direct dependency {needle}")
+    for needle in [
+        "GenreCatalog::List()",
+        "SubtitleGenerator::ToRichAss(KarData::GetGlobal())",
+        "GetVideoDlg()",
+        "SaveProjectDlg().Run(KarData::GetGlobal())",
+        "LyricsTransformer::RawToUntimed(data)",
+        "TimingDlg tDlg",
+        "LyricsPartsDlg lpDlg",
+        "ConvertDlg conDlg",
+        "MusicPlayer::GetPlayer().Open(conDlg.GetConvertedFile())",
+        "std::filesystem::path savePath",
+        "ExportDlg expDlg",
+        "menu.Sub(\"Project\"",
+    ]:
+        if needle not in project_impl:
+            fail(f"Project.cpp missing editor workflow {needle}")
+
     project_list_impl = (root / "ProjectList.cpp").read_text()
     if '#include "Croon.h"' in project_list_impl:
         fail("ProjectList.cpp still depends on Croon.h")

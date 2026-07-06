@@ -3,7 +3,77 @@
  * Author: Mark Documento
  */
 
-#include "Croon.h"
+#include <CtrlLib/CtrlLib.h>
+
+#include <atomic>
+#include <filesystem>
+#ifdef PLATFORM_POSIX
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
+#else
+#include <SDL.h>
+#include <SDL_mixer.h>
+#endif
+
+using namespace Upp;
+
+#define IMAGECLASS CroonImg
+#define IMAGEFILE <Croon/Croon.iml>
+#include <Draw/iml_header.h>
+
+#include "Constants.h"
+#include "AppIdentity.h"
+#include "AppPaths.h"
+#include "ConfigService.h"
+#include "Config.h"
+#include "KarData.h"
+#include "LyricsTransformer.h"
+#include "SubtitleGenerator.h"
+#include "TimeFormatter.h"
+#include "UiScaler.h"
+#include "GenreCatalog.h"
+#include "Visualization.h"
+#include "FfmpegCommandBuilder.h"
+#include "FfmpegProgressParser.h"
+#include "MediaProcessRunner.h"
+#include "RecentProjectService.h"
+#include "ListCtrl.h"
+#include "LyricsPartsCtrl.h"
+#include "ProjectLoader.h"
+#include "Page.h"
+#include "LyricsDownloadService.h"
+#include "TextTools.h"
+
+#define LAYOUTFILE <Croon/Croon.lay>
+#include <CtrlCore/lay.h>
+
+#include "ProgressDlg.h"
+#include "SaveProjectDlg.h"
+#include "ExportDlg.h"
+#include "ConvertDlg.h"
+#include "LyricsPartsDlg.h"
+#include "TimingLine.h"
+#include "TimingCtrl.h"
+
+#define LAYOUTFILE <Croon/CroonTimingDlg.lay>
+#include <CtrlCore/lay.h>
+
+#include "AudioPlayerBase.h"
+#include "AudioPlayer.h"
+#include "SDLMixerAudioPlayer.h"
+#include "MusicPlayer.h"
+#include "TimingDlg.h"
+#include "GatherDlg.h"
+#include "VidThumbnail.h"
+#include "Page3.h"
+
+#define LAYOUTFILE <Croon/CroonVideoDlg.lay>
+#include <CtrlCore/lay.h>
+
+#include "VideoDlg.h"
+#include "Project.h"
+
+VideoDlg& GetVideoDlg();
 
 Project::Project() : videoPath("") {
     CtrlLayout(*this);
