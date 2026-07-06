@@ -152,12 +152,53 @@ def main() -> None:
             fail(f"VideoDlg.h still declares layout member {layout_member}")
 
     video_impl = (root / "VideoDlg.cpp").read_text()
+    if '#include "Croon.h"' in video_impl:
+        fail("VideoDlg.cpp still depends on Croon.h")
+    for needle in [
+        "#include <CtrlLib/CtrlLib.h>",
+        "#define IMAGECLASS CroonImg",
+        "#define IMAGEFILE <Croon/Croon.iml>",
+        "#include <Draw/iml_header.h>",
+        '#include "Constants.h"',
+        '#include "ConfigService.h"\n#include "Config.h"',
+        '#include "UiScaler.h"',
+        '#include "LyricsPartsCtrl.h"',
+        '#include "ListCtrl.h"',
+        '#include "AppIdentity.h"',
+        '#include "AppPaths.h"',
+        '#include "KarData.h"\n#include "Visualization.h"\n#include "FfmpegCommandBuilder.h"',
+        '#include "LyricsTransformer.h"',
+        '#include "MediaProcessRunner.h"',
+        '#include "RecentProjectService.h"',
+        '#include "ProjectLoader.h"',
+        '#include "Page.h"',
+        "#define LAYOUTFILE <Croon/Croon.lay>",
+        "#include <CtrlCore/lay.h>",
+        '#include "ProgressDlg.h"',
+        '#include "GatherDlg.h"',
+        '#include "SaveProjectDlg.h"',
+        '#include "VidThumbnail.h"',
+        '#include "Page3.h"',
+        "#define LAYOUTFILE <Croon/CroonVideoDlg.lay>",
+        '#include "VideoDlg.h"',
+    ]:
+        if needle not in video_impl:
+            fail(f"VideoDlg.cpp missing direct dependency {needle}")
     if "CtrlLayout(*this" not in video_impl:
         fail("VideoDlg constructor does not call CtrlLayout")
     constructor_body = video_impl.split("VideoDlg::VideoDlg()", 1)[-1].split("\n}\n", 1)[0]
     for line in constructor_body.splitlines():
         if "*this <<" in line and "GatherButton" not in line:
             fail("VideoDlg still hardcodes non-gather child placement")
+    for needle in [
+        'page3.GatherButton(true, true, "Find Videos")',
+        "page3.WhenSelected",
+        "SetData(path)",
+        "tnPath = tnpath",
+        "okBtn.Enable()",
+    ]:
+        if needle not in video_impl:
+            fail(f"VideoDlg.cpp missing selection workflow {needle}")
 
 
 if __name__ == "__main__":
