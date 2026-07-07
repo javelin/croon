@@ -21,10 +21,12 @@ def reject(text: str, needle: str, label: str) -> None:
 
 def validate_no_production_utility_wrapper_calls(root: Path) -> None:
     wrappers = [
+        "BuildAzLyricsUrl",
         "CleanSpacing",
         "ComputeFfmpegTs",
         "DownloadLyrics",
         "DownloadLyricsWithStatus",
+        "ExtractAzLyrics",
         "FormatTime",
         "FormatTime2",
         "FormatTimeASS",
@@ -55,6 +57,8 @@ def validate_no_production_utility_wrapper_calls(root: Path) -> None:
         "TextTools.h",
         "Util.cpp",
         "Util.h",
+        "LyricsDownloadService.cpp",
+        "LyricsDownloadService.h",
     }
     for path in sorted(root.glob("*")):
         if path.suffix not in {".cpp", ".h"} or path.name in allowed:
@@ -404,6 +408,7 @@ def main() -> None:
     require(services_md, "active lyrics provider naming", "LyricsDownloadService provider naming documentation")
     require(services_md, "provider-neutral URL and extraction delegation", "LyricsDownloadService provider delegation documentation")
     require(services_md, "download status reporting", "LyricsDownloadService status documentation")
+    require(services_md, "AZLyrics-named URL and extraction methods are compatibility aliases only", "LyricsDownloadService AZ alias documentation")
 
     constants_h = (root / "Constants.h").read_text()
     reject(constants_h, "AZ_URL", "Constants provider URL extraction")
