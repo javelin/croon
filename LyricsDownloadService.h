@@ -7,6 +7,7 @@
 #define _Croon_LyricsDownloadService_h_
 
 struct LyricsDownloadService {
+    static const char* ProviderName();
     static String BuildAzLyricsUrl(String title, String artist);
     static bool ExtractAzLyrics(String content, String& lyrics);
     static bool Download(String title, String artist, String& lyrics);

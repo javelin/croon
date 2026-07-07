@@ -307,6 +307,7 @@ def main() -> None:
     require(lyrics_download_service_h, "BuildAzLyricsUrl", "LyricsDownloadService URL contract")
     require(lyrics_download_service_h, "ExtractAzLyrics", "LyricsDownloadService extraction contract")
     require(lyrics_download_service_h, "Download", "LyricsDownloadService download contract")
+    require(lyrics_download_service_h, "ProviderName", "LyricsDownloadService provider name contract")
     require(lyrics_download_service_h, "AzLyricsUrlFormat", "LyricsDownloadService provider URL boundary")
     require(lyrics_download_service_h, "AzLyricsPattern", "LyricsDownloadService provider pattern boundary")
 
@@ -339,6 +340,7 @@ def main() -> None:
     ]:
         require(lyrics_download_service_cpp, needle, "LyricsDownloadService direct dependency")
     require(lyrics_download_service_cpp, "https://www.azlyrics.com/lyrics/%s/%s.html", "LyricsDownloadService provider URL")
+    require(lyrics_download_service_cpp, 'return "AZLyrics"', "LyricsDownloadService active provider name")
     require(lyrics_download_service_cpp, "<!-- Usage of azlyrics.com content", "LyricsDownloadService extraction pattern")
     require(lyrics_download_service_cpp, "TextTools::CleanSpacing", "LyricsDownloadService spacing cleanup")
     require(lyrics_download_service_cpp, "TextTools::StripNonAlnum", "LyricsDownloadService URL sanitization")
@@ -352,6 +354,12 @@ def main() -> None:
 
     download_dlg_h = (root / "DownloadDlg.h").read_text()
     require(download_dlg_h, "DownloadDefaults::UserAgent()", "DownloadDlg user-agent default")
+
+    decisions_md = (root / "decisions.md").read_text()
+    require(decisions_md, "LyricsDownloadService::ProviderName()", "lyrics provider boundary decision")
+    require(decisions_md, "AZLyrics as the active provider boundary", "active lyrics provider decision")
+    services_md = (root / "services.md").read_text()
+    require(services_md, "active lyrics provider naming", "LyricsDownloadService provider naming documentation")
 
     constants_h = (root / "Constants.h").read_text()
     reject(constants_h, "AZ_URL", "Constants provider URL extraction")

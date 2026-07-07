@@ -36,6 +36,10 @@ using namespace Upp;
 #include "TextTools.h"
 #include "LyricsDownloadService.h"
 
+const char* LyricsDownloadService::ProviderName() {
+    return "AZLyrics";
+}
+
 const char* LyricsDownloadService::AzLyricsUrlFormat() {
     return "https://www.azlyrics.com/lyrics/%s/%s.html";
 }
