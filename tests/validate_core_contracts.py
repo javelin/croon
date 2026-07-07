@@ -403,9 +403,9 @@ def main() -> None:
     require(download_dlg_h, "DownloadDefaults::UserAgent()", "DownloadDlg user-agent default")
 
     decisions_md = (root / "decisions.md").read_text()
-    require(decisions_md, "LyricsDownloadService::ProviderName()", "lyrics provider boundary decision")
-    require(decisions_md, "AZLyrics as the active provider boundary", "active lyrics provider decision")
-    require(decisions_md, "download statuses", "lyrics provider status decision")
+    require(decisions_md, "AZLyrics remains an internal implementation detail", "internal lyrics provider decision")
+    require(decisions_md, "provider-neutral URL/extraction infrastructure is preserved for future work", "future lyrics provider infrastructure decision")
+    require(decisions_md, "user-facing download workflow stays opaque", "opaque lyrics provider workflow decision")
     services_md = (root / "services.md").read_text()
     require(services_md, "`AzLyricsProvider`", "AzLyricsProvider service documentation")
     require(services_md, "internal active lyrics provider naming", "LyricsDownloadService internal provider naming documentation")
