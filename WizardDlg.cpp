@@ -47,7 +47,10 @@ using namespace Upp;
 
 #include "WizardDlg.h"
 
-WizardDlg::WizardDlg() : pages{&page1, &page2, &page3}, currPage(0) {
+WizardDlg::WizardDlg() : WizardDlg(KarData::GetGlobal()) {
+}
+
+WizardDlg::WizardDlg(KarData& data) : data(data), page1(data), page2(data), page3(data), pages{&page1, &page2, &page3}, currPage(0) {
     CtrlLayout(*this, "Create Project");
     NoZoomable().Sizeable();
     CenterScreen();
@@ -100,7 +103,6 @@ void WizardDlg::Close() {
 }
 
 int WizardDlg::Run(String tempAudioPath, double duration, String origAudioFilePath) {
-    auto& data = KarData::GetGlobal();
     data.Reset();
     data.audioFilePath = tempAudioPath;
     data.origAudioFilePath = origAudioFilePath;

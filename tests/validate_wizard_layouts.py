@@ -195,9 +195,15 @@ def main() -> None:
             fail(f"Page3.cpp missing video/save workflow {needle}")
 
     wizard_header = (root / "WizardDlg.h").read_text()
-    for layout_member in ["Page1 page1;", "Page2 page2;", "Page3 page3;"]:
-        if layout_member in wizard_header:
-            fail(f"WizardDlg.h still declares layout member {layout_member}")
+    for needle in [
+        "WizardDlg(KarData& data)",
+        "KarData& data",
+        "Page1 page1;",
+        "Page2 page2;",
+        "Page3 page3;",
+    ]:
+        if needle not in wizard_header:
+            fail(f"WizardDlg.h missing injected data member {needle}")
 
     wizard_impl = (root / "WizardDlg.cpp").read_text()
     if '#include "Croon.h"' in wizard_impl:
@@ -237,16 +243,16 @@ def main() -> None:
     ]:
         if needle not in wizard_impl:
             fail(f"WizardDlg.cpp missing direct dependency {needle}")
-    constructor_body = wizard_impl.split("WizardDlg::WizardDlg()", 1)[-1].split("\n}\n", 1)[0]
+    constructor_body = wizard_impl.split("WizardDlg::WizardDlg(KarData& data)", 1)[-1].split("\n}\n", 1)[0]
     for line in constructor_body.splitlines():
         if "*this <<" in line and "GetPrevButton" not in line and "GetNextButton" not in line and "GatherButton" not in line:
             fail("WizardDlg still hardcodes non-navigation child placement")
     for needle in [
-        "WizardDlg::WizardDlg() : pages{&page1, &page2, &page3}",
+        "WizardDlg::WizardDlg() : WizardDlg(KarData::GetGlobal())",
+        "WizardDlg::WizardDlg(KarData& data) : data(data), page1(data), page2(data), page3(data), pages{&page1, &page2, &page3}",
         "page->WhenPreviousPage",
         "page->WhenNextPage",
         "page3.WhenProjectSaved",
-        "KarData::GetGlobal()",
         "data.Reset()",
         "page1.ShowPage()",
         "page3.Rehint(false)",
