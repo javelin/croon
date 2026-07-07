@@ -869,6 +869,18 @@ def main() -> None:
     require(page3_h, "Page3(KarData& data, String gatherKey", "Page3 injected data declaration")
     require(page3_h, "KarData& data", "Page3 injected data member")
 
+    wizard_cpp = (root / "WizardDlg.cpp").read_text()
+    require(wizard_cpp, "WizardDlg::WizardDlg() : WizardDlg(KarData::GetGlobal())", "WizardDlg default global data wiring")
+    require(wizard_cpp, "WizardDlg::WizardDlg(KarData& data) : data(data), page1(data), page2(data), page3(data)", "WizardDlg injected data constructor")
+    require(wizard_cpp, "data.Reset()", "WizardDlg injected data reset")
+    reject(wizard_cpp, "auto& data = KarData::GetGlobal()", "WizardDlg direct global data access")
+    wizard_h = (root / "WizardDlg.h").read_text()
+    require(wizard_h, "WizardDlg(KarData& data)", "WizardDlg injected data declaration")
+    require(wizard_h, "KarData& data", "WizardDlg injected data member")
+    require(wizard_h, "Page1 page1;", "WizardDlg owned Page1 member")
+    require(wizard_h, "Page2 page2;", "WizardDlg owned Page2 member")
+    require(wizard_h, "Page3 page3;", "WizardDlg owned Page3 member")
+
     list_ctrl_cpp = (root / "ListCtrl.cpp").read_text()
     reject(list_ctrl_cpp, '#include "Croon.h"', "ListCtrl app shell dependency")
     for needle in [
