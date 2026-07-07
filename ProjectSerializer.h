@@ -19,6 +19,7 @@ struct ProjectSerializer {
     static bool SupportsVersion(const String& version) { return NormalizeReadVersion(version) == FormatVersion(); }
     static String ReadVersion(const String& json);
     static MetadataCompatibility ReadCompatibility(const String& json);
+    static String CompatibilityLabel(MetadataCompatibility compatibility);
     static bool SupportsJson(const String& json);
     static String ToJson(const KarData& data);
     static KarData FromJson(const String& json);

@@ -34,6 +34,20 @@ bool ProjectSerializer::SupportsJson(const String& json) {
     return compatibility == CurrentMetadata || compatibility == LegacyUnversionedMetadata;
 }
 
+String ProjectSerializer::CompatibilityLabel(MetadataCompatibility compatibility) {
+    switch (compatibility) {
+    case CurrentMetadata:
+        return "current";
+    case LegacyUnversionedMetadata:
+        return "legacy-unversioned";
+    case UnsupportedMetadata:
+        return "unsupported";
+    case InvalidMetadata:
+        return "invalid";
+    }
+    return "unknown";
+}
+
 String ProjectSerializer::ToJson(const KarData& data) {
     JsonArray tlJsa;
     for (const auto& tl : data.timedLyrics) {

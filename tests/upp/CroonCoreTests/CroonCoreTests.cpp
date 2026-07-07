@@ -162,6 +162,14 @@ CONSOLE_APP_MAIN
 		"ProjectSerializer classifies unsupported explicit project metadata");
 	Check(ProjectSerializer::ReadCompatibility("{\"version\":\"1.0\",") == ProjectSerializer::InvalidMetadata,
 		"ProjectSerializer classifies invalid project metadata");
+	Check(ProjectSerializer::CompatibilityLabel(ProjectSerializer::CurrentMetadata) == "current",
+		"ProjectSerializer labels current project metadata");
+	Check(ProjectSerializer::CompatibilityLabel(ProjectSerializer::LegacyUnversionedMetadata) == "legacy-unversioned",
+		"ProjectSerializer labels legacy unversioned project metadata");
+	Check(ProjectSerializer::CompatibilityLabel(ProjectSerializer::UnsupportedMetadata) == "unsupported",
+		"ProjectSerializer labels unsupported project metadata");
+	Check(ProjectSerializer::CompatibilityLabel(ProjectSerializer::InvalidMetadata) == "invalid",
+		"ProjectSerializer labels invalid project metadata");
 	String currentMetadataFixture = LoadFixture("current-project-metadata.json");
 	String legacyMetadataFixture = LoadFixture("legacy-unversioned-project-metadata.json");
 	String unsupportedMetadataFixture = LoadFixture("unsupported-project-metadata.json");

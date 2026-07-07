@@ -559,6 +559,9 @@ def main() -> None:
     require(project_serializer_cpp, "return SupportsVersion(version) ? CurrentMetadata : UnsupportedMetadata", "ProjectSerializer explicit compatibility classification")
     require(project_serializer_cpp, "bool ProjectSerializer::SupportsJson(const String& json)", "ProjectSerializer JSON support implementation")
     require(project_serializer_cpp, "compatibility == CurrentMetadata || compatibility == LegacyUnversionedMetadata", "ProjectSerializer JSON support status contract")
+    require(project_serializer_cpp, "String ProjectSerializer::CompatibilityLabel", "ProjectSerializer compatibility label implementation")
+    for label in ['return "current"', 'return "legacy-unversioned"', 'return "unsupported"', 'return "invalid"']:
+        require(project_serializer_cpp, label, "ProjectSerializer compatibility label contract")
     for key in [
         '"version"',
         '"title"',
@@ -580,6 +583,7 @@ def main() -> None:
     require(project_serializer_h, "MetadataCompatibility", "ProjectSerializer compatibility-status contract")
     require(project_serializer_h, "LegacyUnversionedMetadata", "ProjectSerializer legacy compatibility-status contract")
     require(project_serializer_h, "InvalidMetadata", "ProjectSerializer invalid compatibility-status contract")
+    require(project_serializer_h, "CompatibilityLabel", "ProjectSerializer compatibility label contract")
     require(project_serializer_h, "SupportsJson", "ProjectSerializer JSON support contract")
 
     ffmpeg_h = (root / "FfmpegCommandBuilder.h").read_text()
