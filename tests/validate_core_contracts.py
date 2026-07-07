@@ -265,7 +265,8 @@ def main() -> None:
         "#include <Draw/iml_header.h>",
         '#include "AppIdentity.h"',
         '#include "ConfigService.h"\n#include "Config.h"',
-        '#include "KarData.h"\n#include "Visualization.h"\n#include "FfmpegCommandBuilder.h"',
+        '#include "KarData.h"\n#include "ProjectSerializer.h"',
+        '#include "ProjectSerializer.h"\n#include "Visualization.h"\n#include "FfmpegCommandBuilder.h"',
         '#include "LyricsTransformer.h"',
         '#include "MediaProcessRunner.h"',
         '#include "RecentProjectService.h"',
@@ -275,7 +276,9 @@ def main() -> None:
     require(project_loader_cpp, "RecentProjectService::LoadPaths()", "ProjectLoader recent-project load contract")
     require(project_loader_cpp, "AppIdentity::TempFileName", "ProjectLoader temp-file identity contract")
     require(project_loader_cpp, "FfmpegCommandBuilder::DumpAttachmentAndGenerateThumbnail", "ProjectLoader ffmpeg command contract")
-    require(project_loader_cpp, "KarData data{LoadFile(infoFilePath)}", "ProjectLoader metadata load contract")
+    require(project_loader_cpp, "String metadata = LoadFile(infoFilePath)", "ProjectLoader metadata read contract")
+    require(project_loader_cpp, "ProjectSerializer::SupportsJson(metadata)", "ProjectLoader metadata compatibility gate")
+    require(project_loader_cpp, "KarData data{metadata}", "ProjectLoader metadata load contract")
     require(project_loader_cpp, "LyricsTransformer::TimedToRaw", "ProjectLoader lyric preview contract")
     require(project_loader_cpp, "process.Start(ffmpeg", "ProjectLoader media process boundary")
 

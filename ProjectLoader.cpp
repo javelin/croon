@@ -10,6 +10,7 @@ using namespace Upp;
 #include "ConfigService.h"
 #include "Config.h"
 #include "KarData.h"
+#include "ProjectSerializer.h"
 #include "Visualization.h"
 #include "FfmpegCommandBuilder.h"
 #include "LyricsTransformer.h"
@@ -47,13 +48,16 @@ void ProjectLoader::PollProgress() {
             //std::cout << "Exitcode: " << code << std::endl;
             if (code == 0) {
                 // Process the project
-                KarData data{LoadFile(infoFilePath)};
-                auto thumbnail = StreamRaster::LoadFileAny(thumbnailPath);
-                WhenProjectLoaded(projectPath,
-                                    data.title,
-                                    data.artist,
-                                    LyricsTransformer::TimedToRaw(data.timedLyrics, true),
-                                    thumbnail);
+                String metadata = LoadFile(infoFilePath);
+                if (ProjectSerializer::SupportsJson(metadata)) {
+                    KarData data{metadata};
+                    auto thumbnail = StreamRaster::LoadFileAny(thumbnailPath);
+                    WhenProjectLoaded(projectPath,
+                                        data.title,
+                                        data.artist,
+                                        LyricsTransformer::TimedToRaw(data.timedLyrics, true),
+                                        thumbnail);
+                }
                 FileDelete(infoFilePath);
                 FileDelete(thumbnailPath);
             }
