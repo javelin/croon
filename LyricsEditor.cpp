@@ -20,12 +20,14 @@ LyricsEditorLine::LyricsEditorLine(const TimeLyrics& tl) {
     WantFocus(false);
 }
 
-LyricsEditor::LyricsEditor() {
+LyricsEditor::LyricsEditor() : LyricsEditor(KarData::GetGlobal()) {
+}
+
+LyricsEditor::LyricsEditor(KarData& data) : data(data) {
     Add(lyricsList.HSizePos().VSizePos());
 }
 
 void LyricsEditor::Populate() {
-    auto& data = KarData::GetGlobal();
     lyricsList.Clear();
     lyricsList.AddColumn("Time", 150);
     lyricsList.AddColumn("Lyrics", 1000).Edit(editor);
