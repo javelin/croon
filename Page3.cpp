@@ -39,7 +39,10 @@ using namespace Upp;
 
 GatherDlg& GetGatherDlg();
 
-Page3::Page3(String gatherKey) : vidCount(0), gatherKey(gatherKey) {
+Page3::Page3(String gatherKey) : Page3(KarData::GetGlobal(), gatherKey) {
+}
+
+Page3::Page3(KarData& data, String gatherKey) : vidCount(0), gatherKey(gatherKey), data(data) {
     pageName = "Background Video";
     CtrlLayout(*this);
     nextBtn.SetLabel("Save");
@@ -81,14 +84,13 @@ Page3::Page3(String gatherKey) : vidCount(0), gatherKey(gatherKey) {
     };
     
     nextBtn << [=] {
-        auto& data = KarData::GetGlobal();
-        data.timedLyrics = LyricsTransformer::RawToUntimed(data);
-        data.infoFilePath = AppIdentity::TempFileName(".json");
+        this->data.timedLyrics = LyricsTransformer::RawToUntimed(this->data);
+        this->data.infoFilePath = AppIdentity::TempFileName(".json");
         
         FileSel fsel;
         String projectDir{Config::Get(PROJECT_DIR, GetHomeDirectory())};
         if (projectDir.IsEmpty()) projectDir = Config::Get(MUSIC_DIR);
-        fsel <<= AppendFileName(projectDir, Format("%s - %s%s", data.artist, data.title, AppIdentity::ProjectExtension()));
+        fsel <<= AppendFileName(projectDir, Format("%s - %s%s", this->data.artist, this->data.title, AppIdentity::ProjectExtension()));
         fsel.Type(AppIdentity::ProjectTypeName(), AppIdentity::ProjectGlob());
         if (fsel.ExecuteSaveAs("Save Project")) {
             String savePath{~fsel};
@@ -97,7 +99,7 @@ Page3::Page3(String gatherKey) : vidCount(0), gatherKey(gatherKey) {
                 savePath = GetFileTitle(savePath) + AppIdentity::ProjectExtension();
             }
             SaveProjectDlg saveDlg;
-            if (saveDlg.Run(savePath, KarData::GetGlobal()) == IDOK) {
+            if (saveDlg.Run(savePath, this->data) == IDOK) {
                 Config::Set(PROJECT_DIR, ::GetFileDirectory(~fsel));
                 WhenProjectSaved();
             }
@@ -163,17 +165,15 @@ void Page3::AddVideoItem(ListCtrl* list, String path, String tnPath, Image img, 
         }
         other->Refresh();
         nextBtn.Enable((enableNext = true));
-        auto& data = KarData::GetGlobal();
-        data.videoFilePath = path;
-        data.origVideoFile = GetFileName(path);
-        data.thumbnailFilePath = tnPath;
-        data.videoThumbnail = img;
+        this->data.videoFilePath = path;
+        this->data.origVideoFile = GetFileName(path);
+        this->data.thumbnailFilePath = tnPath;
+        this->data.videoThumbnail = img;
         WhenSelected(path, tnPath, img);
     };
 }
 
 void Page3::Populate() {
-    auto& data = KarData::GetGlobal();
     enableNext = !data.videoFilePath.IsEmpty();
     gatherBtn.Show();
     gatherBtn.Enable();

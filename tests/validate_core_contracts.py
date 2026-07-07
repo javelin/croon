@@ -856,6 +856,19 @@ def main() -> None:
     require(page2_h, "Page2(KarData& data)", "Page2 injected data declaration")
     require(page2_h, "KarData& data", "Page2 injected data member")
 
+    page3_cpp = (root / "Page3.cpp").read_text()
+    require(page3_cpp, "Page3::Page3(String gatherKey) : Page3(KarData::GetGlobal(), gatherKey)", "Page3 default global data wiring")
+    require(page3_cpp, "Page3::Page3(KarData& data, String gatherKey)", "Page3 injected data constructor")
+    require(page3_cpp, "LyricsTransformer::RawToUntimed(this->data)", "Page3 injected data timing conversion")
+    require(page3_cpp, "saveDlg.Run(savePath, this->data)", "Page3 injected data save contract")
+    require(page3_cpp, "this->data.videoFilePath = path", "Page3 injected video path write")
+    require(page3_cpp, "enableNext = !data.videoFilePath.IsEmpty()", "Page3 injected data population")
+    reject(page3_cpp, "auto& data = KarData::GetGlobal()", "Page3 direct global data access")
+    reject(page3_cpp, "SaveProjectDlg().Run(KarData::GetGlobal()", "Page3 direct global save access")
+    page3_h = (root / "Page3.h").read_text()
+    require(page3_h, "Page3(KarData& data, String gatherKey", "Page3 injected data declaration")
+    require(page3_h, "KarData& data", "Page3 injected data member")
+
     list_ctrl_cpp = (root / "ListCtrl.cpp").read_text()
     reject(list_ctrl_cpp, '#include "Croon.h"', "ListCtrl app shell dependency")
     for needle in [
