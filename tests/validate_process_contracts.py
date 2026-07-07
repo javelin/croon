@@ -265,8 +265,11 @@ def main() -> None:
     for needle in [
         "Config::Get(FFMPEG_LOCATION)",
         "String metadata = LoadFile(data->infoFilePath)",
-        "ProjectSerializer::SupportsJson(metadata)",
+        "ProjectSerializer::MetadataCompatibility compatibility = ProjectSerializer::ReadCompatibility(metadata)",
+        "compatibility == ProjectSerializer::UnsupportedMetadata",
         "ProjectSerializer::ReadVersion(metadata)",
+        "compatibility == ProjectSerializer::InvalidMetadata",
+        "not valid JSON",
         "KarData temp{metadata}",
         "LyricsTransformer::TimedToRaw(temp.timedLyrics)",
         "Visualization::Thumbnail(data->origVideoFile)",

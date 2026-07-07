@@ -48,10 +48,15 @@ OpenProjectDlg::OpenProjectDlg() : phase(Audio) {
         if (code == 0) {
             if (phase == Audio) {
                 String metadata = LoadFile(data->infoFilePath);
-                if (!ProjectSerializer::SupportsJson(metadata)) {
+                ProjectSerializer::MetadataCompatibility compatibility = ProjectSerializer::ReadCompatibility(metadata);
+                if (compatibility == ProjectSerializer::UnsupportedMetadata) {
                     Exclamation(Format("Unable to open project metadata version %s. This Croon version supports project metadata version %s.",
                                         ProjectSerializer::ReadVersion(metadata),
                                         ProjectSerializer::FormatVersion()));
+                    return true;
+                }
+                if (compatibility == ProjectSerializer::InvalidMetadata) {
+                    Exclamation("Unable to open project metadata. The project metadata is not valid JSON.");
                     return true;
                 }
                 KarData temp{metadata};
