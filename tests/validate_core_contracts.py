@@ -554,6 +554,7 @@ def main() -> None:
     require(project_serializer_cpp, '#include "KarData.h"', "ProjectSerializer direct data dependency")
     require(project_serializer_cpp, '#include "ProjectSerializer.h"', "ProjectSerializer direct self dependency")
     require(project_serializer_cpp, "String ProjectSerializer::ReadVersion(const String& json)", "ProjectSerializer direct version-read implementation")
+    require(project_serializer_cpp, "if (js.IsError() || !js.Is<ValueMap>()) return String::GetVoid()", "ProjectSerializer safe version-read invalid metadata contract")
     require(project_serializer_cpp, 'return NormalizeReadVersion(js.GetAdd("version"))', "ProjectSerializer direct version-read normalization")
     require(project_serializer_cpp, "ProjectSerializer::MetadataCompatibility ProjectSerializer::ReadCompatibility", "ProjectSerializer compatibility-status implementation")
     require(project_serializer_cpp, "catch (CParser::Error&)", "ProjectSerializer invalid JSON classification")

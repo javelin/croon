@@ -146,6 +146,10 @@ CONSOLE_APP_MAIN
 		"ProjectSerializer reads legacy unversioned metadata as current");
 	Check(ProjectSerializer::ReadVersion("{\"version\":\"9.9\",\"timedLyrics\":[],\"parts\":[]}") == "9.9",
 		"ProjectSerializer preserves unsupported explicit metadata version on direct read");
+	Check(ProjectSerializer::ReadVersion("{\"version\":\"1.0\",").IsVoid(),
+		"ProjectSerializer returns void version for invalid metadata");
+	Check(ProjectSerializer::ReadVersion("[{\"version\":\"1.0\"}]").IsVoid(),
+		"ProjectSerializer returns void version for non-object metadata");
 	Check(!ProjectSerializer::SupportsVersion(ProjectSerializer::ReadVersion("{\"version\":\"9.9\",\"timedLyrics\":[],\"parts\":[]}")),
 		"ProjectSerializer reports unsupported direct-read metadata versions");
 	Check(ProjectSerializer::SupportsJson("{\"version\":\"1.0\",\"timedLyrics\":[],\"parts\":[]}"),

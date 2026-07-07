@@ -12,8 +12,14 @@ using namespace Upp;
 #include "ProjectSerializer.h"
 
 String ProjectSerializer::ReadVersion(const String& json) {
-    auto js = ParseJSON(json);
-    return NormalizeReadVersion(js.GetAdd("version"));
+    try {
+        auto js = ParseJSON(json);
+        if (js.IsError() || !js.Is<ValueMap>()) return String::GetVoid();
+        return NormalizeReadVersion(js.GetAdd("version"));
+    }
+    catch (CParser::Error&) {
+        return String::GetVoid();
+    }
 }
 
 ProjectSerializer::MetadataCompatibility ProjectSerializer::ReadCompatibility(const String& json) {
