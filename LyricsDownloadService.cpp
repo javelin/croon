@@ -51,12 +51,20 @@ const char* LyricsDownloadService::DownloadStatusLabel(DownloadStatus status) {
     return "unknown";
 }
 
-String LyricsDownloadService::BuildAzLyricsUrl(String title, String artist) {
+String LyricsDownloadService::BuildProviderUrl(String title, String artist) {
     return AzLyricsProvider::BuildUrl(title, artist);
 }
 
-bool LyricsDownloadService::ExtractAzLyrics(String content, String& lyrics) {
+bool LyricsDownloadService::ExtractProviderLyrics(String content, String& lyrics) {
     return AzLyricsProvider::ExtractLyrics(content, lyrics);
+}
+
+String LyricsDownloadService::BuildAzLyricsUrl(String title, String artist) {
+    return BuildProviderUrl(title, artist);
+}
+
+bool LyricsDownloadService::ExtractAzLyrics(String content, String& lyrics) {
+    return ExtractProviderLyrics(content, lyrics);
 }
 
 LyricsDownloadService::DownloadStatus LyricsDownloadService::DownloadWithStatus(String title, String artist, String& lyrics) {
@@ -64,9 +72,9 @@ LyricsDownloadService::DownloadStatus LyricsDownloadService::DownloadWithStatus(
     String* output = &lyrics;
     bool extracted = false;
     dlg.WhenDownloadSuccess << [output, &extracted](String content) {
-        extracted = LyricsDownloadService::ExtractAzLyrics(content, *output);
+        extracted = LyricsDownloadService::ExtractProviderLyrics(content, *output);
     };
-    if (dlg.Run(BuildAzLyricsUrl(title, artist), "Downloading lyrics") != IDOK)
+    if (dlg.Run(BuildProviderUrl(title, artist), "Downloading lyrics") != IDOK)
         return DownloadCancelled;
     return extracted ? DownloadOk : ExtractionFailed;
 }
