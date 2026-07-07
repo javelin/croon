@@ -103,6 +103,8 @@ CONSOLE_APP_MAIN
 	Check(String(AzLyricsProvider::Name()) == "AZLyrics", "AzLyricsProvider exposes provider name");
 	Check(AzLyricsProvider::BuildUrl("The Song!", "Artist") == "https://www.azlyrics.com/lyrics/artist/thesong.html",
 		"AzLyricsProvider builds sanitized URL");
+	Check(AzLyricsProvider::BuildUrl("The Song!", "The Artist") == "https://www.azlyrics.com/lyrics/artist/thesong.html",
+		"AzLyricsProvider strips leading artist prefix");
 	String extractedLyrics;
 	Check(AzLyricsProvider::ExtractLyrics("before<!-- Usage of azlyrics.com content by any third-party is prohibited. -->First<br>Second</div>after", extractedLyrics),
 		"AzLyricsProvider extracts provider lyric block");

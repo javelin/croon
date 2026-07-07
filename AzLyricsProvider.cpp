@@ -25,8 +25,9 @@ const char* AzLyricsProvider::LyricsPattern() {
 
 String AzLyricsProvider::BuildUrl(String title, String artist) {
     String t = Join(Split(TextTools::CleanSpacing(ToLower(TextTools::StripNonAlnum(TrimBoth(title)))), ' '), "");
-    String a = ToLower(TextTools::StripNonAlnum(TrimBoth(artist)));
+    String a = ToLower(TextTools::CleanSpacing(TrimBoth(artist)));
     a.TrimStart("the ");
+    a = TextTools::StripNonAlnum(a);
     a = Join(Split(TextTools::CleanSpacing(a), ' '), "");
     return Format(UrlFormat(), a, t);
 }
