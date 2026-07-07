@@ -7,6 +7,7 @@
 - Current project metadata format version: `1.0`.
 - Project metadata must include a `version` field. Format changes must be represented by explicit version handling in `ProjectSerializer`.
 - Project metadata readers must tolerate legacy unversioned metadata by treating it as the current readable format.
+- Legacy unversioned metadata must still be object-shaped JSON metadata.
 - Unsupported explicit metadata versions must remain visible on read so future migrations can make compatibility decisions.
 - `ProjectSerializer` must classify metadata compatibility as current, legacy unversioned, unsupported, or invalid before callers decide whether to load.
 - `ProjectSerializer` compatibility labels must remain stable for diagnostics and future UI/logging.
