@@ -327,6 +327,7 @@ def main() -> None:
     require(azlyrics_provider_cpp, "<!-- Usage of azlyrics.com content", "AzLyricsProvider extraction pattern")
     require(azlyrics_provider_cpp, "TextTools::CleanSpacing", "AzLyricsProvider spacing cleanup")
     require(azlyrics_provider_cpp, "TextTools::StripNonAlnum", "AzLyricsProvider URL sanitization")
+    require(azlyrics_provider_cpp, 'a.TrimStart("the ")', "AzLyricsProvider leading artist prefix cleanup")
     require(azlyrics_provider_cpp, "RegExp rx", "AzLyricsProvider extraction regex")
 
     lyrics_download_service_h = (root / "LyricsDownloadService.h").read_text()
