@@ -29,5 +29,5 @@ Croon must keep `.croon` as the supported project artifact format. Project metad
 ## Deferred Decisions
 
 - Whether Croon needs backward-compatible import of legacy product artifacts outside the `.croon` metadata compatibility policy.
-- Whether to replace AZLyrics scraping with a different lyrics provider. Until that changes, `LyricsDownloadService::ProviderName()` identifies AZLyrics as the active provider boundary.
+- Whether to replace AZLyrics scraping with a different lyrics provider. Until that changes, `LyricsDownloadService::ProviderName()` identifies AZLyrics as the active provider boundary and `LyricsDownloadService` exposes download statuses for provider workflow outcomes.
 - Whether to remove global project state after the first functional migration.

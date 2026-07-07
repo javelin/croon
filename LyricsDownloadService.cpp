@@ -40,6 +40,18 @@ const char* LyricsDownloadService::ProviderName() {
     return "AZLyrics";
 }
 
+const char* LyricsDownloadService::DownloadStatusLabel(DownloadStatus status) {
+    switch (status) {
+    case DownloadOk:
+        return "ok";
+    case DownloadCancelled:
+        return "cancelled";
+    case ExtractionFailed:
+        return "extraction-failed";
+    }
+    return "unknown";
+}
+
 const char* LyricsDownloadService::AzLyricsUrlFormat() {
     return "https://www.azlyrics.com/lyrics/%s/%s.html";
 }
@@ -70,11 +82,18 @@ bool LyricsDownloadService::ExtractAzLyrics(String content, String& lyrics) {
     return false;
 }
 
-bool LyricsDownloadService::Download(String title, String artist, String& lyrics) {
+LyricsDownloadService::DownloadStatus LyricsDownloadService::DownloadWithStatus(String title, String artist, String& lyrics) {
     DownloadDlg dlg;
     String* output = &lyrics;
-    dlg.WhenDownloadSuccess << [output](String content) {
-        LyricsDownloadService::ExtractAzLyrics(content, *output);
+    bool extracted = false;
+    dlg.WhenDownloadSuccess << [output, &extracted](String content) {
+        extracted = LyricsDownloadService::ExtractAzLyrics(content, *output);
     };
-    return dlg.Run(BuildAzLyricsUrl(title, artist), "Downloading lyrics") == IDOK;
+    if (dlg.Run(BuildAzLyricsUrl(title, artist), "Downloading lyrics") != IDOK)
+        return DownloadCancelled;
+    return extracted ? DownloadOk : ExtractionFailed;
+}
+
+bool LyricsDownloadService::Download(String title, String artist, String& lyrics) {
+    return DownloadWithStatus(title, artist, lyrics) == DownloadOk;
 }
