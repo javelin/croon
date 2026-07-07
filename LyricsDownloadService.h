@@ -15,6 +15,8 @@ struct LyricsDownloadService {
 
     static const char* ProviderName();
     static const char* DownloadStatusLabel(DownloadStatus status);
+    static String BuildProviderUrl(String title, String artist);
+    static bool ExtractProviderLyrics(String content, String& lyrics);
     static String BuildAzLyricsUrl(String title, String artist);
     static bool ExtractAzLyrics(String content, String& lyrics);
     static DownloadStatus DownloadWithStatus(String title, String artist, String& lyrics);
