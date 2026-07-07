@@ -787,7 +787,10 @@ def main() -> None:
     require(page2_cpp, '#include "KarData.h"', "Page2 direct data dependency")
     require(page2_cpp, '#include "LyricsDownloadService.h"', "Page2 direct download dependency")
     require(page2_cpp, '#include "TextTools.h"', "Page2 direct text helper dependency")
-    require(page2_cpp, "LyricsDownloadService::Download", "Page2 lyric download contract")
+    require(page2_cpp, "LyricsDownloadService::DownloadWithStatus", "Page2 lyric download status contract")
+    require(page2_cpp, "LyricsDownloadService::DownloadOk", "Page2 lyric download success contract")
+    require(page2_cpp, "LyricsDownloadService::ExtractionFailed", "Page2 lyric extraction failure contract")
+    require(page2_cpp, "Downloaded lyrics could not be read", "Page2 lyric extraction failure message")
     require(page2_cpp, "TextTools::CleanSpacing", "Page2 lyric cleanup contract")
     require(page2_cpp, "Config::Get(LYRICS_PREFIX)", "Page2 lyrics prefix contract")
 

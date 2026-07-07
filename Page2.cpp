@@ -48,7 +48,11 @@ void Page2::Populate() {
     willDownloadLyrics = willDownloadLyrics && karData.timedLyrics.IsEmpty();
     if (willDownloadLyrics) {
         String lyrics{""};
-        if (LyricsDownloadService::Download(karData.title, karData.artist, lyrics)) lyrics = TrimBoth(lyrics);
+        auto downloadStatus = LyricsDownloadService::DownloadWithStatus(karData.title, karData.artist, lyrics);
+        if (downloadStatus == LyricsDownloadService::DownloadOk)
+            lyrics = TrimBoth(lyrics);
+        else if (downloadStatus == LyricsDownloadService::ExtractionFailed)
+            Exclamation("Downloaded lyrics could not be read. You can enter lyrics manually.");
         if (lyrics.IsEmpty()) lyrics = "\n";
         lyricsEd.SetData(
                     TrimBoth(Format("%s\n%s\n%s",
