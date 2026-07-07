@@ -6,6 +6,8 @@
 #ifndef _Croon_ProjectList_h_
 #define _Croon_ProjectList_h_
 
+struct KarData;
+
 struct ProjectItem : public Moveable<ProjectItem>, Pte<ProjectItem> {
     ProjectItem(String path, time_t tstamp, String title, String artist, String lyrics, Image img) :
         path(path), tstamp(tstamp), title(title), artist(artist), lyrics(lyrics.Left(200)), img(img) {}
@@ -41,6 +43,7 @@ private:
 class ProjectList : public WithCroonProjectListLayout<ParentCtrl> {
 public:
     ProjectList();
+    ProjectList(KarData& data);
     virtual ~ProjectList();
     void OpenProject();
     void NewProject();
@@ -57,6 +60,7 @@ private:
         
 private:
     Vector<ProjectItem> projects;
+    KarData& data;
 };
 
 #endif

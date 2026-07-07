@@ -269,6 +269,8 @@ def main() -> None:
             fail(f"ProjectList.cpp missing direct dependency {needle}")
     for needle in [
         "RTHelper rth",
+        "ProjectList::ProjectList() : ProjectList(KarData::GetGlobal())",
+        "ProjectList::ProjectList(KarData& data) : data(data)",
         "loader.WhenProjectLoaded",
         "OpenProjectDlg opDlg",
         "MusicPlayer::GetPlayer().Open(data.audioFilePath)",
