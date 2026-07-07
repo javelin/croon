@@ -162,6 +162,10 @@ CONSOLE_APP_MAIN
 		"ProjectSerializer classifies unsupported explicit project metadata");
 	Check(ProjectSerializer::ReadCompatibility("{\"version\":\"1.0\",") == ProjectSerializer::InvalidMetadata,
 		"ProjectSerializer classifies invalid project metadata");
+	Check(ProjectSerializer::ReadCompatibility("[{\"version\":\"1.0\"}]") == ProjectSerializer::InvalidMetadata,
+		"ProjectSerializer rejects array-shaped project metadata");
+	Check(ProjectSerializer::ReadCompatibility("\"not a project\"") == ProjectSerializer::InvalidMetadata,
+		"ProjectSerializer rejects string-shaped project metadata");
 	Check(ProjectSerializer::CompatibilityLabel(ProjectSerializer::CurrentMetadata) == "current",
 		"ProjectSerializer labels current project metadata");
 	Check(ProjectSerializer::CompatibilityLabel(ProjectSerializer::LegacyUnversionedMetadata) == "legacy-unversioned",
@@ -186,6 +190,7 @@ CONSOLE_APP_MAIN
 	Check(ProjectSerializer::SupportsJson(legacyMetadataFixture), "ProjectSerializer supports legacy metadata fixture");
 	Check(!ProjectSerializer::SupportsJson(unsupportedMetadataFixture), "ProjectSerializer rejects unsupported metadata fixture");
 	Check(!ProjectSerializer::SupportsJson(invalidMetadataFixture), "ProjectSerializer rejects invalid metadata fixture");
+	Check(!ProjectSerializer::SupportsJson("[{\"version\":\"1.0\"}]"), "ProjectSerializer rejects array-shaped metadata JSON");
 	KarData fixtureCurrent = ProjectSerializer::FromJson(currentMetadataFixture);
 	Check(fixtureCurrent.version == ProjectSerializer::FormatVersion(), "ProjectSerializer loads current metadata fixture version");
 	Check(fixtureCurrent.title == "Fixture Current Song", "ProjectSerializer loads current metadata fixture title");

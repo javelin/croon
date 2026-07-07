@@ -20,6 +20,7 @@ ProjectSerializer::MetadataCompatibility ProjectSerializer::ReadCompatibility(co
     try {
         auto js = ParseJSON(json);
         if (js.IsError()) return InvalidMetadata;
+        if (!js.Is<ValueMap>()) return InvalidMetadata;
         String version = js.GetAdd("version");
         if (version.IsEmpty()) return LegacyUnversionedMetadata;
         return SupportsVersion(version) ? CurrentMetadata : UnsupportedMetadata;

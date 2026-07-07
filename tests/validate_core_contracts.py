@@ -558,6 +558,7 @@ def main() -> None:
     require(project_serializer_cpp, "ProjectSerializer::MetadataCompatibility ProjectSerializer::ReadCompatibility", "ProjectSerializer compatibility-status implementation")
     require(project_serializer_cpp, "catch (CParser::Error&)", "ProjectSerializer invalid JSON classification")
     require(project_serializer_cpp, "return InvalidMetadata", "ProjectSerializer invalid metadata status")
+    require(project_serializer_cpp, "if (!js.Is<ValueMap>()) return InvalidMetadata", "ProjectSerializer metadata object-shape classification")
     require(project_serializer_cpp, "if (version.IsEmpty()) return LegacyUnversionedMetadata", "ProjectSerializer legacy compatibility classification")
     require(project_serializer_cpp, "return SupportsVersion(version) ? CurrentMetadata : UnsupportedMetadata", "ProjectSerializer explicit compatibility classification")
     require(project_serializer_cpp, "bool ProjectSerializer::SupportsJson(const String& json)", "ProjectSerializer JSON support implementation")
