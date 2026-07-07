@@ -6,9 +6,12 @@
 #ifndef _Croon_Page3_h_
 #define _Croon_Page3_h_
 
+struct KarData;
+
 class Page3 : public WithCroonWizardPage3Layout<Page> {
 public:
     Page3(String gatherKey = "");
+    Page3(KarData& data, String gatherKey = "");
     void Layout() override;
     void HideButtons() override {
         Page::HideButtons(); gatherBtn.Hide(); gatherBtn.Disable(); }
@@ -39,6 +42,7 @@ private:
     String gatherKey;
     Button gatherBtn;
     bool rehint{true};
+    KarData& data;
 };
 
 #endif

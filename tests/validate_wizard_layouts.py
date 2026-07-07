@@ -166,9 +166,11 @@ def main() -> None:
     ]:
         if needle not in page3_impl:
             fail(f"Page3.cpp missing direct dependency {needle}")
-    if "Page3::Page3(String gatherKey)" not in page3_impl:
+    if "Page3::Page3(String gatherKey) : Page3(KarData::GetGlobal(), gatherKey)" not in page3_impl:
+        fail("Page3 default constructor no longer wires global data")
+    if "Page3::Page3(KarData& data, String gatherKey)" not in page3_impl:
         fail("Page3 dynamic constructor was unexpectedly removed")
-    constructor_body = page3_impl.split("Page3::Page3(String gatherKey)", 1)[-1].split("\n}\n", 1)[0]
+    constructor_body = page3_impl.split("Page3::Page3(KarData& data, String gatherKey)", 1)[-1].split("\n}\n", 1)[0]
     if "*this <<" in constructor_body:
         fail("Page3 still hardcodes top-level child placement")
 
@@ -180,11 +182,13 @@ def main() -> None:
         "AppPaths::DataDirectory()",
         "Visualization::Thumbnail(\"@@freqs\")",
         "GetGatherDlg().WhenVideoAdded",
-        "LyricsTransformer::RawToUntimed(data)",
+        "LyricsTransformer::RawToUntimed(this->data)",
         "AppIdentity::TempFileName(\".json\")",
         "SaveProjectDlg saveDlg",
+        "saveDlg.Run(savePath, this->data)",
         "Config::Set(PROJECT_DIR",
         "new VidThumbnail(path, img)",
+        "this->data.videoFilePath = path",
         "WhenSelected(path, tnPath, img)",
     ]:
         if needle not in page3_impl:
