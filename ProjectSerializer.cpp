@@ -11,29 +11,32 @@ using namespace Upp;
 #include "KarData.h"
 #include "ProjectSerializer.h"
 
-String ProjectSerializer::ReadVersion(const String& json) {
+namespace {
+
+bool ParseMetadataObject(const String& json, Value& js) {
     try {
-        auto js = ParseJSON(json);
-        if (js.IsError() || !js.Is<ValueMap>()) return String::GetVoid();
-        return NormalizeReadVersion(js.GetAdd("version"));
+        js = ParseJSON(json);
+        return !js.IsError() && js.Is<ValueMap>();
     }
     catch (CParser::Error&) {
-        return String::GetVoid();
+        return false;
     }
 }
 
+}
+
+String ProjectSerializer::ReadVersion(const String& json) {
+    Value js;
+    if (!ParseMetadataObject(json, js)) return String::GetVoid();
+    return NormalizeReadVersion(js.GetAdd("version"));
+}
+
 ProjectSerializer::MetadataCompatibility ProjectSerializer::ReadCompatibility(const String& json) {
-    try {
-        auto js = ParseJSON(json);
-        if (js.IsError()) return InvalidMetadata;
-        if (!js.Is<ValueMap>()) return InvalidMetadata;
-        String version = js.GetAdd("version");
-        if (version.IsEmpty()) return LegacyUnversionedMetadata;
-        return SupportsVersion(version) ? CurrentMetadata : UnsupportedMetadata;
-    }
-    catch (CParser::Error&) {
-        return InvalidMetadata;
-    }
+    Value js;
+    if (!ParseMetadataObject(json, js)) return InvalidMetadata;
+    String version = js.GetAdd("version");
+    if (version.IsEmpty()) return LegacyUnversionedMetadata;
+    return SupportsVersion(version) ? CurrentMetadata : UnsupportedMetadata;
 }
 
 bool ProjectSerializer::SupportsJson(const String& json) {
@@ -84,11 +87,11 @@ String ProjectSerializer::ToJson(const KarData& data) {
 
 KarData ProjectSerializer::FromJson(const String& json) {
     KarData data;
-    if (ReadCompatibility(json) == InvalidMetadata) {
+    Value js;
+    if (!ParseMetadataObject(json, js)) {
         data.version = String::GetVoid();
         return pick(data);
     }
-    auto js = ParseJSON(json);
     data.version = NormalizeReadVersion(js.GetAdd("version"));
     data.title = js.GetAdd("title");
     data.artist = js.GetAdd("artist");
