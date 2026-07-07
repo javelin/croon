@@ -16,6 +16,13 @@ String ProjectSerializer::ReadVersion(const String& json) {
     return NormalizeReadVersion(js.GetAdd("version"));
 }
 
+ProjectSerializer::MetadataCompatibility ProjectSerializer::ReadCompatibility(const String& json) {
+    auto js = ParseJSON(json);
+    String version = js.GetAdd("version");
+    if (version.IsEmpty()) return LegacyUnversionedMetadata;
+    return SupportsVersion(version) ? CurrentMetadata : UnsupportedMetadata;
+}
+
 String ProjectSerializer::ToJson(const KarData& data) {
     JsonArray tlJsa;
     for (const auto& tl : data.timedLyrics) {

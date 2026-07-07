@@ -8,6 +8,7 @@
 - Project metadata must include a `version` field. Format changes must be represented by explicit version handling in `ProjectSerializer`.
 - Project metadata readers must tolerate legacy unversioned metadata by treating it as the current readable format.
 - Unsupported explicit metadata versions must remain visible on read so future migrations can make compatibility decisions.
+- `ProjectSerializer` must classify metadata compatibility as current, legacy unversioned, or unsupported before callers decide whether to load.
 - Runtime app data directory name: `Croon`.
 - Temporary file prefixes should use `Croon_`.
 

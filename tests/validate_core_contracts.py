@@ -543,6 +543,9 @@ def main() -> None:
     require(project_serializer_cpp, '#include "ProjectSerializer.h"', "ProjectSerializer direct self dependency")
     require(project_serializer_cpp, "String ProjectSerializer::ReadVersion(const String& json)", "ProjectSerializer direct version-read implementation")
     require(project_serializer_cpp, 'return NormalizeReadVersion(js.GetAdd("version"))', "ProjectSerializer direct version-read normalization")
+    require(project_serializer_cpp, "ProjectSerializer::MetadataCompatibility ProjectSerializer::ReadCompatibility", "ProjectSerializer compatibility-status implementation")
+    require(project_serializer_cpp, "if (version.IsEmpty()) return LegacyUnversionedMetadata", "ProjectSerializer legacy compatibility classification")
+    require(project_serializer_cpp, "return SupportsVersion(version) ? CurrentMetadata : UnsupportedMetadata", "ProjectSerializer explicit compatibility classification")
     for key in [
         '"version"',
         '"title"',
@@ -561,6 +564,8 @@ def main() -> None:
     require(project_serializer_h, "NormalizeReadVersion", "ProjectSerializer legacy read-version normalization contract")
     require(project_serializer_h, "SupportsVersion", "ProjectSerializer version-support contract")
     require(project_serializer_h, "ReadVersion", "ProjectSerializer direct version-read contract")
+    require(project_serializer_h, "MetadataCompatibility", "ProjectSerializer compatibility-status contract")
+    require(project_serializer_h, "LegacyUnversionedMetadata", "ProjectSerializer legacy compatibility-status contract")
     require(project_serializer_h, "SupportsJson", "ProjectSerializer JSON support contract")
 
     ffmpeg_h = (root / "FfmpegCommandBuilder.h").read_text()
