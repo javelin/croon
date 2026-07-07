@@ -11,6 +11,7 @@ struct ProjectSerializer {
         CurrentMetadata,
         LegacyUnversionedMetadata,
         UnsupportedMetadata,
+        InvalidMetadata,
     };
 
     static String FormatVersion() { return AppIdentity::Version(); }
@@ -18,7 +19,7 @@ struct ProjectSerializer {
     static bool SupportsVersion(const String& version) { return NormalizeReadVersion(version) == FormatVersion(); }
     static String ReadVersion(const String& json);
     static MetadataCompatibility ReadCompatibility(const String& json);
-    static bool SupportsJson(const String& json) { return ReadCompatibility(json) != UnsupportedMetadata; }
+    static bool SupportsJson(const String& json);
     static String ToJson(const KarData& data);
     static KarData FromJson(const String& json);
 };

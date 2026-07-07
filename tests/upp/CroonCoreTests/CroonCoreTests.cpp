@@ -160,18 +160,24 @@ CONSOLE_APP_MAIN
 		"ProjectSerializer classifies legacy unversioned project metadata");
 	Check(ProjectSerializer::ReadCompatibility("{\"version\":\"9.9\",\"timedLyrics\":[],\"parts\":[]}") == ProjectSerializer::UnsupportedMetadata,
 		"ProjectSerializer classifies unsupported explicit project metadata");
+	Check(ProjectSerializer::ReadCompatibility("{\"version\":\"1.0\",") == ProjectSerializer::InvalidMetadata,
+		"ProjectSerializer classifies invalid project metadata");
 	String currentMetadataFixture = LoadFixture("current-project-metadata.json");
 	String legacyMetadataFixture = LoadFixture("legacy-unversioned-project-metadata.json");
 	String unsupportedMetadataFixture = LoadFixture("unsupported-project-metadata.json");
+	String invalidMetadataFixture = LoadFixture("invalid-project-metadata.json");
 	Check(ProjectSerializer::ReadCompatibility(currentMetadataFixture) == ProjectSerializer::CurrentMetadata,
 		"ProjectSerializer classifies current metadata fixture");
 	Check(ProjectSerializer::ReadCompatibility(legacyMetadataFixture) == ProjectSerializer::LegacyUnversionedMetadata,
 		"ProjectSerializer classifies legacy unversioned metadata fixture");
 	Check(ProjectSerializer::ReadCompatibility(unsupportedMetadataFixture) == ProjectSerializer::UnsupportedMetadata,
 		"ProjectSerializer classifies unsupported metadata fixture");
+	Check(ProjectSerializer::ReadCompatibility(invalidMetadataFixture) == ProjectSerializer::InvalidMetadata,
+		"ProjectSerializer classifies invalid metadata fixture");
 	Check(ProjectSerializer::SupportsJson(currentMetadataFixture), "ProjectSerializer supports current metadata fixture");
 	Check(ProjectSerializer::SupportsJson(legacyMetadataFixture), "ProjectSerializer supports legacy metadata fixture");
 	Check(!ProjectSerializer::SupportsJson(unsupportedMetadataFixture), "ProjectSerializer rejects unsupported metadata fixture");
+	Check(!ProjectSerializer::SupportsJson(invalidMetadataFixture), "ProjectSerializer rejects invalid metadata fixture");
 	KarData fixtureCurrent = ProjectSerializer::FromJson(currentMetadataFixture);
 	Check(fixtureCurrent.version == ProjectSerializer::FormatVersion(), "ProjectSerializer loads current metadata fixture version");
 	Check(fixtureCurrent.title == "Fixture Current Song", "ProjectSerializer loads current metadata fixture title");

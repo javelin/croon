@@ -17,10 +17,21 @@ String ProjectSerializer::ReadVersion(const String& json) {
 }
 
 ProjectSerializer::MetadataCompatibility ProjectSerializer::ReadCompatibility(const String& json) {
-    auto js = ParseJSON(json);
-    String version = js.GetAdd("version");
-    if (version.IsEmpty()) return LegacyUnversionedMetadata;
-    return SupportsVersion(version) ? CurrentMetadata : UnsupportedMetadata;
+    try {
+        auto js = ParseJSON(json);
+        if (js.IsError()) return InvalidMetadata;
+        String version = js.GetAdd("version");
+        if (version.IsEmpty()) return LegacyUnversionedMetadata;
+        return SupportsVersion(version) ? CurrentMetadata : UnsupportedMetadata;
+    }
+    catch (CParser::Error&) {
+        return InvalidMetadata;
+    }
+}
+
+bool ProjectSerializer::SupportsJson(const String& json) {
+    MetadataCompatibility compatibility = ReadCompatibility(json);
+    return compatibility == CurrentMetadata || compatibility == LegacyUnversionedMetadata;
 }
 
 String ProjectSerializer::ToJson(const KarData& data) {

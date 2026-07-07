@@ -465,6 +465,7 @@ def main() -> None:
         "current-project-metadata.json",
         "legacy-unversioned-project-metadata.json",
         "unsupported-project-metadata.json",
+        "invalid-project-metadata.json",
     ]:
         if not (root / "tests" / "upp" / "CroonCoreTests" / "fixtures" / fixture).exists():
             fail(f"core tests missing metadata fixture {fixture}")
@@ -552,8 +553,12 @@ def main() -> None:
     require(project_serializer_cpp, "String ProjectSerializer::ReadVersion(const String& json)", "ProjectSerializer direct version-read implementation")
     require(project_serializer_cpp, 'return NormalizeReadVersion(js.GetAdd("version"))', "ProjectSerializer direct version-read normalization")
     require(project_serializer_cpp, "ProjectSerializer::MetadataCompatibility ProjectSerializer::ReadCompatibility", "ProjectSerializer compatibility-status implementation")
+    require(project_serializer_cpp, "catch (CParser::Error&)", "ProjectSerializer invalid JSON classification")
+    require(project_serializer_cpp, "return InvalidMetadata", "ProjectSerializer invalid metadata status")
     require(project_serializer_cpp, "if (version.IsEmpty()) return LegacyUnversionedMetadata", "ProjectSerializer legacy compatibility classification")
     require(project_serializer_cpp, "return SupportsVersion(version) ? CurrentMetadata : UnsupportedMetadata", "ProjectSerializer explicit compatibility classification")
+    require(project_serializer_cpp, "bool ProjectSerializer::SupportsJson(const String& json)", "ProjectSerializer JSON support implementation")
+    require(project_serializer_cpp, "compatibility == CurrentMetadata || compatibility == LegacyUnversionedMetadata", "ProjectSerializer JSON support status contract")
     for key in [
         '"version"',
         '"title"',
@@ -574,6 +579,7 @@ def main() -> None:
     require(project_serializer_h, "ReadVersion", "ProjectSerializer direct version-read contract")
     require(project_serializer_h, "MetadataCompatibility", "ProjectSerializer compatibility-status contract")
     require(project_serializer_h, "LegacyUnversionedMetadata", "ProjectSerializer legacy compatibility-status contract")
+    require(project_serializer_h, "InvalidMetadata", "ProjectSerializer invalid compatibility-status contract")
     require(project_serializer_h, "SupportsJson", "ProjectSerializer JSON support contract")
 
     ffmpeg_h = (root / "FfmpegCommandBuilder.h").read_text()
