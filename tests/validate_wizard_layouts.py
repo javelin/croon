@@ -82,9 +82,10 @@ def main() -> None:
             fail(f"Page1.cpp missing direct dependency {needle}")
     for needle in [
         "GenreCatalog::List()",
+        "Page1::Page1() : Page1(KarData::GetGlobal())",
+        "Page1::Page1(KarData& data) : data(data)",
         "titleEd.WhenAction",
         "artistEd.WhenAction",
-        "KarData::GetGlobal()",
         "loadedAudioLbl.SetLabel(data.origAudioFilePath)",
         "data.title = titleEd.TrimBoth().GetData()",
         "data.year = year.IsNull() ? 0:(int)year",
@@ -122,11 +123,13 @@ def main() -> None:
             fail(f"Page2.cpp missing direct dependency {needle}")
     for needle in [
         "lyricsEd.WhenAction",
+        "Page2::Page2() : Page2(KarData::GetGlobal())",
+        "Page2::Page2(KarData& data)",
         "LyricsDownloadService::Download",
         "TextTools::CleanSpacing",
         "Config::Get(LYRICS_PREFIX)",
         "Config::Get(LYRICS_SUFFIX)",
-        "karData.rawLyrics = raw",
+        "data.rawLyrics = raw",
     ]:
         if needle not in page2_impl:
             fail(f"Page2.cpp missing behavior {needle}")

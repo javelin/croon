@@ -34,7 +34,10 @@ using namespace Upp;
 
 #include "Page2.h"
 
-Page2::Page2() : willDownloadLyrics(true) {
+Page2::Page2() : Page2(KarData::GetGlobal()) {
+}
+
+Page2::Page2(KarData& data) : willDownloadLyrics(true), data(data) {
     pageName = "Lyrics";
     CtrlLayout(*this);
     lyricsEd.WhenAction = [=] {
@@ -44,11 +47,10 @@ Page2::Page2() : willDownloadLyrics(true) {
 }
 
 void Page2::Populate() {
-    auto& karData = KarData::GetGlobal();
-    willDownloadLyrics = willDownloadLyrics && karData.timedLyrics.IsEmpty();
+    willDownloadLyrics = willDownloadLyrics && data.timedLyrics.IsEmpty();
     if (willDownloadLyrics) {
         String lyrics{""};
-        auto downloadStatus = LyricsDownloadService::DownloadWithStatus(karData.title, karData.artist, lyrics);
+        auto downloadStatus = LyricsDownloadService::DownloadWithStatus(data.title, data.artist, lyrics);
         if (downloadStatus == LyricsDownloadService::DownloadOk)
             lyrics = TrimBoth(lyrics);
         else if (downloadStatus == LyricsDownloadService::ExtractionFailed)
@@ -62,7 +64,7 @@ void Page2::Populate() {
         willDownloadLyrics = false;
     }
     else {
-        lyricsEd.SetData(TrimBoth(karData.rawLyrics));
+        lyricsEd.SetData(TrimBoth(data.rawLyrics));
     }
     lyricsEd.SetFocus();
     enableNext = !((String)~lyricsEd).IsEmpty();
@@ -76,6 +78,5 @@ void Page2::Reset() {
 
 void Page2::SaveData() {
     auto raw = TrimBoth(lyricsEd.GetData());
-    auto& karData = KarData::GetGlobal();
-    karData.rawLyrics = raw;
+    data.rawLyrics = raw;
 }

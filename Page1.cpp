@@ -33,7 +33,10 @@ using namespace Upp;
 
 #include "Page1.h"
 
-Page1::Page1() {
+Page1::Page1() : Page1(KarData::GetGlobal()) {
+}
+
+Page1::Page1(KarData& data) : data(data) {
     pageName = "Song Details";
     CtrlLayout(*this);
     prevBtn.Disable();
@@ -66,7 +69,6 @@ void Page1::Reset() {
 }
 
 void Page1::Populate() {
-    auto& data = KarData::GetGlobal();
     titleEd.SetData(data.title);
     artistEd.SetData(data.artist);
     if (data.year > 0) yearEd.SetData(data.year);
@@ -82,7 +84,6 @@ void Page1::Populate() {
 }
 
 void Page1::SaveData() {
-    auto& data = KarData::GetGlobal();
     data.title = titleEd.TrimBoth().GetData();
     data.artist = artistEd.TrimBoth().GetData();
     Value year = yearEd.GetData();
