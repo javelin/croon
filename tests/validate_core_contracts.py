@@ -881,6 +881,18 @@ def main() -> None:
     require(wizard_h, "Page2 page2;", "WizardDlg owned Page2 member")
     require(wizard_h, "Page3 page3;", "WizardDlg owned Page3 member")
 
+    project_list_cpp = (root / "ProjectList.cpp").read_text()
+    require(project_list_cpp, "ProjectList::ProjectList() : ProjectList(KarData::GetGlobal())", "ProjectList default global data wiring")
+    require(project_list_cpp, "ProjectList::ProjectList(KarData& data) : data(data)", "ProjectList injected data constructor")
+    require(project_list_cpp, "data = pick(tdata)", "ProjectList injected data load")
+    require(project_list_cpp, "MusicPlayer::GetPlayer().Open(data.audioFilePath)", "ProjectList injected data audio open")
+    require(project_list_cpp, "LyricsTransformer::TimedToRaw(data.timedLyrics, true)", "ProjectList injected data list refresh")
+    reject(project_list_cpp, "KarData& data = KarData::GetGlobal()", "ProjectList direct global data alias")
+    reject(project_list_cpp, "KarData::GetGlobal().audioFilePath", "ProjectList direct global audio access")
+    project_list_h = (root / "ProjectList.h").read_text()
+    require(project_list_h, "ProjectList(KarData& data)", "ProjectList injected data declaration")
+    require(project_list_h, "KarData& data", "ProjectList injected data member")
+
     list_ctrl_cpp = (root / "ListCtrl.cpp").read_text()
     reject(list_ctrl_cpp, '#include "Croon.h"', "ListCtrl app shell dependency")
     for needle in [

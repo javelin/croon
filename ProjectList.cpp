@@ -88,11 +88,14 @@ ProjectItemCtrl::ProjectItemCtrl(const ProjectItem& item) :
     detailsLbl.SetText("\1" + text);
 }
 
-ProjectList::ProjectList() {
+ProjectList::ProjectList() : ProjectList(KarData::GetGlobal()) {
+}
+
+ProjectList::ProjectList(KarData& data) : data(data) {
     CtrlLayout(*this);
-    openBtn << [=] { OpenProject(); };
-    newBtn << [=] { NewProject(); };
-    clearBtn << [=] {
+    openBtn << [this] { OpenProject(); };
+    newBtn << [this] { NewProject(); };
+    clearBtn << [this] {
         if (PromptYesNoCancel(DeQtfLf("Are you sure you want to clear the projects list?\n"
                                         "The saved projects won't be deleted.")) == 1) {
             projects.Clear();
@@ -101,7 +104,7 @@ ProjectList::ProjectList() {
         }
     };
     projectLst.SetOrientation(ListCtrl::VerticalGrid, 250, 70);
-    loader.WhenProjectLoaded << [=] (
+    loader.WhenProjectLoaded << [this] (
         String path, String title, String artist, String lyrics, Image thumbnail) {
         projects.Add(*(new ProjectItem(path,
                                         time(0),
@@ -112,29 +115,28 @@ ProjectList::ProjectList() {
         projectLst.AddChild(*(new ProjectItemCtrl(projects.back())), false);
         projectLst.Scroll();
     };
-    loader.WhenDoneLoading << [=] {
+    loader.WhenDoneLoading << [this] {
         loader.Hide();
         clearBtn.Enable(!projects.IsEmpty());
-        projectLst.ConsumeMouseEvents().WhenLeftDouble = [=] (int index, Ctrl* ctrl) {
+        projectLst.ConsumeMouseEvents().WhenLeftDouble = [this] (int index, Ctrl* ctrl) {
             if (index < 0 || index >= projects.GetCount()) return;
             const auto& item = projects[index];
             KarData tdata;
             OpenProjectDlg opDlg;
             if (opDlg.Run(item.path, tdata) == IDOK) {
                 WhenLoadingProject();
-                KarData& data = KarData::GetGlobal();
-                data = pick(tdata);
+                this->data = pick(tdata);
                 UpdateList();
-                if (!MusicPlayer::GetPlayer().Open(data.audioFilePath)) {
+                if (!MusicPlayer::GetPlayer().Open(this->data.audioFilePath)) {
                     Exclamation("Player is unable to load audio file. You will not be able to set timing!");
                 }
                 WhenProjectLoaded();
             }
         };
-        projectLst.WhenRightUp = [=] (int index, Ctrl* ctrl) {
+        projectLst.WhenRightUp = [this] (int index, Ctrl* ctrl) {
             if (index < 0 || index >= projects.GetCount()) return;
-            MenuBar::Execute([=](Bar& bar) {
-                bar.Add(TextTools::ShortenMiddle(projects[index].path, 255), CroonImg::Icon16(), [=] {
+            MenuBar::Execute([this, index](Bar& bar) {
+                bar.Add(TextTools::ShortenMiddle(projects[index].path, 255), CroonImg::Icon16(), [this, index] {
                     const auto& item = projects[index];
                     auto msg = Format("{{1:9 Project:: %s:: Title:: %s:: Artist:: %s}}",
                                         DeQtf(item.path),
@@ -146,33 +148,31 @@ ProjectList::ProjectList() {
                         OpenProjectDlg opDlg;
                         if (opDlg.Run(item.path, tdata) == IDOK) {
                             WhenLoadingProject();
-                            KarData& data = KarData::GetGlobal();
-                            data = pick(tdata);
+                            this->data = pick(tdata);
                             UpdateList();
-                            if (!MusicPlayer::GetPlayer().Open(data.audioFilePath)) {
+                            if (!MusicPlayer::GetPlayer().Open(this->data.audioFilePath)) {
                                 Exclamation("Player is unable to load audio file. You will not be able to set timing!");
                             }
                             WhenProjectLoaded();
                         }
                     }
                 });
-                bar.Add("Open Project", CtrlImg::open(), [=] {
+                bar.Add("Open Project", CtrlImg::open(), [this, index] {
                     const auto& item = projects[index];
                     KarData tdata;
                     OpenProjectDlg opDlg;
                     if (opDlg.Run(item.path, tdata) == IDOK) {
                         WhenLoadingProject();
-                        KarData& data = KarData::GetGlobal();
-                        data = pick(tdata);
+                        this->data = pick(tdata);
                         UpdateList();
-                        if (!MusicPlayer::GetPlayer().Open(data.audioFilePath)) {
+                        if (!MusicPlayer::GetPlayer().Open(this->data.audioFilePath)) {
                             Exclamation("Player is unable to load audio file. You will not be able to set timing!");
                         }
                         WhenProjectLoaded();
                     }
                 });
                 bar.Separator();
-                bar.Add("Delete Project", CroonImg::Trash(), [=] {
+                bar.Add("Delete Project", CroonImg::Trash(), [this, index] {
                     if (PromptYesNoCancel("Are you sure you want to [* permanently] delete this project?") == 1) {
                         const auto& item = projects[index];
                         if (!FileDelete(item.path)) {
@@ -215,7 +215,7 @@ void ProjectList::NewProject() {
             auto& wizDlg = GetWizardDlg();
             if (wizDlg.Run(conDlg.GetConvertedFile(), conDlg.GetDurationn(), ~fsel) == IDOK) {
                 UpdateList();
-                if (!MusicPlayer::GetPlayer().Open(KarData::GetGlobal().audioFilePath)) {
+                if (!MusicPlayer::GetPlayer().Open(data.audioFilePath)) {
                     Exclamation("Player is unable to load audio file. You will not be able to set timing!");
                 }
                 WhenProjectLoaded();
@@ -236,7 +236,6 @@ void ProjectList::OpenProject() {
         OpenProjectDlg opDlg;
         if (opDlg.Run(~fsel, tdata) == IDOK) {
             WhenLoadingProject();
-            KarData& data = KarData::GetGlobal();
             data = pick(tdata);
             UpdateList();
             if (!MusicPlayer::GetPlayer().Open(data.audioFilePath)) {
@@ -249,7 +248,6 @@ void ProjectList::OpenProject() {
 }
 
 void ProjectList::UpdateList() {
-    KarData& data = KarData::GetGlobal();
     int index;
     auto project = FindProject(data.projectPath, index);
     if (!project) {
