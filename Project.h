@@ -6,9 +6,12 @@
 #ifndef _Croon_Project_h_
 #define _Croon_Project_h_
 
+struct KarData;
+
 class Project : public WithCroonProjectLayout<ParentCtrl> {
 public:
     Project();
+    Project(KarData& data);
     virtual ~Project() { CleanUp(); }
     void Populate();
     void SaveProject();
@@ -41,6 +44,7 @@ private:
     String videoPath;
     bool open{false};
     bool dirty{false};
+    KarData& data;
 };
 
 #endif

@@ -75,7 +75,10 @@ using namespace Upp;
 
 VideoDlg& GetVideoDlg();
 
-Project::Project() : videoPath("") {
+Project::Project() : Project(KarData::GetGlobal()) {
+}
+
+Project::Project(KarData& projectData) : videoPath(""), data(projectData) {
     CtrlLayout(*this);
     
     for (const auto& genre : GenreCatalog::List()) genreEd.AddList(genre);
@@ -89,80 +92,77 @@ Project::Project() : videoPath("") {
     
     saveBtn.Disable();
     
-    auto updateData = [=] {
+    auto updateData = [this] {
         SetDirty();
         KillTimeCallback(timerId);
-        SetTimeCallback(1000, [=]{
-            previewRT.SetQTF(Format("[2 %s]", SubtitleGenerator::ToRichAss(KarData::GetGlobal())));
+        SetTimeCallback(1000, [this]{
+            previewRT.SetQTF(Format("[2 %s]", SubtitleGenerator::ToRichAss(data)));
         }, timerId);
     };
     
-    titleEd.WhenAction = [=] {
-        auto& data = KarData::GetGlobal();
+    titleEd.WhenAction = [this, updateData] {
         data.title = ~titleEd.TrimBoth();
         exportBtn.Enable(!data.title.IsEmpty() &&
                             !data.artist.IsEmpty() &&
                             data.timed == data.timedLyrics.GetCount() - 1);
         updateData();
     };
-    artistEd.WhenAction = [=] {
-        auto& data = KarData::GetGlobal();
+    artistEd.WhenAction = [this, updateData] {
         data.artist = ~artistEd.TrimBoth();
         exportBtn.Enable(!data.title.IsEmpty() &&
                             !data.artist.IsEmpty() &&
                             data.timed == data.timedLyrics.GetCount() - 1);
         updateData();
     };
-    genreEd.WhenAction = [=] {
-        KarData::GetGlobal().genre = ~genreEd.TrimBoth();
+    genreEd.WhenAction = [this, updateData] {
+        data.genre = ~genreEd.TrimBoth();
         updateData();
     };
-    yearEd.WhenAction = [=] {
+    yearEd.WhenAction = [this, updateData] {
         Value val = yearEd.GetData();
-        KarData::GetGlobal().year = val.IsNull() ? 0:(int)val;
+        data.year = val.IsNull() ? 0:(int)val;
         updateData();
     };
-    writerEd.WhenAction = [=] {
-        KarData::GetGlobal().writer = ~writerEd.TrimBoth();
+    writerEd.WhenAction = [this, updateData] {
+        data.writer = ~writerEd.TrimBoth();
         updateData();
     };
-    ownerEd.WhenAction = [=] {
-        KarData::GetGlobal().owner = ~ownerEd.TrimBoth();
+    ownerEd.WhenAction = [this, updateData] {
+        data.owner = ~ownerEd.TrimBoth();
         updateData();
     };
-    fontSizeEd.WhenAction = [=] {
+    fontSizeEd.WhenAction = [this, updateData] {
         Value val = fontSizeEd.GetData();
-        KarData::GetGlobal().SetFontSize(val.IsNull() ? 0:(int)val);
+        data.SetFontSize(val.IsNull() ? 0:(int)val);
         updateData();
     };
-    dehissOpt.WhenAction = [=] {
-        KarData::GetGlobal().dehiss = dehissOpt.GetData();
+    dehissOpt.WhenAction = [this, updateData] {
+        data.dehiss = dehissOpt.GetData();
         updateData();
     };
     
-    videoBtn << [=] {
+    videoBtn << [this] {
         auto& vDlg = GetVideoDlg();
         if (vDlg.Run() == IDOK) {
-            auto& data = KarData::GetGlobal();
             videoImg.SetImage(data.videoThumbnail);
             videoImg.Tip(data.origVideoFile);
             SetDirty();
         }
     };
     
-    timingBtn << [=] { Timing(); };
+    timingBtn << [this] { Timing(); };
     
-    partsBtn << [=] { VocalParts(); };
+    partsBtn << [this] { VocalParts(); };
     
-    exportBtn << [=] { ExportVideo(exportOpts.GetData()); };
+    exportBtn << [this] { ExportVideo(exportOpts.GetData()); };
     
-    saveBtn << [=] { SaveProject(); };
+    saveBtn << [this] { SaveProject(); };
     
     tab.Add(lyricsEd.HSizePosZ(5, 5).VSizePosZ(5, 5), "Lyrics");
     
-    lyricsEd.WhenAction << [=] {
+    lyricsEd.WhenAction << [this] {
         KillTimeCallback(timerId);
-        SetTimeCallback(1000, [=]{
+        SetTimeCallback(1000, [this]{
             UpdateLyricsData();
         }, timerId);
     };
@@ -172,7 +172,6 @@ Project::Project() : videoPath("") {
 
 void Project::Populate() {
     SetDirty(false);
-    auto& data = KarData::GetGlobal();
     titleEd.SetData(data.title);
     artistEd.SetData(data.artist);
     genreEd.SetData(data.genre);
@@ -196,7 +195,7 @@ void Project::Populate() {
 
 void Project::SaveProject() {
     if (open && dirty) {
-        SaveProjectDlg().Run(KarData::GetGlobal());
+        SaveProjectDlg().Run(data);
         SetDirty(false);
         WhenProjectSaved();
     }
@@ -204,7 +203,6 @@ void Project::SaveProject() {
 
 void Project::SaveProjectAs() {
     if (open) {
-        auto& data = KarData::GetGlobal();
         FileSel fsel;
         String projectDir{Config::Get(PROJECT_DIR, GetHomeDirectory())};
         if (projectDir.IsEmpty()) projectDir = Config::Get(MUSIC_DIR);
@@ -217,7 +215,7 @@ void Project::SaveProjectAs() {
                 savePath = GetFileTitle(savePath) + AppIdentity::ProjectExtension();
             }
             SaveProjectDlg saveDlg;
-            if (saveDlg.Run(savePath, KarData::GetGlobal()) == IDOK) {
+            if (saveDlg.Run(savePath, data) == IDOK) {
                 Config::Set(PROJECT_DIR, ::GetFileDirectory(~fsel));
                 WhenProjectSaved();
                 SetDirty(false);
@@ -227,7 +225,6 @@ void Project::SaveProjectAs() {
 }
 
 void Project::UpdateLyricsData() {
-    auto& data = KarData::GetGlobal();
     auto rawLyrics = TrimBoth((String)~lyricsEd);
     if (data.rawLyrics != rawLyrics) {
         dirty = true;
@@ -280,7 +277,6 @@ bool Project::CloseProject(bool quitting) {
 
 void Project::CleanUp() {
     if (!open) return;
-    auto& data = KarData::GetGlobal();
     FileDelete(data.audioFilePath);
     FileDelete(data.infoFilePath);
     if (GetFileDirectory(data.videoFilePath) == GetTempDirectory()) {
@@ -294,7 +290,6 @@ void Project::CleanUp() {
 void Project::Timing() {
     KillTimeCallback(timerId);
     UpdateLyricsData();
-    auto& data = KarData::GetGlobal();
     TimingDlg tDlg;
     tDlg.Run(data);
     SetDirty(tDlg.IsDirty());
@@ -308,7 +303,6 @@ void Project::Timing() {
 void Project::VocalParts() {
     KillTimeCallback(timerId);
     UpdateLyricsData();
-    auto& data = KarData::GetGlobal();
     LyricsPartsDlg lpDlg;
     if (lpDlg.Run(data) == IDOK) {
         data.parts = lpDlg.GetParts();
@@ -335,7 +329,6 @@ void Project::ReplaceAudio() {
                 return;
             }
             Config::Set(MUSIC_DIR, ::GetFileDirectory(~fsel));
-            auto& data = KarData::GetGlobal();
             data.audioFilePath = conDlg.GetConvertedFile();
             data.origAudioFilePath = ~fsel;
             data.duration = conDlg.GetDurationn();
@@ -345,7 +338,6 @@ void Project::ReplaceAudio() {
 }
 
 void Project::ExportVideo(int length) {
-    auto& data = KarData::GetGlobal();
     String ext = "mp4";
     if (length != 1) {
         ext = length == 0 ? "FULL":(IntStr(length) + "-SEC");

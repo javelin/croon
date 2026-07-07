@@ -203,9 +203,11 @@ def main() -> None:
             fail(f"Project.cpp missing direct dependency {needle}")
     for needle in [
         "GenreCatalog::List()",
-        "SubtitleGenerator::ToRichAss(KarData::GetGlobal())",
+        "Project::Project() : Project(KarData::GetGlobal())",
+        "Project::Project(KarData& projectData) : videoPath(\"\"), data(projectData)",
+        "SubtitleGenerator::ToRichAss(data)",
         "GetVideoDlg()",
-        "SaveProjectDlg().Run(KarData::GetGlobal())",
+        "SaveProjectDlg().Run(data)",
         "LyricsTransformer::RawToUntimed(data)",
         "TimingDlg tDlg",
         "LyricsPartsDlg lpDlg",
