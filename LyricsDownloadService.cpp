@@ -74,7 +74,7 @@ LyricsDownloadService::DownloadStatus LyricsDownloadService::DownloadWithStatus(
     dlg.WhenDownloadSuccess << [output, &extracted](String content) {
         extracted = LyricsDownloadService::ExtractProviderLyrics(content, *output);
     };
-    if (dlg.Run(BuildProviderUrl(title, artist), Format("Downloading lyrics from %s", ProviderName())) != IDOK)
+    if (dlg.Run(BuildProviderUrl(title, artist), "Downloading lyrics") != IDOK)
         return DownloadCancelled;
     return extracted ? DownloadOk : ExtractionFailed;
 }
