@@ -105,9 +105,6 @@ using namespace Upp;
 
 #include "WizardDlg.h"
 
-GatherDlg& GetGatherDlg();
-VideoDlg& GetVideoDlg();
-WizardDlg& GetWizardDlg();
 void RunCroon();
 
 #endif

@@ -163,6 +163,9 @@ def main() -> None:
 
     croon_h = (root / "Croon.h").read_text()
     reject(croon_h, "typedef struct Visualization VIZ", "Croon.h visualization alias")
+    reject(croon_h, "GatherDlg& GetGatherDlg()", "Croon.h global gather accessor exposure")
+    reject(croon_h, "VideoDlg& GetVideoDlg()", "Croon.h global video accessor exposure")
+    reject(croon_h, "WizardDlg& GetWizardDlg()", "Croon.h global wizard accessor exposure")
     for path in sorted(root.glob("*")):
         if path.suffix not in {".cpp", ".h"} or path.name == "Croon.h":
             continue
