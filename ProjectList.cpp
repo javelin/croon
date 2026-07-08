@@ -65,7 +65,14 @@ using namespace Upp;
 #include "WizardDlg.h"
 #include "ProjectList.h"
 
-WizardDlg& GetWizardDlg();
+namespace {
+
+WizardDlg& CompatibilityWizardDlg() {
+    static WizardDlg* dlg = new WizardDlg();
+    return *dlg;
+}
+
+}
 
 ProjectItemCtrl::ProjectItemCtrl(const ProjectItem& item) :
                     item(item) {
@@ -91,7 +98,7 @@ ProjectItemCtrl::ProjectItemCtrl(const ProjectItem& item) :
 ProjectList::ProjectList() : ProjectList(KarData::GetGlobal()) {
 }
 
-ProjectList::ProjectList(KarData& data) : ProjectList(data, GetWizardDlg()) {
+ProjectList::ProjectList(KarData& data) : ProjectList(data, CompatibilityWizardDlg()) {
 }
 
 ProjectList::ProjectList(KarData& data, WizardDlg& wizardDlg) : data(data), wizardDlg(wizardDlg) {

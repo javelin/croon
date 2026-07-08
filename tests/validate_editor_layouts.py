@@ -199,14 +199,14 @@ def main() -> None:
         "#define LAYOUTFILE <Croon/CroonVideoDlg.lay>",
         '#include "VideoDlg.h"',
         '#include "Project.h"',
-        "VideoDlg& GetVideoDlg();",
     ]:
         if needle not in project_impl:
             fail(f"Project.cpp missing direct dependency {needle}")
     for needle in [
         "GenreCatalog::List()",
         "Project::Project() : Project(KarData::GetGlobal())",
-        "Project::Project(KarData& projectData) : Project(projectData, GetVideoDlg())",
+        "VideoDlg& CompatibilityVideoDlg()",
+        "Project::Project(KarData& projectData) : Project(projectData, CompatibilityVideoDlg())",
         "Project::Project(KarData& projectData, VideoDlg& videoDialog) : videoPath(\"\"), data(projectData), videoDlg(videoDialog)",
         "SubtitleGenerator::ToRichAss(data)",
         "videoDlg.Run()",
@@ -268,14 +268,14 @@ def main() -> None:
         "#define LAYOUTFILE <Croon/CroonWizardShell.lay>",
         '#include "WizardDlg.h"',
         '#include "ProjectList.h"',
-        "WizardDlg& GetWizardDlg();",
     ]:
         if needle not in project_list_impl:
             fail(f"ProjectList.cpp missing direct dependency {needle}")
     for needle in [
         "RTHelper rth",
         "ProjectList::ProjectList() : ProjectList(KarData::GetGlobal())",
-        "ProjectList::ProjectList(KarData& data) : ProjectList(data, GetWizardDlg())",
+        "WizardDlg& CompatibilityWizardDlg()",
+        "ProjectList::ProjectList(KarData& data) : ProjectList(data, CompatibilityWizardDlg())",
         "ProjectList::ProjectList(KarData& data, WizardDlg& wizardDlg) : data(data), wizardDlg(wizardDlg)",
         "loader.WhenProjectLoaded",
         "OpenProjectDlg opDlg",

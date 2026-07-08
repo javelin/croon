@@ -92,21 +92,6 @@ using namespace Upp;
 
 #include "MainWindow.h"
 
-GatherDlg& GetGatherDlg() {
-    static GatherDlg* dlg = new GatherDlg();
-    return *dlg;
-}
-
-VideoDlg& GetVideoDlg() {
-    static VideoDlg* dlg = new VideoDlg();
-    return *dlg;
-}
-
-WizardDlg& GetWizardDlg() {
-    static WizardDlg* dlg = new WizardDlg();
-    return *dlg;
-}
-
 void RunCroon() {
     auto ffmpegLoc = Config::Get(FFMPEG_LOCATION);
     if (ffmpegLoc.IsVoid() || ffmpegLoc.IsEmpty()) ffmpegLoc = "ffmpeg";

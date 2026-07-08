@@ -236,9 +236,6 @@ def main() -> None:
     ]:
         require(croon_cpp, needle, "Croon app shell direct dependency")
     for needle in [
-        "GatherDlg& GetGatherDlg()",
-        "VideoDlg& GetVideoDlg()",
-        "WizardDlg& GetWizardDlg()",
         "Config::Get(FFMPEG_LOCATION)",
         "MediaProcessRunner proc",
         "proc.Start(ffmpegLoc)",
@@ -248,6 +245,9 @@ def main() -> None:
         "MusicPlayer::DeInitPlayer()",
     ]:
         require(croon_cpp, needle, "Croon app launch workflow")
+    reject(croon_cpp, "GatherDlg& GetGatherDlg()", "Croon app shell global gather accessor")
+    reject(croon_cpp, "VideoDlg& GetVideoDlg()", "Croon app shell global video accessor")
+    reject(croon_cpp, "WizardDlg& GetWizardDlg()", "Croon app shell global wizard accessor")
     reject(croon_cpp, "(void)GetVideoDlg()", "Croon launch global video dialog prewarm")
     reject(croon_cpp, "(void)GetWizardDlg()", "Croon launch global wizard dialog prewarm")
     page3_cpp = (root / "Page3.cpp").read_text()
@@ -837,7 +837,8 @@ def main() -> None:
 
     project_cpp = (root / "Project.cpp").read_text()
     require(project_cpp, "Project::Project() : Project(KarData::GetGlobal())", "Project default global data wiring")
-    require(project_cpp, "Project::Project(KarData& projectData) : Project(projectData, GetVideoDlg())", "Project compatibility video wiring")
+    require(project_cpp, "VideoDlg& CompatibilityVideoDlg()", "Project compatibility video helper")
+    require(project_cpp, "Project::Project(KarData& projectData) : Project(projectData, CompatibilityVideoDlg())", "Project compatibility video wiring")
     require(project_cpp, "Project::Project(KarData& projectData, VideoDlg& videoDialog) : videoPath(\"\"), data(projectData), videoDlg(videoDialog)", "Project injected video constructor")
     require(project_cpp, "videoDlg.Run()", "Project injected video dialog workflow")
     require(project_cpp, "SubtitleGenerator::ToRichAss(data)", "Project injected data preview")
@@ -909,7 +910,8 @@ def main() -> None:
 
     page3_cpp = (root / "Page3.cpp").read_text()
     require(page3_cpp, "Page3::Page3(String gatherKey) : Page3(KarData::GetGlobal(), gatherKey)", "Page3 default global data wiring")
-    require(page3_cpp, "Page3::Page3(KarData& data, String gatherKey) : Page3(data, GetGatherDlg(), gatherKey)", "Page3 compatibility gather wiring")
+    require(page3_cpp, "GatherDlg& CompatibilityGatherDlg()", "Page3 compatibility gather helper")
+    require(page3_cpp, "Page3::Page3(KarData& data, String gatherKey) : Page3(data, CompatibilityGatherDlg(), gatherKey)", "Page3 compatibility gather wiring")
     require(page3_cpp, "Page3::Page3(KarData& data, GatherDlg& gatherDlg, String gatherKey)", "Page3 injected gather constructor")
     require(page3_cpp, "gatherDlg.WhenVideoAdded", "Page3 injected gather event")
     require(page3_cpp, "gatherDlg.Run(~fsel)", "Page3 injected gather run")
@@ -940,7 +942,8 @@ def main() -> None:
 
     project_list_cpp = (root / "ProjectList.cpp").read_text()
     require(project_list_cpp, "ProjectList::ProjectList() : ProjectList(KarData::GetGlobal())", "ProjectList default global data wiring")
-    require(project_list_cpp, "ProjectList::ProjectList(KarData& data) : ProjectList(data, GetWizardDlg())", "ProjectList compatibility wizard wiring")
+    require(project_list_cpp, "WizardDlg& CompatibilityWizardDlg()", "ProjectList compatibility wizard helper")
+    require(project_list_cpp, "ProjectList::ProjectList(KarData& data) : ProjectList(data, CompatibilityWizardDlg())", "ProjectList compatibility wizard wiring")
     require(project_list_cpp, "ProjectList::ProjectList(KarData& data, WizardDlg& wizardDlg) : data(data), wizardDlg(wizardDlg)", "ProjectList injected wizard constructor")
     require(project_list_cpp, "data = pick(tdata)", "ProjectList injected data load")
     require(project_list_cpp, "wizardDlg.Run(conDlg.GetConvertedFile()", "ProjectList injected wizard workflow")

@@ -37,12 +37,19 @@ using namespace Upp;
 #include "VidThumbnail.h"
 #include "Page3.h"
 
-GatherDlg& GetGatherDlg();
+namespace {
+
+GatherDlg& CompatibilityGatherDlg() {
+    static GatherDlg* dlg = new GatherDlg();
+    return *dlg;
+}
+
+}
 
 Page3::Page3(String gatherKey) : Page3(KarData::GetGlobal(), gatherKey) {
 }
 
-Page3::Page3(KarData& data, String gatherKey) : Page3(data, GetGatherDlg(), gatherKey) {
+Page3::Page3(KarData& data, String gatherKey) : Page3(data, CompatibilityGatherDlg(), gatherKey) {
 }
 
 Page3::Page3(KarData& data, GatherDlg& gatherDlg, String gatherKey) :

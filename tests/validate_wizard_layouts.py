@@ -162,13 +162,13 @@ def main() -> None:
         '#include "SaveProjectDlg.h"',
         '#include "VidThumbnail.h"',
         '#include "Page3.h"',
-        "GatherDlg& GetGatherDlg();",
+        "GatherDlg& CompatibilityGatherDlg()",
     ]:
         if needle not in page3_impl:
             fail(f"Page3.cpp missing direct dependency {needle}")
     if "Page3::Page3(String gatherKey) : Page3(KarData::GetGlobal(), gatherKey)" not in page3_impl:
         fail("Page3 default constructor no longer wires global data")
-    if "Page3::Page3(KarData& data, String gatherKey) : Page3(data, GetGatherDlg(), gatherKey)" not in page3_impl:
+    if "Page3::Page3(KarData& data, String gatherKey) : Page3(data, CompatibilityGatherDlg(), gatherKey)" not in page3_impl:
         fail("Page3 dynamic constructor was unexpectedly removed")
     if "Page3::Page3(KarData& data, GatherDlg& gatherDlg, String gatherKey)" not in page3_impl:
         fail("Page3 injected gather constructor was unexpectedly removed")
