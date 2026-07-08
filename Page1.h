@@ -10,7 +10,6 @@ struct KarData;
 
 class Page1 : public WithCroonWizardPage1Layout<Page> {
 public:
-    Page1();
     Page1(KarData& data);
     Event<> WhenAudioLoaded;
     Event<String> WhenAudioLoadError;

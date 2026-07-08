@@ -33,9 +33,6 @@ using namespace Upp;
 
 #include "Page1.h"
 
-Page1::Page1() : Page1(KarData::GetGlobal()) {
-}
-
 Page1::Page1(KarData& data) : data(data) {
     pageName = "Song Details";
     CtrlLayout(*this);

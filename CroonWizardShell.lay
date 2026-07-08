@@ -1,7 +1,4 @@
 LAYOUT(CroonWizardLayout, 450, 550)
 	ITEM(Label, pageName, SetAlign(ALIGN_CENTER).HSizePosZ(110, 110).TopPosZ(5, 25))
-	ITEM(Page1, page1, HSizePosZ(5, 5).VSizePosZ(32, 45))
-	ITEM(Page2, page2, HSizePosZ(5, 5).VSizePosZ(32, 45))
-	ITEM(Page3, page3, HSizePosZ(5, 5).VSizePosZ(32, 45))
 	ITEM(Button, cancelBtn, SetLabel(t_("Cancel")).RightPosZ(5, 100).BottomPosZ(15, 25))
 END_LAYOUT

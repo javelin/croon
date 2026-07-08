@@ -56,6 +56,7 @@ WizardDlg::WizardDlg(KarData& data) : data(data), page1(data), page2(data), gath
     
     for (int i = 0; i < maxPages; ++i) {
         auto page = pages[i];
+        Add(page->HSizePosZ(5, 5).VSizePosZ(32, 45));
         *this << page->GetPrevButton().LeftPosZ(5, 100).TopPosZ(5, 25)
             << page->GetNextButton().RightPosZ(5, 100).TopPosZ(5, 25);
         page->Hide();

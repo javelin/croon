@@ -11,8 +11,6 @@ class GatherDlg;
 
 class Page3 : public WithCroonWizardPage3Layout<Page> {
 public:
-    Page3(String gatherKey = "");
-    Page3(KarData& data, String gatherKey = "");
     Page3(KarData& data, GatherDlg& gatherDlg, String gatherKey = "");
     void Layout() override;
     void HideButtons() override {

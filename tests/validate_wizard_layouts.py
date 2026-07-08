@@ -26,14 +26,14 @@ def main() -> None:
 
     for layout in [
         "LAYOUT(CroonWizardLayout",
-        "ITEM(Page1, page1",
-        "ITEM(Page2, page2",
-        "ITEM(Page3, page3",
         "ITEM(Label, pageName",
         "ITEM(Button, cancelBtn",
     ]:
         if layout not in shell_lay:
             fail(f"missing {layout}")
+    for layout_member in ["ITEM(Page1, page1", "ITEM(Page2, page2", "ITEM(Page3, page3"]:
+        if layout_member in shell_lay:
+            fail(f"CroonWizardShell.lay still default-constructs {layout_member}")
 
     if "LAYOUT(CroonWizardLayout" in lay:
         fail("Croon.lay still defines CroonWizardLayout")
@@ -82,7 +82,6 @@ def main() -> None:
             fail(f"Page1.cpp missing direct dependency {needle}")
     for needle in [
         "GenreCatalog::List()",
-        "Page1::Page1() : Page1(KarData::GetGlobal())",
         "Page1::Page1(KarData& data) : data(data)",
         "titleEd.WhenAction",
         "artistEd.WhenAction",
@@ -123,7 +122,6 @@ def main() -> None:
             fail(f"Page2.cpp missing direct dependency {needle}")
     for needle in [
         "lyricsEd.WhenAction",
-        "Page2::Page2() : Page2(KarData::GetGlobal())",
         "Page2::Page2(KarData& data)",
         "LyricsDownloadService::Download",
         "TextTools::CleanSpacing",
@@ -162,14 +160,15 @@ def main() -> None:
         '#include "SaveProjectDlg.h"',
         '#include "VidThumbnail.h"',
         '#include "Page3.h"',
-        "GatherDlg& CompatibilityGatherDlg()",
     ]:
         if needle not in page3_impl:
             fail(f"Page3.cpp missing direct dependency {needle}")
-    if "Page3::Page3(String gatherKey) : Page3(KarData::GetGlobal(), gatherKey)" not in page3_impl:
-        fail("Page3 default constructor no longer wires global data")
-    if "Page3::Page3(KarData& data, String gatherKey) : Page3(data, CompatibilityGatherDlg(), gatherKey)" not in page3_impl:
-        fail("Page3 dynamic constructor was unexpectedly removed")
+    if "Page3::Page3(String gatherKey) : Page3(KarData::GetGlobal(), gatherKey)" in page3_impl:
+        fail("Page3 still has default global data wiring")
+    if "GatherDlg& CompatibilityGatherDlg()" in page3_impl:
+        fail("Page3 still has compatibility gather helper")
+    if "Page3::Page3(KarData& data, String gatherKey) : Page3(data, CompatibilityGatherDlg(), gatherKey)" in page3_impl:
+        fail("Page3 still has compatibility gather wiring")
     if "Page3::Page3(KarData& data, GatherDlg& gatherDlg, String gatherKey)" not in page3_impl:
         fail("Page3 injected gather constructor was unexpectedly removed")
     constructor_body = page3_impl.split("Page3::Page3(KarData& data, GatherDlg& gatherDlg, String gatherKey)", 1)[-1].split("\n}\n", 1)[0]
@@ -253,6 +252,7 @@ def main() -> None:
             fail("WizardDlg still hardcodes non-navigation child placement")
     for needle in [
         "WizardDlg::WizardDlg(KarData& data) : data(data), page1(data), page2(data), gatherDlg(), page3(data, gatherDlg), pages{&page1, &page2, &page3}",
+        "Add(page->HSizePosZ(5, 5).VSizePosZ(32, 45))",
         "page->WhenPreviousPage",
         "page->WhenNextPage",
         "page3.WhenProjectSaved",

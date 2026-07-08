@@ -34,9 +34,6 @@ using namespace Upp;
 
 #include "Page2.h"
 
-Page2::Page2() : Page2(KarData::GetGlobal()) {
-}
-
 Page2::Page2(KarData& data) : willDownloadLyrics(true), data(data) {
     pageName = "Lyrics";
     CtrlLayout(*this);
