@@ -11,8 +11,6 @@ class VideoDlg;
 
 class Project : public WithCroonProjectLayout<ParentCtrl> {
 public:
-    Project();
-    Project(KarData& data);
     Project(KarData& data, VideoDlg& videoDlg);
     virtual ~Project() { CleanUp(); }
     void Populate();

@@ -46,7 +46,7 @@ def main() -> None:
 
     constructors = {
         "ProjectList.cpp": "ProjectList::ProjectList()",
-        "Project.cpp": "Project::Project()",
+        "Project.cpp": "Project::Project(KarData& projectData, VideoDlg& videoDialog)",
         "MainWindow.cpp": "MainWindow::MainWindow(KarData& data)",
     }
     for rel, marker in constructors.items():
@@ -205,9 +205,6 @@ def main() -> None:
             fail(f"Project.cpp missing direct dependency {needle}")
     for needle in [
         "GenreCatalog::List()",
-        "Project::Project() : Project(KarData::GetGlobal())",
-        "VideoDlg& CompatibilityVideoDlg()",
-        "Project::Project(KarData& projectData) : Project(projectData, CompatibilityVideoDlg())",
         "Project::Project(KarData& projectData, VideoDlg& videoDialog) : videoPath(\"\"), data(projectData), videoDlg(videoDialog)",
         "SubtitleGenerator::ToRichAss(data)",
         "videoDlg.Run()",

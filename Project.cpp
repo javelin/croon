@@ -73,21 +73,6 @@ using namespace Upp;
 #include "VideoDlg.h"
 #include "Project.h"
 
-namespace {
-
-VideoDlg& CompatibilityVideoDlg() {
-    static VideoDlg* dlg = new VideoDlg();
-    return *dlg;
-}
-
-}
-
-Project::Project() : Project(KarData::GetGlobal()) {
-}
-
-Project::Project(KarData& projectData) : Project(projectData, CompatibilityVideoDlg()) {
-}
-
 Project::Project(KarData& projectData, VideoDlg& videoDialog) : videoPath(""), data(projectData), videoDlg(videoDialog) {
     CtrlLayout(*this);
     
