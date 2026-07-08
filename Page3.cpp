@@ -50,8 +50,8 @@ Page3::Page3(KarData& data, GatherDlg& gatherDlg, String gatherKey) :
     for (int i = 0; i < paths.GetCount(); ++i) {
         String tnPath = VideoCatalog::ThumbnailPath(paths[i]);
         
-        Image img;
-        if (FileExists(tnPath) && (img = StreamRaster::LoadFileAny(tnPath))) {
+        Image img = VideoCatalog::LoadThumbnail(paths[i]);
+        if (img) {
             ++vidCount;
             AddVideoItem(&videoLst, paths[i], tnPath, img, &vizLst);
         }

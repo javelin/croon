@@ -228,6 +228,7 @@ def main() -> None:
         "Config::Get(FFMPEG_LOCATION)",
         "VideoCatalog::FindVideoFiles(videoDir)",
         "VideoCatalog::ThumbnailPath(paths[curPath])",
+        "VideoCatalog::LoadThumbnail(paths[curPath])",
         "TextTools::ShortenMiddle(paths[curPath], 60)",
         "FfmpegCommandBuilder::GenerateThumbnail(paths[curPath], tnPath, ThumbnailDim, ThumbnailDim)",
         "process.Start(ffmpeg",

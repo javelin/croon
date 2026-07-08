@@ -39,7 +39,7 @@ GatherDlg::GatherDlg() {
     WhenProcessEnded << [=] (int code) {
         if (code == 0) {
             String tnPath = VideoCatalog::ThumbnailPath(paths[curPath]);
-            Image image = StreamRaster::LoadFileAny(tnPath);
+            Image image = VideoCatalog::LoadThumbnail(paths[curPath]);
             if (image) {
                 images.Add(image);
                 WhenVideoAdded(images.GetCount() - 1, paths[curPath], tnPath, image);
@@ -60,7 +60,7 @@ GatherDlg::GatherDlg() {
         String tnPath = VideoCatalog::ThumbnailPath(paths[curPath]);
         bool existing = FileExists(tnPath);
         auto fn = [=]() {
-            Image image = StreamRaster::LoadFileAny(tnPath);
+            Image image = VideoCatalog::LoadThumbnail(paths[curPath]);
             if (image) {
                 images.Add(image);
                 WhenVideoAdded(images.GetCount() - 1, paths[curPath], tnPath, image);

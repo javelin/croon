@@ -182,6 +182,7 @@ def main() -> None:
     for needle in [
         "VideoCatalog::FindVideoFiles(videoDir)",
         "VideoCatalog::ThumbnailPath(paths[i])",
+        "VideoCatalog::LoadThumbnail(paths[i])",
         "Visualization::Thumbnail(\"@@freqs\")",
         "gatherDlg.WhenVideoAdded",
         "gatherDlg.Run(~fsel)",

@@ -9,6 +9,7 @@
 struct VideoCatalog {
     static Vector<String> FindVideoFiles(String videoDir);
     static String ThumbnailPath(String videoPath);
+    static Image LoadThumbnail(String videoPath);
 };
 
 #endif
