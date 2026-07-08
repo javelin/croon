@@ -92,7 +92,7 @@ using namespace Upp;
 MainWindow::MainWindow() : MainWindow(KarData::GetGlobal()) {
 }
 
-MainWindow::MainWindow(KarData& data) : data(data), project(data), projects(data) {
+MainWindow::MainWindow(KarData& data) : data(data), wizardDlg(data), project(data), projects(data, wizardDlg) {
     CtrlLayout(*this);
     Add(projects.HSizePos().VSizePos());
     Add(project.HSizePos().VSizePos());

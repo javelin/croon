@@ -7,6 +7,7 @@
 #define _Croon_ProjectList_h_
 
 struct KarData;
+class WizardDlg;
 
 struct ProjectItem : public Moveable<ProjectItem>, Pte<ProjectItem> {
     ProjectItem(String path, time_t tstamp, String title, String artist, String lyrics, Image img) :
@@ -44,6 +45,7 @@ class ProjectList : public WithCroonProjectListLayout<ParentCtrl> {
 public:
     ProjectList();
     ProjectList(KarData& data);
+    ProjectList(KarData& data, WizardDlg& wizardDlg);
     virtual ~ProjectList();
     void OpenProject();
     void NewProject();
@@ -61,6 +63,7 @@ private:
 private:
     Vector<ProjectItem> projects;
     KarData& data;
+    WizardDlg& wizardDlg;
 };
 
 #endif

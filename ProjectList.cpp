@@ -91,7 +91,10 @@ ProjectItemCtrl::ProjectItemCtrl(const ProjectItem& item) :
 ProjectList::ProjectList() : ProjectList(KarData::GetGlobal()) {
 }
 
-ProjectList::ProjectList(KarData& data) : data(data) {
+ProjectList::ProjectList(KarData& data) : ProjectList(data, GetWizardDlg()) {
+}
+
+ProjectList::ProjectList(KarData& data, WizardDlg& wizardDlg) : data(data), wizardDlg(wizardDlg) {
     CtrlLayout(*this);
     openBtn << [this] { OpenProject(); };
     newBtn << [this] { NewProject(); };
@@ -212,8 +215,7 @@ void ProjectList::NewProject() {
         ConvertDlg conDlg;
         if (conDlg.Run(~fsel) == IDOK) {
             Config::Set(MUSIC_DIR, ::GetFileDirectory(~fsel));
-            auto& wizDlg = GetWizardDlg();
-            if (wizDlg.Run(conDlg.GetConvertedFile(), conDlg.GetDurationn(), ~fsel) == IDOK) {
+            if (wizardDlg.Run(conDlg.GetConvertedFile(), conDlg.GetDurationn(), ~fsel) == IDOK) {
                 UpdateList();
                 if (!MusicPlayer::GetPlayer().Open(data.audioFilePath)) {
                     Exclamation("Player is unable to load audio file. You will not be able to set timing!");

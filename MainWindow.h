@@ -33,6 +33,7 @@ private:
     
 private:
     KarData& data;
+    WizardDlg wizardDlg;
     Project project;
     ProjectList projects;
     StatusBar status;

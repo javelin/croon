@@ -58,7 +58,7 @@ def main() -> None:
             fail(f"{rel} still hardcodes top-level child placement")
 
     mainwindow_h = (root / "MainWindow.h").read_text()
-    for runtime_member in ["KarData& data;", "Project project;", "ProjectList projects;", "StatusBar status;", "MenuBar menuBar;"]:
+    for runtime_member in ["KarData& data;", "WizardDlg wizardDlg;", "Project project;", "ProjectList projects;", "StatusBar status;", "MenuBar menuBar;"]:
         if runtime_member not in mainwindow_h:
             fail(f"MainWindow.h missing runtime frame member {runtime_member}")
 
@@ -128,7 +128,7 @@ def main() -> None:
             fail(f"MainWindow.cpp missing direct dependency {needle}")
     for needle in [
         "MainWindow::MainWindow() : MainWindow(KarData::GetGlobal())",
-        "MainWindow::MainWindow(KarData& data) : data(data), project(data), projects(data)",
+        "MainWindow::MainWindow(KarData& data) : data(data), wizardDlg(data), project(data), projects(data, wizardDlg)",
         "Add(projects.HSizePos().VSizePos())",
         "Add(project.HSizePos().VSizePos())",
         "Title(AppIdentity::ProductName())",
@@ -274,13 +274,14 @@ def main() -> None:
     for needle in [
         "RTHelper rth",
         "ProjectList::ProjectList() : ProjectList(KarData::GetGlobal())",
-        "ProjectList::ProjectList(KarData& data) : data(data)",
+        "ProjectList::ProjectList(KarData& data) : ProjectList(data, GetWizardDlg())",
+        "ProjectList::ProjectList(KarData& data, WizardDlg& wizardDlg) : data(data), wizardDlg(wizardDlg)",
         "loader.WhenProjectLoaded",
         "OpenProjectDlg opDlg",
         "MusicPlayer::GetPlayer().Open(data.audioFilePath)",
         "RecentProjectService::SavePaths(vs)",
         "ConvertDlg conDlg",
-        "GetWizardDlg()",
+        "wizardDlg.Run(conDlg.GetConvertedFile()",
         "AppIdentity::ProjectTypeName()",
         "TextTools::ShortenMiddle(projects[index].path, 255)",
         "LyricsTransformer::TimedToRaw(data.timedLyrics, true)",
