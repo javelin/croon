@@ -42,7 +42,11 @@ GatherDlg& GetGatherDlg();
 Page3::Page3(String gatherKey) : Page3(KarData::GetGlobal(), gatherKey) {
 }
 
-Page3::Page3(KarData& data, String gatherKey) : vidCount(0), gatherKey(gatherKey), data(data) {
+Page3::Page3(KarData& data, String gatherKey) : Page3(data, GetGatherDlg(), gatherKey) {
+}
+
+Page3::Page3(KarData& data, GatherDlg& gatherDlg, String gatherKey) :
+        vidCount(0), gatherKey(gatherKey), data(data), gatherDlg(gatherDlg) {
     pageName = "Background Video";
     CtrlLayout(*this);
     nextBtn.SetLabel("Save");
@@ -74,7 +78,7 @@ Page3::Page3(KarData& data, String gatherKey) : vidCount(0), gatherKey(gatherKey
     gatherBtn << [=] { GatherVideos(); };
     gatherBtn.Disable();
     gatherBtn.Hide();
-    GetGatherDlg().WhenVideoAdded << [=](int i, String path, String tnPath, Image img) {
+    gatherDlg.WhenVideoAdded << [this](int i, String path, String tnPath, Image img) {
         if (i == 0) {
             videoLst.ClearChildren();
             vidCount = 0;
@@ -139,7 +143,7 @@ void Page3::GatherVideos() {
     fsel.Type("MP4 Videos", "*.mp4");
     fsel <<= Config::Get(VIDEO_DIR, GetHomeDirectory());
     if(fsel.ExecuteSelectDir()) {
-        GetGatherDlg().Run(~fsel);
+        gatherDlg.Run(~fsel);
         if (vidCount) Config::Set(VIDEO_DIR, ~fsel);
     }
 }

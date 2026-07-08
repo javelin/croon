@@ -128,7 +128,7 @@ def main() -> None:
             fail(f"MainWindow.cpp missing direct dependency {needle}")
     for needle in [
         "MainWindow::MainWindow() : MainWindow(KarData::GetGlobal())",
-        "MainWindow::MainWindow(KarData& data) : data(data), videoDlg(), wizardDlg(data), project(data, videoDlg), projects(data, wizardDlg)",
+        "MainWindow::MainWindow(KarData& data) : data(data), videoDlg(data), wizardDlg(data), project(data, videoDlg), projects(data, wizardDlg)",
         "Add(projects.HSizePos().VSizePos())",
         "Add(project.HSizePos().VSizePos())",
         "Title(AppIdentity::ProductName())",
@@ -358,17 +358,21 @@ def main() -> None:
     video_lay = (root / "CroonVideoDlg.lay").read_text()
     for layout in [
         "LAYOUT(CroonVideoDlgLayout",
-        "ITEM(Page3, page3",
         "ITEM(Button, okBtn",
         "ITEM(Button, cancelBtn",
     ]:
         if layout not in video_lay:
             fail(f"missing {layout}")
+    if "ITEM(Page3, page3" in video_lay:
+        fail("CroonVideoDlg.lay still default-constructs Page3")
 
     video_header = (root / "VideoDlg.h").read_text()
     if "WithCroonVideoDlgLayout<TopWindow>" not in video_header:
         fail("VideoDlg does not inherit WithCroonVideoDlgLayout")
-    for layout_member in ["Page3 page3;", "Button okBtn;", "Button cancelBtn;"]:
+    for runtime_member in ["GatherDlg gatherDlg;", "Page3 page3;"]:
+        if runtime_member not in video_header:
+            fail(f"VideoDlg.h missing runtime member {runtime_member}")
+    for layout_member in ["Button okBtn;", "Button cancelBtn;"]:
         if layout_member in video_header:
             fail(f"VideoDlg.h still declares layout member {layout_member}")
 
@@ -407,11 +411,14 @@ def main() -> None:
             fail(f"VideoDlg.cpp missing direct dependency {needle}")
     if "CtrlLayout(*this" not in video_impl:
         fail("VideoDlg constructor does not call CtrlLayout")
-    constructor_body = video_impl.split("VideoDlg::VideoDlg()", 1)[-1].split("\n}\n", 1)[0]
+    constructor_body = video_impl.split("VideoDlg::VideoDlg(KarData& data)", 1)[-1].split("\n}\n", 1)[0]
     for line in constructor_body.splitlines():
         if "*this <<" in line and "GatherButton" not in line:
             fail("VideoDlg still hardcodes non-gather child placement")
     for needle in [
+        "VideoDlg::VideoDlg() : VideoDlg(KarData::GetGlobal())",
+        "VideoDlg::VideoDlg(KarData& data) : gatherDlg(), page3(data, gatherDlg)",
+        "Add(page3.HSizePosZ().VSizePosZ(0, 40))",
         'page3.GatherButton(true, true, "Find Videos")',
         "page3.WhenSelected",
         "SetData(path)",

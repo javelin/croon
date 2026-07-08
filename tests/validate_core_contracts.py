@@ -844,7 +844,7 @@ def main() -> None:
 
     main_window_cpp = (root / "MainWindow.cpp").read_text()
     require(main_window_cpp, "MainWindow::MainWindow() : MainWindow(KarData::GetGlobal())", "MainWindow default global data wiring")
-    require(main_window_cpp, "MainWindow::MainWindow(KarData& data) : data(data), videoDlg(), wizardDlg(data), project(data, videoDlg), projects(data, wizardDlg)", "MainWindow injected data constructor")
+    require(main_window_cpp, "MainWindow::MainWindow(KarData& data) : data(data), videoDlg(data), wizardDlg(data), project(data, videoDlg), projects(data, wizardDlg)", "MainWindow injected data constructor")
     require(main_window_cpp, "Add(projects.HSizePos().VSizePos())", "MainWindow runtime project-list mount")
     require(main_window_cpp, "Add(project.HSizePos().VSizePos())", "MainWindow runtime project mount")
     require(main_window_cpp, "project.Populate()", "MainWindow project load workflow")
@@ -896,7 +896,10 @@ def main() -> None:
 
     page3_cpp = (root / "Page3.cpp").read_text()
     require(page3_cpp, "Page3::Page3(String gatherKey) : Page3(KarData::GetGlobal(), gatherKey)", "Page3 default global data wiring")
-    require(page3_cpp, "Page3::Page3(KarData& data, String gatherKey)", "Page3 injected data constructor")
+    require(page3_cpp, "Page3::Page3(KarData& data, String gatherKey) : Page3(data, GetGatherDlg(), gatherKey)", "Page3 compatibility gather wiring")
+    require(page3_cpp, "Page3::Page3(KarData& data, GatherDlg& gatherDlg, String gatherKey)", "Page3 injected gather constructor")
+    require(page3_cpp, "gatherDlg.WhenVideoAdded", "Page3 injected gather event")
+    require(page3_cpp, "gatherDlg.Run(~fsel)", "Page3 injected gather run")
     require(page3_cpp, "LyricsTransformer::RawToUntimed(this->data)", "Page3 injected data timing conversion")
     require(page3_cpp, "saveDlg.Run(savePath, this->data)", "Page3 injected data save contract")
     require(page3_cpp, "this->data.videoFilePath = path", "Page3 injected video path write")
@@ -905,11 +908,13 @@ def main() -> None:
     reject(page3_cpp, "SaveProjectDlg().Run(KarData::GetGlobal()", "Page3 direct global save access")
     page3_h = (root / "Page3.h").read_text()
     require(page3_h, "Page3(KarData& data, String gatherKey", "Page3 injected data declaration")
+    require(page3_h, "Page3(KarData& data, GatherDlg& gatherDlg", "Page3 injected gather declaration")
     require(page3_h, "KarData& data", "Page3 injected data member")
+    require(page3_h, "GatherDlg& gatherDlg", "Page3 injected gather member")
 
     wizard_cpp = (root / "WizardDlg.cpp").read_text()
     require(wizard_cpp, "WizardDlg::WizardDlg() : WizardDlg(KarData::GetGlobal())", "WizardDlg default global data wiring")
-    require(wizard_cpp, "WizardDlg::WizardDlg(KarData& data) : data(data), page1(data), page2(data), page3(data)", "WizardDlg injected data constructor")
+    require(wizard_cpp, "WizardDlg::WizardDlg(KarData& data) : data(data), page1(data), page2(data), gatherDlg(), page3(data, gatherDlg)", "WizardDlg injected data constructor")
     require(wizard_cpp, "data.Reset()", "WizardDlg injected data reset")
     reject(wizard_cpp, "auto& data = KarData::GetGlobal()", "WizardDlg direct global data access")
     wizard_h = (root / "WizardDlg.h").read_text()
@@ -917,6 +922,7 @@ def main() -> None:
     require(wizard_h, "KarData& data", "WizardDlg injected data member")
     require(wizard_h, "Page1 page1;", "WizardDlg owned Page1 member")
     require(wizard_h, "Page2 page2;", "WizardDlg owned Page2 member")
+    require(wizard_h, "GatherDlg gatherDlg;", "WizardDlg owned GatherDlg member")
     require(wizard_h, "Page3 page3;", "WizardDlg owned Page3 member")
 
     project_list_cpp = (root / "ProjectList.cpp").read_text()

@@ -50,7 +50,7 @@ using namespace Upp;
 WizardDlg::WizardDlg() : WizardDlg(KarData::GetGlobal()) {
 }
 
-WizardDlg::WizardDlg(KarData& data) : data(data), page1(data), page2(data), page3(data), pages{&page1, &page2, &page3}, currPage(0) {
+WizardDlg::WizardDlg(KarData& data) : data(data), page1(data), page2(data), gatherDlg(), page3(data, gatherDlg), pages{&page1, &page2, &page3}, currPage(0) {
     CtrlLayout(*this, "Create Project");
     NoZoomable().Sizeable();
     CenterScreen();

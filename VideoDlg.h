@@ -9,6 +9,7 @@
 class VideoDlg : public WithCroonVideoDlgLayout<TopWindow> {
 public:
     VideoDlg();
+    VideoDlg(KarData& data);
     int Run() {
         page3.Reset();
         SetTimeCallback(500, [=] { page3.Rehint(false); });
@@ -25,6 +26,8 @@ public:
     String GetThumbnailPath() const { return tnPath; }
     
 private:
+    GatherDlg gatherDlg;
+    Page3 page3;
     Image image;
     String value;
     String tnPath;

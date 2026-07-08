@@ -42,8 +42,12 @@ using namespace Upp;
 
 #include "VideoDlg.h"
 
-VideoDlg::VideoDlg() {
+VideoDlg::VideoDlg() : VideoDlg(KarData::GetGlobal()) {
+}
+
+VideoDlg::VideoDlg(KarData& data) : gatherDlg(), page3(data, gatherDlg) {
     CtrlLayout(*this);
+    Add(page3.HSizePosZ().VSizePosZ(0, 40));
     Title("Background Video").NoZoomable().Sizeable().SetRect(0, 0, UiScaler::X(450), UiScaler::Y(550));
     CenterScreen();
     okBtn.Ok();
