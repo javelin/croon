@@ -15,7 +15,7 @@ This file records service boundaries expected during migration. Some services be
 - `FfmpegProgressParser`: timestamp extraction from `ffmpeg` progress output.
 - `GenreCatalog`: shared application genre reference list.
 - `KarData`: project data model passed explicitly through the runtime UI composition graph.
-- `LyricsDownloadService`: internal active lyrics provider naming, provider-neutral URL and extraction delegation for future provider work, download status reporting, and opaque download workflow. AZLyrics-named URL and extraction methods are compatibility aliases only.
+- `LyricsDownloadService`: internal active lyrics provider naming, provider-neutral URL and extraction delegation for future provider work, download status reporting, and opaque download workflow. AZLyrics-specific naming stays inside `AzLyricsProvider`.
 - `RecentProjectService`: recent project list persistence and normalization.
 - `RichTextBuilder`: QTF/RichText construction helper for shared list and subtitle previews.
 - `SubtitleLineProcessor`: subtitle metadata expansion, count-in insertion, and vocal style resolution.

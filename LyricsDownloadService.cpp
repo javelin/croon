@@ -59,14 +59,6 @@ bool LyricsDownloadService::ExtractProviderLyrics(String content, String& lyrics
     return AzLyricsProvider::ExtractLyrics(content, lyrics);
 }
 
-String LyricsDownloadService::BuildAzLyricsUrl(String title, String artist) {
-    return BuildProviderUrl(title, artist);
-}
-
-bool LyricsDownloadService::ExtractAzLyrics(String content, String& lyrics) {
-    return ExtractProviderLyrics(content, lyrics);
-}
-
 LyricsDownloadService::DownloadStatus LyricsDownloadService::DownloadWithStatus(String title, String artist, String& lyrics) {
     DownloadDlg dlg;
     String* output = &lyrics;

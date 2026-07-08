@@ -21,12 +21,10 @@ def reject(text: str, needle: str, label: str) -> None:
 
 def validate_no_production_utility_wrapper_calls(root: Path) -> None:
     wrappers = [
-        "BuildAzLyricsUrl",
         "CleanSpacing",
         "ComputeFfmpegTs",
         "DownloadLyrics",
         "DownloadLyricsWithStatus",
-        "ExtractAzLyrics",
         "FormatTime",
         "FormatTime2",
         "FormatTimeASS",
@@ -350,8 +348,8 @@ def main() -> None:
     require(lyrics_download_service_h, "DownloadStatusLabel", "LyricsDownloadService status label contract")
     require(lyrics_download_service_h, "BuildProviderUrl", "LyricsDownloadService provider-neutral URL contract")
     require(lyrics_download_service_h, "ExtractProviderLyrics", "LyricsDownloadService provider-neutral extraction contract")
-    require(lyrics_download_service_h, "BuildAzLyricsUrl", "LyricsDownloadService URL contract")
-    require(lyrics_download_service_h, "ExtractAzLyrics", "LyricsDownloadService extraction contract")
+    reject(lyrics_download_service_h, "BuildAzLyricsUrl", "LyricsDownloadService AZ URL alias")
+    reject(lyrics_download_service_h, "ExtractAzLyrics", "LyricsDownloadService AZ extraction alias")
     require(lyrics_download_service_h, "DownloadWithStatus", "LyricsDownloadService status download contract")
     require(lyrics_download_service_h, "Download", "LyricsDownloadService download contract")
     require(lyrics_download_service_h, "ProviderName", "LyricsDownloadService provider name contract")
@@ -388,8 +386,8 @@ def main() -> None:
     require(lyrics_download_service_cpp, "return AzLyricsProvider::Name()", "LyricsDownloadService provider name delegation")
     require(lyrics_download_service_cpp, "return AzLyricsProvider::BuildUrl", "LyricsDownloadService provider URL delegation")
     require(lyrics_download_service_cpp, "return AzLyricsProvider::ExtractLyrics", "LyricsDownloadService provider extraction delegation")
-    require(lyrics_download_service_cpp, "return BuildProviderUrl(title, artist)", "LyricsDownloadService AZ URL compatibility wrapper")
-    require(lyrics_download_service_cpp, "return ExtractProviderLyrics(content, lyrics)", "LyricsDownloadService AZ extraction compatibility wrapper")
+    reject(lyrics_download_service_cpp, "BuildAzLyricsUrl", "LyricsDownloadService AZ URL alias implementation")
+    reject(lyrics_download_service_cpp, "ExtractAzLyrics", "LyricsDownloadService AZ extraction alias implementation")
     require(lyrics_download_service_cpp, "ExtractProviderLyrics(content, *output)", "LyricsDownloadService provider-neutral download extraction")
     require(lyrics_download_service_cpp, "dlg.Run(BuildProviderUrl(title, artist)", "LyricsDownloadService provider-neutral download URL")
     require(lyrics_download_service_cpp, '"Downloading lyrics"', "LyricsDownloadService opaque download prompt")
@@ -424,7 +422,7 @@ def main() -> None:
     require(services_md, "provider-neutral URL and extraction delegation for future provider work", "LyricsDownloadService future provider delegation documentation")
     require(services_md, "opaque download workflow", "LyricsDownloadService opaque workflow documentation")
     require(services_md, "download status reporting", "LyricsDownloadService status documentation")
-    require(services_md, "AZLyrics-named URL and extraction methods are compatibility aliases only", "LyricsDownloadService AZ alias documentation")
+    require(services_md, "AZLyrics-specific naming stays inside `AzLyricsProvider`", "LyricsDownloadService provider-specific naming documentation")
     require(services_md, "`VideoCatalog` / `VideoLibraryCache`", "VideoCatalog planned service documentation")
     require(services_md, "scanning configured video directories", "VideoCatalog scan documentation")
     require(services_md, "sharing video candidates between `WizardDlg` and `VideoDlg`", "VideoCatalog dialog sharing documentation")
