@@ -58,9 +58,11 @@ def main() -> None:
             fail(f"{rel} still hardcodes top-level child placement")
 
     mainwindow_h = (root / "MainWindow.h").read_text()
-    for runtime_member in ["KarData& data;", "VideoDlg videoDlg;", "WizardDlg wizardDlg;", "Project project;", "ProjectList projects;", "StatusBar status;", "MenuBar menuBar;"]:
+    for runtime_member in ["VideoDlg videoDlg;", "WizardDlg wizardDlg;", "Project project;", "ProjectList projects;", "StatusBar status;", "MenuBar menuBar;"]:
         if runtime_member not in mainwindow_h:
             fail(f"MainWindow.h missing runtime frame member {runtime_member}")
+    if "KarData& data;" in mainwindow_h:
+        fail("MainWindow.h still stores unused KarData reference")
 
     mainwindow_impl = (root / "MainWindow.cpp").read_text()
     if '#include "Croon.h"' in mainwindow_impl:
@@ -128,7 +130,7 @@ def main() -> None:
             fail(f"MainWindow.cpp missing direct dependency {needle}")
     for needle in [
         "MainWindow::MainWindow() : MainWindow(KarData::GetGlobal())",
-        "MainWindow::MainWindow(KarData& data) : data(data), videoDlg(data), wizardDlg(data), project(data, videoDlg), projects(data, wizardDlg)",
+        "MainWindow::MainWindow(KarData& data) : videoDlg(data), wizardDlg(data), project(data, videoDlg), projects(data, wizardDlg)",
         "Add(projects.HSizePos().VSizePos())",
         "Add(project.HSizePos().VSizePos())",
         "Title(AppIdentity::ProductName())",

@@ -32,7 +32,6 @@ private:
     void SetTheMainMenu();
     
 private:
-    KarData& data;
     VideoDlg videoDlg;
     WizardDlg wizardDlg;
     Project project;
