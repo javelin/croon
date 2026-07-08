@@ -55,8 +55,6 @@ def validate_no_production_utility_wrapper_calls(root: Path) -> None:
         "SubtitleLineProcessor.cpp",
         "SubtitleLineProcessor.h",
         "TextTools.h",
-        "Util.cpp",
-        "Util.h",
         "LyricsDownloadService.cpp",
         "LyricsDownloadService.h",
     }
@@ -440,8 +438,8 @@ def main() -> None:
     reject(constants_h, "MinASSDisplayLines", "Constants dead ASS min cleanup")
 
     services_md = (root / "services.md").read_text()
-    require(services_md, "## Compatibility Facade", "services compatibility documentation")
-    require(services_md, "`Util`: legacy compatibility facade", "Util compatibility documentation")
+    require(services_md, "## Retired Compatibility Facades", "services retired compatibility documentation")
+    require(services_md, "`Util`: removed legacy facade", "Util retirement documentation")
 
     croon_h = (root / "Croon.h").read_text()
     reject(croon_h, '#include "Util.h"', "Croon.h compatibility facade exposure")
@@ -585,49 +583,13 @@ def main() -> None:
     require(vid_thumbnail_cpp, "const int VidThumbnail::Width = ThumbnailDim", "VidThumbnail width contract")
     require(vid_thumbnail_cpp, "imgCtrl.SetImage(Rescale(image, sz))", "VidThumbnail rescale contract")
 
-    util_cpp = (root / "Util.cpp").read_text()
-    reject(util_cpp, '#include "Croon.h"', "Util.cpp app shell dependency")
-    require(util_cpp, '#include "Util.h"', "Util.cpp direct facade header dependency")
-    require(util_cpp, "#include <RichText/RichText.h>", "Util.cpp direct rich text dependency")
-    require(util_cpp, '#include "Constants.h"', "Util.cpp direct ASS defaults dependency")
-    require(util_cpp, '#include "AppPaths.h"', "Util.cpp direct app paths dependency")
-    require(util_cpp, '#include "LyricsTransformer.h"', "Util.cpp direct lyrics transformer dependency")
-    require(util_cpp, '#include "SubtitleGenerator.h"', "Util.cpp direct subtitle generator dependency")
-    require(util_cpp, '#include "SubtitleLineProcessor.h"', "Util.cpp direct subtitle line processor dependency")
-    reject(util_cpp, "SRT_PATTERN", "Util.cpp dead SRT parser cleanup")
-    require(util_cpp, "return AppPaths::DataDirectory", "GetDataDirectory compatibility wrapper")
-    require(util_cpp, "return AppPaths::FindFiles", "GetPaths compatibility wrapper")
-    require(util_cpp, "return LyricsDownloadService::DownloadWithStatus", "DownloadLyricsWithStatus compatibility wrapper")
-    require(util_cpp, "return LyricsDownloadService::Download", "DownloadLyrics compatibility wrapper")
-    require(util_cpp, "return LyricsTransformer::SplitDecorations", "SplitLyrics compatibility wrapper")
-    require(util_cpp, "return LyricsTransformer::RawToUntimed", "RawToUntimedLyrics compatibility wrapper")
-    require(util_cpp, "return LyricsTransformer::TimedToRaw", "TimedLyricsToRaw compatibility wrapper")
-    require(util_cpp, "return SubtitleLineProcessor::ReplaceMetadata", "ReplaceMetadata compatibility wrapper")
-    require(util_cpp, "SubtitleLineProcessor::ProcessMetadata", "ProcessMetadata compatibility wrapper")
-    require(util_cpp, "return SubtitleLineProcessor::ResolveVocalPart", "ResolveVocalPart compatibility wrapper")
-    require(util_cpp, "return SubtitleLineProcessor::ResolveStyle", "ResolveStyle compatibility wrapper")
-    require(util_cpp, "return SubtitleLineProcessor::ResolveDimStyle", "ResolveDimStyle compatibility wrapper")
-    require(util_cpp, "return SubtitleGenerator::ToAss", "TimedToASS compatibility wrapper")
-    require(util_cpp, "return SubtitleGenerator::ToRichAss", "TimedToRichASS compatibility wrapper")
-    require(util_cpp, "return UiScaler::X", "_Zx compatibility wrapper")
-    require(util_cpp, "return UiScaler::Y", "_Zy compatibility wrapper")
-
-    util_h = (root / "Util.h").read_text()
-    require(util_h, '#include "RichTextBuilder.h"', "Util.h rich text dependency")
-    require(util_h, '#include "LyricsDownloadService.h"', "Util.h lyrics download status dependency")
-    reject(util_h, "struct RTHelper", "Util.h rich text helper extraction")
-    require(util_h, '#include "SubtitleLineProcessor.h"', "Util.h subtitle type dependency")
-    require(util_h, '#include "TextTools.h"', "Util.h text helper dependency")
-    require(util_h, '#include "TimeFormatter.h"', "Util.h time type dependency")
-    require(util_h, "return TextTools::CleanSpacing", "CleanSpacing compatibility wrapper")
-    require(util_h, "return TextTools::StripNonAlnum", "StripNonAlnum compatibility wrapper")
-    require(util_h, "return TextTools::ShortenMiddle", "ShortenMiddle compatibility wrapper")
-    require(util_h, "return TimeFormatter::CountInDuration", "CountInDuration compatibility wrapper")
-    require(util_h, "DownloadLyricsWithStatus", "DownloadLyricsWithStatus compatibility declaration")
-    require(util_h, "return TimeFormatter::Format", "FormatTime compatibility wrapper")
-    require(util_h, "return TimeFormatter::Ass", "FormatTimeASS compatibility wrapper")
-    require(util_h, "return TimeFormatter::Srt", "FormatTimeSRT compatibility wrapper")
-    require(util_h, "return TimeFormatter::Clock", "FormatTime2 compatibility wrapper")
+    if (root / "Util.cpp").exists():
+        fail("Util.cpp compatibility facade still exists")
+    if (root / "Util.h").exists():
+        fail("Util.h compatibility facade still exists")
+    croon_upp = (root / "Croon.upp").read_text()
+    reject(croon_upp, "Util.cpp", "Croon.upp compatibility facade implementation")
+    reject(croon_upp, "Util.h", "Croon.upp compatibility facade header")
 
     kar_data_cpp = (root / "KarData.cpp").read_text()
     reject(kar_data_cpp, '#include "Croon.h"', "KarData app shell dependency")
@@ -716,9 +678,6 @@ def main() -> None:
     require(ffmpeg_progress_parser_cpp, "Split(tsStr, ':')", "ffmpeg progress timestamp split")
     require(ffmpeg_progress_parser_cpp, "formatted = output.Mid", "ffmpeg progress formatted timestamp")
 
-    util_cpp = (root / "Util.cpp").read_text()
-    require(util_cpp, "return FfmpegProgressParser::ParseTimestamp", "ComputeFfmpegTs compatibility wrapper")
-
     genre_catalog_h = (root / "GenreCatalog.h").read_text()
     require(genre_catalog_h, "List()", "GenreCatalog list contract")
 
@@ -727,9 +686,6 @@ def main() -> None:
     require(genre_catalog_cpp, '#include "GenreCatalog.h"', "GenreCatalog direct self dependency")
     for genre in ["Ballad", "OPM", "Rock n Roll", "Soft Rock"]:
         require(genre_catalog_cpp, f'"{genre}"', "GenreCatalog reference data")
-
-    util_cpp = (root / "Util.cpp").read_text()
-    require(util_cpp, "return GenreCatalog::List", "GetGenres compatibility wrapper")
 
     for rel in [
         "Page3.cpp",

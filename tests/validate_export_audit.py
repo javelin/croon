@@ -36,9 +36,8 @@ def main() -> None:
         if needle not in export_cpp:
             fail(f"ExportDlg.cpp missing {needle}")
 
-    util_cpp = (root / "Util.cpp").read_text()
-    if "String TimedToASS(" not in util_cpp:
-        fail("Util.cpp missing TimedToASS compatibility wrapper")
+    if (root / "Util.cpp").exists() or (root / "Util.h").exists():
+        fail("Util compatibility facade should not exist")
 
     subtitle_generator_cpp = (root / "SubtitleGenerator.cpp").read_text()
     for needle in [
