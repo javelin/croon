@@ -241,12 +241,12 @@ def main() -> None:
         "proc.Start(ffmpegLoc)",
         "Config::Set(FFMPEG_LOCATION, ffmpegLoc)",
         "MusicPlayer::InitPlayer()",
-        "(void)GetVideoDlg()",
-        "(void)GetWizardDlg()",
         "MainWindow(KarData::GetGlobal()).Run()",
         "MusicPlayer::DeInitPlayer()",
     ]:
         require(croon_cpp, needle, "Croon app launch workflow")
+    reject(croon_cpp, "(void)GetVideoDlg()", "Croon launch global video dialog prewarm")
+    reject(croon_cpp, "(void)GetWizardDlg()", "Croon launch global wizard dialog prewarm")
     page3_cpp = (root / "Page3.cpp").read_text()
     open_project_dlg_cpp = (root / "OpenProjectDlg.cpp").read_text()
     reject(page3_cpp, "VIZ::", "Page3 visualization alias dependency")
