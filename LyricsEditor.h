@@ -20,7 +20,6 @@ private:
 
 class LyricsEditor : public Ctrl {
 public:
-    LyricsEditor();
     LyricsEditor(KarData& data);
     void Populate();
     

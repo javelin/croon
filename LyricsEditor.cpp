@@ -20,9 +20,6 @@ LyricsEditorLine::LyricsEditorLine(const TimeLyrics& tl) {
     WantFocus(false);
 }
 
-LyricsEditor::LyricsEditor() : LyricsEditor(KarData::GetGlobal()) {
-}
-
 LyricsEditor::LyricsEditor(KarData& data) : data(data) {
     Add(lyricsList.HSizePos().VSizePos());
 }

@@ -1013,11 +1013,12 @@ def main() -> None:
     lyrics_editor_cpp = (root / "LyricsEditor.cpp").read_text()
     reject(lyrics_editor_cpp, '#include "Croon.h"', "LyricsEditor app shell dependency")
     require(lyrics_editor_cpp, '#include "KarData.h"', "LyricsEditor direct data dependency")
-    require(lyrics_editor_cpp, "LyricsEditor::LyricsEditor() : LyricsEditor(KarData::GetGlobal())", "LyricsEditor default global data wiring")
+    reject(lyrics_editor_cpp, "LyricsEditor::LyricsEditor() : LyricsEditor(KarData::GetGlobal())", "LyricsEditor default global data wiring")
     require(lyrics_editor_cpp, "LyricsEditor::LyricsEditor(KarData& data) : data(data)", "LyricsEditor injected data constructor")
     require(lyrics_editor_cpp, "for (auto& tl : data.timedLyrics)", "LyricsEditor injected timed lyrics read")
     reject(lyrics_editor_cpp, "auto& data = KarData::GetGlobal()", "LyricsEditor direct global data access")
     lyrics_editor_h = (root / "LyricsEditor.h").read_text()
+    reject(lyrics_editor_h, "    LyricsEditor();", "LyricsEditor default global data declaration")
     require(lyrics_editor_h, "LyricsEditor(KarData& data)", "LyricsEditor injected data declaration")
     require(lyrics_editor_h, "KarData& data", "LyricsEditor injected data member")
     for needle in [
@@ -1029,7 +1030,6 @@ def main() -> None:
         require(lyrics_editor_cpp, needle, "LyricsEditor direct dependency")
     for needle in [
         "lineEd.WhenEnter = Proxy(WhenEnter)",
-        "KarData::GetGlobal()",
         "lyricsList.AddColumn",
         "TimeFormatter::Format(tl.time)",
         "editor.CancelSelection()",
