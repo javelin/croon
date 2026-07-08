@@ -20,8 +20,12 @@ String VideoCatalog::ThumbnailPath(String videoPath) {
     return tnPath;
 }
 
+bool VideoCatalog::HasThumbnail(String videoPath) {
+    return FileExists(ThumbnailPath(videoPath));
+}
+
 Image VideoCatalog::LoadThumbnail(String videoPath) {
     String tnPath = ThumbnailPath(videoPath);
-    if (!FileExists(tnPath)) return Image();
+    if (!HasThumbnail(videoPath)) return Image();
     return StreamRaster::LoadFileAny(tnPath);
 }

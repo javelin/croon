@@ -58,7 +58,7 @@ GatherDlg::GatherDlg() {
         }
         
         String tnPath = VideoCatalog::ThumbnailPath(paths[curPath]);
-        bool existing = FileExists(tnPath);
+        bool existing = VideoCatalog::HasThumbnail(paths[curPath]);
         auto fn = [=]() {
             Image image = VideoCatalog::LoadThumbnail(paths[curPath]);
             if (image) {
