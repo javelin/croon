@@ -6,9 +6,12 @@
 #ifndef _Croon_MainWindow_h_
 #define _Croon_MainWindow_h_
 
+struct KarData;
+
 class MainWindow : public WithCroonMainWindowLayout<TopWindow> {
 public:
     MainWindow();
+    MainWindow(KarData& data);
     ~MainWindow();
     void Close() override {
         if (project.CloseProject(true)) TopWindow::Close();
@@ -29,6 +32,9 @@ private:
     void SetTheMainMenu();
     
 private:
+    KarData& data;
+    Project project;
+    ProjectList projects;
     StatusBar status;
 #ifndef PLATFORM_COCOA
     MenuBar menuBar;

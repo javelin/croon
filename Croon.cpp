@@ -130,7 +130,7 @@ void RunCroon() {
     
     (void)GetVideoDlg();
     (void)GetWizardDlg();
-    MainWindow().Run();
+    MainWindow(KarData::GetGlobal()).Run();
     
     MusicPlayer::DeInitPlayer();
 }

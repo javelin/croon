@@ -89,8 +89,13 @@ using namespace Upp;
 #include "SettingsDlg.h"
 #include "MainWindow.h"
 
-MainWindow::MainWindow() {
+MainWindow::MainWindow() : MainWindow(KarData::GetGlobal()) {
+}
+
+MainWindow::MainWindow(KarData& data) : data(data), project(data), projects(data) {
     CtrlLayout(*this);
+    Add(projects.HSizePos().VSizePos());
+    Add(project.HSizePos().VSizePos());
     Title(AppIdentity::ProductName()).Sizeable().Zoomable().SetMinSize(Size(UiScaler::X(640), UiScaler::Y(490)));
     int x{Config::GetInt(WIN_X, -9999)},
         y{Config::GetInt(WIN_Y, -9999)},
@@ -103,10 +108,10 @@ MainWindow::MainWindow() {
     AddFrame(status);
     status = "No project loaded.";
     
-    project.WhenProjectSaved << [=] { status = "Project saved."; };
-    project.WhenDirty << [=](bool dirty) { if (dirty) status = ""; };
+    project.WhenProjectSaved << [this] { status = "Project saved."; };
+    project.WhenDirty << [this](bool dirty) { if (dirty) status = ""; };
     
-    projects.WhenOpeningProject << [=] {
+    projects.WhenOpeningProject << [this] {
         if (project.IsProjectDirty()) {
             auto res = PromptYesNoCancel("Save open project first?");
             if (res == 1) {
@@ -118,11 +123,11 @@ MainWindow::MainWindow() {
         return true;
     };
     
-    projects.WhenLoadingProject << [=] {
+    projects.WhenLoadingProject << [this] {
         project.CloseProject(false);
     };
     
-    projects.WhenProjectLoaded << [=] {
+    projects.WhenProjectLoaded << [this] {
         project.Populate();
         ShowProject();
         status = "Project loaded.";
@@ -145,41 +150,41 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::SetTheMainMenu() {
-    auto menuFn = [=] (Bar& menu) {
-            menu.Sub(AppIdentity::ProductName(), [=](Bar& bar) {
-                bar.Add("New...", CtrlImg::new_doc(), [=] {
+    auto menuFn = [this] (Bar& menu) {
+            menu.Sub(AppIdentity::ProductName(), [this](Bar& bar) {
+                bar.Add("New...", CtrlImg::new_doc(), [this] {
                     project.SaveProject();
                     projects.NewProject();
                 }).Key(K_CTRL_N);
-                bar.Add("Open...", CtrlImg::open(), [=] {
+                bar.Add("Open...", CtrlImg::open(), [this] {
                     projects.OpenProject();
                 }).Key(K_CTRL_O);
-                bar.Add("Save", CtrlImg::save(), [=] {
+                bar.Add("Save", CtrlImg::save(), [this] {
                     project.SaveProject();
                 }).Key(K_CTRL_S).Enable(project.IsProjectDirty());
-                bar.Add("Save As...", CtrlImg::save_as(), [=] {
+                bar.Add("Save As...", CtrlImg::save_as(), [this] {
                     project.SaveProjectAs();
                 }).Key(K_CTRL_A).Enable(project.IsProjectOpen());
-                bar.Add("Close", CroonImg::Close(), [=] {
+                bar.Add("Close", CroonImg::Close(), [this] {
                     if (project.CloseProject(false)) HideProject();
                 }).Key(K_CTRL_W).Enable(project.IsProjectOpen());
                 bar.Separator();
-                bar.Add("Settings...", CroonImg::Settings(), [=] {
+                bar.Add("Settings...", CroonImg::Settings(), [] {
                     SettingsDlg sDlg;
                     sDlg.Execute();
                 });
                 bar.Separator();
-                bar.Add(Format("Quit %s", AppIdentity::ProductName()), [=] {
+                bar.Add(Format("Quit %s", AppIdentity::ProductName()), [this] {
                     Close();
                 }).Key(K_CTRL_Q);
             });
             project.MainMenu()(menu);
-            menu.Sub("Help", [=](Bar& bar) {
-                bar.Add("Help", [=]{
+            menu.Sub("Help", [](Bar& bar) {
+                bar.Add("Help", []{
                     PromptOK("Help is on the way...");
                 }).Key(K_CTRL_H);
                 bar.Separator();
-                bar.Add("About...", CroonImg::Info(),  [=]{
+                bar.Add("About...", CroonImg::Info(),  []{
                     PromptOK(AppIdentity::VersionText());
                 });
             });

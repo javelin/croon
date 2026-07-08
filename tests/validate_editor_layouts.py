@@ -28,11 +28,12 @@ def main() -> None:
 
     for layout in [
         "LAYOUT(CroonMainWindowLayout",
-        "ITEM(ProjectList, projects",
-        "ITEM(Project, project",
     ]:
         if layout not in main_lay:
             fail(f"missing {layout}")
+    for layout_member in ["ITEM(ProjectList, projects", "ITEM(Project, project"]:
+        if layout_member in main_lay:
+            fail(f"CroonMainWindow.lay still default-constructs {layout_member}")
 
     expected_bases = {
         "ProjectList.h": "WithCroonProjectListLayout<ParentCtrl>",
@@ -57,12 +58,9 @@ def main() -> None:
             fail(f"{rel} still hardcodes top-level child placement")
 
     mainwindow_h = (root / "MainWindow.h").read_text()
-    for runtime_member in ["StatusBar status;", "MenuBar menuBar;"]:
+    for runtime_member in ["KarData& data;", "Project project;", "ProjectList projects;", "StatusBar status;", "MenuBar menuBar;"]:
         if runtime_member not in mainwindow_h:
             fail(f"MainWindow.h missing runtime frame member {runtime_member}")
-    for layout_member in ["Project project;", "ProjectList projects;"]:
-        if layout_member in mainwindow_h:
-            fail(f"MainWindow.h still declares layout member {layout_member}")
 
     mainwindow_impl = (root / "MainWindow.cpp").read_text()
     if '#include "Croon.h"' in mainwindow_impl:
@@ -129,6 +127,10 @@ def main() -> None:
         if needle not in mainwindow_impl:
             fail(f"MainWindow.cpp missing direct dependency {needle}")
     for needle in [
+        "MainWindow::MainWindow() : MainWindow(KarData::GetGlobal())",
+        "MainWindow::MainWindow(KarData& data) : data(data), project(data), projects(data)",
+        "Add(projects.HSizePos().VSizePos())",
+        "Add(project.HSizePos().VSizePos())",
         "Title(AppIdentity::ProductName())",
         "Config::GetInt(WIN_X",
         "project.WhenProjectSaved",

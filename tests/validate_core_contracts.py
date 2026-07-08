@@ -243,7 +243,7 @@ def main() -> None:
         "MusicPlayer::InitPlayer()",
         "(void)GetVideoDlg()",
         "(void)GetWizardDlg()",
-        "MainWindow().Run()",
+        "MainWindow(KarData::GetGlobal()).Run()",
         "MusicPlayer::DeInitPlayer()",
     ]:
         require(croon_cpp, needle, "Croon app launch workflow")
@@ -837,6 +837,22 @@ def main() -> None:
     project_h = (root / "Project.h").read_text()
     require(project_h, "Project(KarData& data)", "Project injected data declaration")
     require(project_h, "KarData& data", "Project injected data member")
+
+    main_window_cpp = (root / "MainWindow.cpp").read_text()
+    require(main_window_cpp, "MainWindow::MainWindow() : MainWindow(KarData::GetGlobal())", "MainWindow default global data wiring")
+    require(main_window_cpp, "MainWindow::MainWindow(KarData& data) : data(data), project(data), projects(data)", "MainWindow injected data constructor")
+    require(main_window_cpp, "Add(projects.HSizePos().VSizePos())", "MainWindow runtime project-list mount")
+    require(main_window_cpp, "Add(project.HSizePos().VSizePos())", "MainWindow runtime project mount")
+    require(main_window_cpp, "project.Populate()", "MainWindow project load workflow")
+    require(main_window_cpp, "projects.NewProject()", "MainWindow project-list workflow")
+    main_window_h = (root / "MainWindow.h").read_text()
+    require(main_window_h, "MainWindow(KarData& data)", "MainWindow injected data declaration")
+    require(main_window_h, "KarData& data", "MainWindow injected data member")
+    require(main_window_h, "Project project", "MainWindow owned Project member")
+    require(main_window_h, "ProjectList projects", "MainWindow owned ProjectList member")
+    main_window_lay = (root / "CroonMainWindow.lay").read_text()
+    reject(main_window_lay, "ITEM(ProjectList, projects", "MainWindow layout default ProjectList construction")
+    reject(main_window_lay, "ITEM(Project, project", "MainWindow layout default Project construction")
 
     page1_cpp = (root / "Page1.cpp").read_text()
     reject(page1_cpp, '#include "Croon.h"', "Page1 app shell dependency")
