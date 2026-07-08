@@ -43,8 +43,6 @@ private:
 
 class ProjectList : public WithCroonProjectListLayout<ParentCtrl> {
 public:
-    ProjectList();
-    ProjectList(KarData& data);
     ProjectList(KarData& data, WizardDlg& wizardDlg);
     virtual ~ProjectList();
     void OpenProject();

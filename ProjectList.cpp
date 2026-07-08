@@ -65,15 +65,6 @@ using namespace Upp;
 #include "WizardDlg.h"
 #include "ProjectList.h"
 
-namespace {
-
-WizardDlg& CompatibilityWizardDlg() {
-    static WizardDlg* dlg = new WizardDlg();
-    return *dlg;
-}
-
-}
-
 ProjectItemCtrl::ProjectItemCtrl(const ProjectItem& item) :
                     item(item) {
     auto sz = GetImageSize();
@@ -93,12 +84,6 @@ ProjectItemCtrl::ProjectItemCtrl(const ProjectItem& item) :
                     .EFmt()//.EFmt()
                     .ToString();
     detailsLbl.SetText("\1" + text);
-}
-
-ProjectList::ProjectList() : ProjectList(KarData::GetGlobal()) {
-}
-
-ProjectList::ProjectList(KarData& data) : ProjectList(data, CompatibilityWizardDlg()) {
 }
 
 ProjectList::ProjectList(KarData& data, WizardDlg& wizardDlg) : data(data), wizardDlg(wizardDlg) {

@@ -45,7 +45,7 @@ def main() -> None:
             fail(f"{rel} does not inherit {base}")
 
     constructors = {
-        "ProjectList.cpp": "ProjectList::ProjectList()",
+        "ProjectList.cpp": "ProjectList::ProjectList(KarData& data, WizardDlg& wizardDlg)",
         "Project.cpp": "Project::Project(KarData& projectData, VideoDlg& videoDialog)",
         "MainWindow.cpp": "MainWindow::MainWindow(KarData& data)",
     }
@@ -271,9 +271,6 @@ def main() -> None:
             fail(f"ProjectList.cpp missing direct dependency {needle}")
     for needle in [
         "RTHelper rth",
-        "ProjectList::ProjectList() : ProjectList(KarData::GetGlobal())",
-        "WizardDlg& CompatibilityWizardDlg()",
-        "ProjectList::ProjectList(KarData& data) : ProjectList(data, CompatibilityWizardDlg())",
         "ProjectList::ProjectList(KarData& data, WizardDlg& wizardDlg) : data(data), wizardDlg(wizardDlg)",
         "loader.WhenProjectLoaded",
         "OpenProjectDlg opDlg",
