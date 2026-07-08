@@ -159,13 +159,12 @@ def main() -> None:
     ]:
         require(sdl_mixer_audio_player_cpp, needle, "SDLMixerAudioPlayer playback contract")
 
-    croon_h = (root / "Croon.h").read_text()
-    reject(croon_h, "typedef struct Visualization VIZ", "Croon.h visualization alias")
-    reject(croon_h, "GatherDlg& GetGatherDlg()", "Croon.h global gather accessor exposure")
-    reject(croon_h, "VideoDlg& GetVideoDlg()", "Croon.h global video accessor exposure")
-    reject(croon_h, "WizardDlg& GetWizardDlg()", "Croon.h global wizard accessor exposure")
+    if (root / "Croon.h").exists():
+        fail("obsolete Croon.h umbrella header still exists")
+    croon_upp = (root / "Croon.upp").read_text()
+    reject(croon_upp, "Croon.h", "Croon.upp obsolete umbrella header")
     for path in sorted(root.glob("*")):
-        if path.suffix not in {".cpp", ".h"} or path.name == "Croon.h":
+        if path.suffix not in {".cpp", ".h"}:
             continue
         reject(path.read_text(), '#include "Croon.h"', f"{path.name} umbrella dependency")
 
@@ -440,9 +439,6 @@ def main() -> None:
     services_md = (root / "services.md").read_text()
     require(services_md, "## Retired Compatibility Facades", "services retired compatibility documentation")
     require(services_md, "`Util`: removed legacy facade", "Util retirement documentation")
-
-    croon_h = (root / "Croon.h").read_text()
-    reject(croon_h, '#include "Util.h"', "Croon.h compatibility facade exposure")
 
     subtitle_line_processor_h = (root / "SubtitleLineProcessor.h").read_text()
     require(subtitle_line_processor_h, "ProcessMetadata", "SubtitleLineProcessor metadata contract")

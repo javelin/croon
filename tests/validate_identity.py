@@ -15,7 +15,6 @@ def main() -> None:
     root = Path(sys.argv[1])
     required = [
         "Croon.upp",
-        "Croon.h",
         "Croon.cpp",
         "Croon.iml",
         "AppIdentity.h",
@@ -63,7 +62,6 @@ def main() -> None:
 
     upp = (root / "Croon.upp").read_text()
     if (
-        "Croon.h" not in upp or
         "Croon.iml" not in upp or
         "AppIdentity.h" not in upp or
         "AppPaths.cpp" not in upp or
@@ -99,6 +97,8 @@ def main() -> None:
         "MediaProcessRunner.h" not in upp
     ):
         fail("Croon.upp does not list package-level Croon files")
+    if "Croon.h" in upp:
+        fail("Croon.upp still lists obsolete Croon.h umbrella header")
     legacy_product = "Mu" + "se"
     if f"{legacy_product}." in upp or f"{legacy_product}Img" in upp:
         fail("Croon.upp still contains legacy package references")
@@ -111,49 +111,16 @@ def main() -> None:
     if "\tFfmpeg.h," in upp:
         fail("Croon.upp should not list obsolete Ffmpeg.h alias")
 
-    header = (root / "Croon.h").read_text()
-    if '#include "AppIdentity.h"' not in header:
-        fail("Croon.h does not include AppIdentity.h")
-    if '#include "AppPaths.h"' not in header:
-        fail("Croon.h does not include AppPaths.h")
-    if '#include "AzLyricsProvider.h"' not in header:
-        fail("Croon.h does not include AzLyricsProvider.h")
-    if '#include "ConfigService.h"' not in header:
-        fail("Croon.h does not include ConfigService.h")
-    if '#include "DownloadDefaults.h"' not in header:
-        fail("Croon.h does not include DownloadDefaults.h")
-    if '#include "ProjectSerializer.h"' not in header:
-        fail("Croon.h does not include ProjectSerializer.h")
-    if '#include "FfmpegProgressParser.h"' not in header:
-        fail("Croon.h does not include FfmpegProgressParser.h")
-    if '#include "GenreCatalog.h"' not in header:
-        fail("Croon.h does not include GenreCatalog.h")
-    if '#include "LyricsDownloadService.h"' not in header:
-        fail("Croon.h does not include LyricsDownloadService.h")
-    if '#include "LyricsTransformer.h"' not in header:
-        fail("Croon.h does not include LyricsTransformer.h")
-    if '#include "RichTextBuilder.h"' not in header:
-        fail("Croon.h does not include RichTextBuilder.h")
-    if '#include "SubtitleLineProcessor.h"' not in header:
-        fail("Croon.h does not include SubtitleLineProcessor.h")
-    if '#include "RecentProjectService.h"' not in header:
-        fail("Croon.h does not include RecentProjectService.h")
-    if '#include "SubtitleGenerator.h"' not in header:
-        fail("Croon.h does not include SubtitleGenerator.h")
-    if '#include "TextTools.h"' not in header:
-        fail("Croon.h does not include TextTools.h")
-    if '#include "TimeFormatter.h"' not in header:
-        fail("Croon.h does not include TimeFormatter.h")
-    if '#include "UiScaler.h"' not in header:
-        fail("Croon.h does not include UiScaler.h")
-    if '#include "MediaProcessRunner.h"' not in header:
-        fail("Croon.h does not include MediaProcessRunner.h")
-    if "CroonImg" not in header:
+    if (root / "Croon.h").exists():
+        fail("obsolete Croon.h umbrella header still exists")
+
+    croon_cpp = (root / "Croon.cpp").read_text()
+    if "CroonImg" not in croon_cpp:
         fail("Croon image class is not declared")
-    if "<Croon/Croon.iml>" not in header:
+    if "<Croon/Croon.iml>" not in croon_cpp:
         fail("Croon image file is not declared")
-    if "RunCroon" not in header:
-        fail("RunCroon entry point is not declared")
+    if "void RunCroon()" not in croon_cpp:
+        fail("RunCroon entry point is not defined")
 
     main_cpp = (root / "main.cpp").read_text()
     if "RunCroon();" not in main_cpp:

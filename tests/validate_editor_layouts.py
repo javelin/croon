@@ -285,12 +285,6 @@ def main() -> None:
         if needle not in project_list_impl:
             fail(f"ProjectList.cpp missing project-list workflow {needle}")
 
-    croon_h = (root / "Croon.h").read_text()
-    if croon_h.find('#include "ProjectLoader.h"') > croon_h.find("#include <CtrlCore/lay.h>"):
-        fail("Croon.h includes layouts before ProjectLoader declaration")
-    if croon_h.find('#include "TimingCtrl.h"') > croon_h.find("<Croon/CroonTimingDlg.lay>"):
-        fail("Croon.h includes TimingDlg layout before TimingCtrl declaration")
-
     timing_lay = (root / "CroonTimingDlg.lay").read_text()
     for layout in [
         "LAYOUT(CroonTimingDlgLayout",
@@ -346,9 +340,6 @@ def main() -> None:
     ]:
         if needle not in timing_impl:
             fail(f"TimingDlg.cpp missing timing workflow {needle}")
-
-    if croon_h.find('#include "Page3.h"') > croon_h.find("<Croon/CroonVideoDlg.lay>"):
-        fail("Croon.h includes VideoDlg layout before Page3 declaration")
 
     video_lay = (root / "CroonVideoDlg.lay").read_text()
     for layout in [

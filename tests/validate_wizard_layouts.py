@@ -263,10 +263,5 @@ def main() -> None:
         if needle not in wizard_impl:
             fail(f"WizardDlg.cpp missing wizard workflow {needle}")
 
-    croon_h = (root / "Croon.h").read_text()
-    if croon_h.find('#include "Page3.h"') > croon_h.find("<Croon/CroonWizardShell.lay>"):
-        fail("Croon.h includes wizard shell layout before Page3 declaration")
-
-
 if __name__ == "__main__":
     main()

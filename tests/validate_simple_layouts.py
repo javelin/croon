@@ -146,10 +146,5 @@ def main() -> None:
         if needle not in settings_impl:
             fail(f"SettingsDlg.cpp missing behavior {needle}")
 
-    croon_h = (root / "Croon.h").read_text()
-    if croon_h.find('#include "LyricsPartsCtrl.h"') > croon_h.find("#include <CtrlCore/lay.h>"):
-        fail("Croon.h includes layouts before custom control declarations")
-
-
 if __name__ == "__main__":
     main()
