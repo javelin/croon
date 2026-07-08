@@ -8,7 +8,6 @@
 
 class VideoDlg : public WithCroonVideoDlgLayout<TopWindow> {
 public:
-    VideoDlg();
     VideoDlg(KarData& data);
     int Run() {
         page3.Reset();

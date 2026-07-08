@@ -859,6 +859,13 @@ def main() -> None:
     require(project_h, "KarData& data", "Project injected data member")
     require(project_h, "VideoDlg& videoDlg", "Project injected video member")
 
+    video_dlg_cpp = (root / "VideoDlg.cpp").read_text()
+    reject(video_dlg_cpp, "VideoDlg::VideoDlg() : VideoDlg(KarData::GetGlobal())", "VideoDlg default global data wiring")
+    require(video_dlg_cpp, "VideoDlg::VideoDlg(KarData& data) : gatherDlg(), page3(data, gatherDlg)", "VideoDlg injected data constructor")
+    video_dlg_h = (root / "VideoDlg.h").read_text()
+    reject(video_dlg_h, "    VideoDlg();", "VideoDlg default global data declaration")
+    require(video_dlg_h, "VideoDlg(KarData& data)", "VideoDlg injected data declaration")
+
     main_window_cpp = (root / "MainWindow.cpp").read_text()
     reject(main_window_cpp, "MainWindow::MainWindow() : MainWindow(KarData::GetGlobal())", "MainWindow default global data wiring")
     require(main_window_cpp, "MainWindow::MainWindow(KarData& data) : videoDlg(data), wizardDlg(data), project(data, videoDlg), projects(data, wizardDlg)", "MainWindow injected data constructor")

@@ -411,7 +411,6 @@ def main() -> None:
         if "*this <<" in line and "GatherButton" not in line:
             fail("VideoDlg still hardcodes non-gather child placement")
     for needle in [
-        "VideoDlg::VideoDlg() : VideoDlg(KarData::GetGlobal())",
         "VideoDlg::VideoDlg(KarData& data) : gatherDlg(), page3(data, gatherDlg)",
         "Add(page3.HSizePosZ().VSizePosZ(0, 40))",
         'page3.GatherButton(true, true, "Find Videos")',

@@ -42,9 +42,6 @@ using namespace Upp;
 
 #include "VideoDlg.h"
 
-VideoDlg::VideoDlg() : VideoDlg(KarData::GetGlobal()) {
-}
-
 VideoDlg::VideoDlg(KarData& data) : gatherDlg(), page3(data, gatherDlg) {
     CtrlLayout(*this);
     Add(page3.HSizePosZ().VSizePosZ(0, 40));
