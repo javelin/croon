@@ -10,7 +10,6 @@ struct KarData;
 
 class WizardDlg : public WithCroonWizardLayout<TopWindow> {
 public:
-    WizardDlg();
     WizardDlg(KarData& data);
     int Run(String tempAudioPath, double duration, String origAudioFilePath);
     void Close() override;

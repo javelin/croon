@@ -252,7 +252,6 @@ def main() -> None:
         if "*this <<" in line and "GetPrevButton" not in line and "GetNextButton" not in line and "GatherButton" not in line:
             fail("WizardDlg still hardcodes non-navigation child placement")
     for needle in [
-        "WizardDlg::WizardDlg() : WizardDlg(KarData::GetGlobal())",
         "WizardDlg::WizardDlg(KarData& data) : data(data), page1(data), page2(data), gatherDlg(), page3(data, gatherDlg), pages{&page1, &page2, &page3}",
         "page->WhenPreviousPage",
         "page->WhenNextPage",

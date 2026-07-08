@@ -932,11 +932,12 @@ def main() -> None:
     require(page3_h, "GatherDlg& gatherDlg", "Page3 injected gather member")
 
     wizard_cpp = (root / "WizardDlg.cpp").read_text()
-    require(wizard_cpp, "WizardDlg::WizardDlg() : WizardDlg(KarData::GetGlobal())", "WizardDlg default global data wiring")
+    reject(wizard_cpp, "WizardDlg::WizardDlg() : WizardDlg(KarData::GetGlobal())", "WizardDlg default global data wiring")
     require(wizard_cpp, "WizardDlg::WizardDlg(KarData& data) : data(data), page1(data), page2(data), gatherDlg(), page3(data, gatherDlg)", "WizardDlg injected data constructor")
     require(wizard_cpp, "data.Reset()", "WizardDlg injected data reset")
     reject(wizard_cpp, "auto& data = KarData::GetGlobal()", "WizardDlg direct global data access")
     wizard_h = (root / "WizardDlg.h").read_text()
+    reject(wizard_h, "    WizardDlg();", "WizardDlg default global data declaration")
     require(wizard_h, "WizardDlg(KarData& data)", "WizardDlg injected data declaration")
     require(wizard_h, "KarData& data", "WizardDlg injected data member")
     require(wizard_h, "Page1 page1;", "WizardDlg owned Page1 member")
