@@ -48,6 +48,8 @@ def main() -> None:
         "TimeFormatter.h",
         "UiScaler.cpp",
         "UiScaler.h",
+        "VideoCatalog.cpp",
+        "VideoCatalog.h",
         "MediaProcessRunner.h",
         "main.cpp",
         "architecture.md",
@@ -94,6 +96,8 @@ def main() -> None:
         "TimeFormatter.h" not in upp or
         "UiScaler.cpp" not in upp or
         "UiScaler.h" not in upp or
+        "VideoCatalog.cpp" not in upp or
+        "VideoCatalog.h" not in upp or
         "MediaProcessRunner.h" not in upp
     ):
         fail("Croon.upp does not list package-level Croon files")

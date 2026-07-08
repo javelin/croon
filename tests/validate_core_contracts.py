@@ -269,10 +269,12 @@ def main() -> None:
     require(decisions_md, "unsupported explicit metadata versions are rejected by load gates", "unsupported .croon metadata compatibility decision")
     require(decisions_md, "### Explicit Runtime Project State", "explicit runtime project state decision")
     require(decisions_md, "legacy global `KarData` accessor has been removed", "removed global data decision")
+    require(decisions_md, "### VideoCatalog Owns Video Discovery", "VideoCatalog discovery decision")
+    require(decisions_md, "Configured video directory enumeration belongs behind `VideoCatalog`", "VideoCatalog enumeration ownership decision")
     require(decisions_md, "legacy product artifacts outside the `.croon` metadata compatibility policy", "legacy product artifact deferred decision")
     reject(decisions_md, "Whether to remove global project state after the first functional migration.", "resolved global project state deferred decision")
-    require(decisions_md, "`VideoCatalog` or `VideoLibraryCache`", "video catalog deferred decision")
-    require(decisions_md, "preferred future answer to expensive video directory scans", "video catalog performance decision")
+    require(decisions_md, "expand `VideoCatalog` into a `VideoLibraryCache`", "video library cache deferred decision")
+    require(decisions_md, "preferred future answer to expensive video directory scans", "video library cache performance decision")
 
     architecture_md = (root / "architecture.md").read_text()
     require(architecture_md, "`MainWindow` is the normal composition root", "MainWindow composition root documentation")
@@ -423,8 +425,8 @@ def main() -> None:
     require(services_md, "opaque download workflow", "LyricsDownloadService opaque workflow documentation")
     require(services_md, "download status reporting", "LyricsDownloadService status documentation")
     require(services_md, "AZLyrics-specific naming stays inside `AzLyricsProvider`", "LyricsDownloadService provider-specific naming documentation")
-    require(services_md, "`VideoCatalog` / `VideoLibraryCache`", "VideoCatalog planned service documentation")
-    require(services_md, "scanning configured video directories", "VideoCatalog scan documentation")
+    require(services_md, "`VideoCatalog`: video file discovery boundary for configured video directories", "VideoCatalog service documentation")
+    require(services_md, "`VideoLibraryCache`: deferred service", "VideoLibraryCache planned service documentation")
     require(services_md, "sharing video candidates between `WizardDlg` and `VideoDlg`", "VideoCatalog dialog sharing documentation")
 
     constants_h = (root / "Constants.h").read_text()
@@ -754,8 +756,9 @@ def main() -> None:
         "ConfigService.cpp": ["AppPaths::DataDirectory"],
         "GatherDlg.cpp": ["AppPaths::DataDirectory", "AppPaths::FindFiles"],
         "Page1.cpp": ["GenreCatalog::List"],
-        "Page3.cpp": ["AppPaths::DataDirectory", "AppPaths::FindFiles"],
+        "Page3.cpp": ["AppPaths::DataDirectory", "VideoCatalog::FindVideoFiles"],
         "Project.cpp": ["GenreCatalog::List"],
+        "VideoCatalog.cpp": ["AppPaths::FindFiles"],
     }
     for rel, expected_calls in direct_path_catalog_dependencies.items():
         text = (root / rel).read_text()
@@ -883,6 +886,7 @@ def main() -> None:
     require(page3_cpp, "gatherDlg.WhenVideoAdded", "Page3 injected gather event")
     require(page3_cpp, "gatherDlg.Run(~fsel)", "Page3 injected gather run")
     require(page3_cpp, "LyricsTransformer::RawToUntimed(this->data)", "Page3 injected data timing conversion")
+    require(page3_cpp, "VideoCatalog::FindVideoFiles(videoDir)", "Page3 injected video discovery service")
     require(page3_cpp, "saveDlg.Run(savePath, this->data)", "Page3 injected data save contract")
     require(page3_cpp, "this->data.videoFilePath = path", "Page3 injected video path write")
     require(page3_cpp, "enableNext = !data.videoFilePath.IsEmpty()", "Page3 injected data population")
@@ -894,6 +898,13 @@ def main() -> None:
     require(page3_h, "Page3(KarData& data, GatherDlg& gatherDlg", "Page3 injected gather declaration")
     require(page3_h, "KarData& data", "Page3 injected data member")
     require(page3_h, "GatherDlg& gatherDlg", "Page3 injected gather member")
+
+    video_catalog_h = (root / "VideoCatalog.h").read_text()
+    require(video_catalog_h, "FindVideoFiles(String videoDir)", "VideoCatalog discovery declaration")
+    video_catalog_cpp = (root / "VideoCatalog.cpp").read_text()
+    reject(video_catalog_cpp, '#include "Croon.h"', "VideoCatalog app shell dependency")
+    require(video_catalog_cpp, '#include "AppPaths.h"\n#include "VideoCatalog.h"', "VideoCatalog direct dependencies")
+    require(video_catalog_cpp, 'AppPaths::FindFiles(videoDir, "*.mp4")', "VideoCatalog mp4 discovery contract")
 
     wizard_cpp = (root / "WizardDlg.cpp").read_text()
     reject(wizard_cpp, "WizardDlg::WizardDlg() : WizardDlg(KarData::GetGlobal())", "WizardDlg default global data wiring")

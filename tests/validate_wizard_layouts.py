@@ -147,7 +147,9 @@ def main() -> None:
         '#include "ListCtrl.h"',
         '#include "AppIdentity.h"',
         '#include "AppPaths.h"',
-        '#include "KarData.h"\n#include "Visualization.h"\n#include "FfmpegCommandBuilder.h"',
+        '#include "KarData.h"\n#include "Visualization.h"',
+        '#include "VideoCatalog.h"',
+        '#include "FfmpegCommandBuilder.h"',
         '#include "LyricsTransformer.h"',
         '#include "MediaProcessRunner.h"',
         '#include "RecentProjectService.h"',
@@ -179,7 +181,7 @@ def main() -> None:
     if "TabCtrl tab;" in page3_header:
         fail("Page3.h still declares layout member TabCtrl tab")
     for needle in [
-        "AppPaths::FindFiles(videoDir, \"*.mp4\")",
+        "VideoCatalog::FindVideoFiles(videoDir)",
         "AppPaths::DataDirectory()",
         "Visualization::Thumbnail(\"@@freqs\")",
         "gatherDlg.WhenVideoAdded",

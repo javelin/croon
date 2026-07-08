@@ -21,6 +21,7 @@ using namespace Upp;
 #include "AppPaths.h"
 #include "KarData.h"
 #include "Visualization.h"
+#include "VideoCatalog.h"
 #include "FfmpegCommandBuilder.h"
 #include "LyricsTransformer.h"
 #include "MediaProcessRunner.h"
@@ -45,7 +46,7 @@ Page3::Page3(KarData& data, GatherDlg& gatherDlg, String gatherKey) :
     videoLst.SetOrientation(ListCtrl::VerticalGrid, UiScaler::X(200), UiScaler::Y(200));
     tab.Add(videoLst.HSizePosZ(5, 5).VSizePosZ(5, 5), "Videos");
     String videoDir = Config::Get(VIDEO_DIR, GetHomeDirectory());
-    Vector<String> paths = AppPaths::FindFiles(videoDir, "*.mp4");
+    Vector<String> paths = VideoCatalog::FindVideoFiles(videoDir);
     
     for (int i = 0; i < paths.GetCount(); ++i) {
         String tnPath = AppendFileName(AppPaths::DataDirectory(), GetFileName(paths[i]));

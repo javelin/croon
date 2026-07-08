@@ -23,11 +23,12 @@ This file records service boundaries expected during migration. Some services be
 - `TextTools`: shared text spacing, filtering, and display-shortening helpers.
 - `TimeFormatter`: timestamp and count-in duration formatting helpers.
 - `UiScaler`: U++ zoom-ratio scaling helpers for layout dimensions.
+- `VideoCatalog`: video file discovery boundary for configured video directories.
 - `MediaProcessRunner`: process execution boundary for `ffmpeg` and related long-running tasks.
 
 ## Planned Services
 
-- `VideoCatalog` / `VideoLibraryCache`: deferred service for scanning configured video directories, loading/reusing thumbnails, and sharing video candidates between `WizardDlg` and `VideoDlg`. This should replace constructor-heavy `Page3` video discovery when the migration reaches video-library performance work.
+- `VideoLibraryCache`: deferred service for loading/reusing thumbnails, background scanning, and sharing video candidates between `WizardDlg` and `VideoDlg`. This should grow from `VideoCatalog` when the migration reaches video-library performance work.
 
 ## UI Boundary
 

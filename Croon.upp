@@ -109,6 +109,8 @@ file
 	TimeFormatter.h,
 	UiScaler.cpp,
 	UiScaler.h,
+	VideoCatalog.cpp,
+	VideoCatalog.h,
 	VideoDlg.cpp,
 	VideoDlg.h,
 	VidThumbnail.cpp,
