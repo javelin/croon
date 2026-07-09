@@ -20,6 +20,7 @@ def main() -> None:
         "AppIdentity.h",
         "AppPaths.cpp",
         "AppPaths.h",
+        "AppAudioPlayer.h",
         "AzLyricsProvider.cpp",
         "AzLyricsProvider.h",
         "ConfigService.cpp",
@@ -72,6 +73,7 @@ def main() -> None:
         "AppIdentity.h" not in upp or
         "AppPaths.cpp" not in upp or
         "AppPaths.h" not in upp or
+        "AppAudioPlayer.h" not in upp or
         "AzLyricsProvider.cpp" not in upp or
         "AzLyricsProvider.h" not in upp or
         "ConfigService.cpp" not in upp or
@@ -124,11 +126,15 @@ def main() -> None:
         fail("Croon.upp should not list obsolete Ffmpeg.h alias")
     if "\tFfmpegCommandBuilder.h," in upp:
         fail("Croon.upp should not list obsolete FfmpegCommandBuilder facade")
+    if "\tMusicPlayer.h," in upp:
+        fail("Croon.upp should not list obsolete MusicPlayer facade")
 
     if (root / "Croon.h").exists():
         fail("obsolete Croon.h umbrella header still exists")
     if (root / "FfmpegCommandBuilder.h").exists():
         fail("obsolete FfmpegCommandBuilder compatibility facade still exists")
+    if (root / "MusicPlayer.h").exists():
+        fail("obsolete MusicPlayer compatibility facade still exists")
 
     croon_cpp = (root / "Croon.cpp").read_text()
     if "CroonImg" not in croon_cpp:

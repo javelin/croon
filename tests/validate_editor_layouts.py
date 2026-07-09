@@ -109,7 +109,7 @@ def main() -> None:
         '#include "AudioPlayerBase.h"',
         '#include "AudioPlayer.h"',
         '#include "SDLMixerAudioPlayer.h"',
-        '#include "MusicPlayer.h"',
+        '#include "AppAudioPlayer.h"',
         '#include "TimingDlg.h"',
         '#include "GatherDlg.h"',
         '#include "VidThumbnail.h"',
@@ -192,7 +192,7 @@ def main() -> None:
         '#include "AudioPlayerBase.h"',
         '#include "AudioPlayer.h"',
         '#include "SDLMixerAudioPlayer.h"',
-        '#include "MusicPlayer.h"',
+        '#include "AppAudioPlayer.h"',
         '#include "TimingDlg.h"',
         '#include "GatherDlg.h"',
         '#include "VidThumbnail.h"',
@@ -213,7 +213,7 @@ def main() -> None:
         "TimingDlg tDlg",
         "LyricsPartsDlg lpDlg",
         "ConvertDlg conDlg",
-        "MusicPlayer::GetPlayer().Open(conDlg.GetConvertedFile())",
+        "AppAudioPlayer::GetPlayer().Open(conDlg.GetConvertedFile())",
         "std::filesystem::path savePath",
         "ExportDlg expDlg",
         "menu.Sub(\"Project\"",
@@ -256,7 +256,7 @@ def main() -> None:
         '#include "AudioPlayerBase.h"',
         '#include "AudioPlayer.h"',
         '#include "SDLMixerAudioPlayer.h"',
-        '#include "MusicPlayer.h"',
+        '#include "AppAudioPlayer.h"',
         '#include "GatherDlg.h"',
         '#include "SaveProjectDlg.h"',
         '#include "VidThumbnail.h"',
@@ -274,7 +274,7 @@ def main() -> None:
         "ProjectList::ProjectList(KarData& data, WizardDlg& wizardDlg) : data(data), wizardDlg(wizardDlg)",
         "loader.WhenProjectLoaded",
         "OpenProjectDlg opDlg",
-        "MusicPlayer::GetPlayer().Open(data.audioFilePath)",
+        "AppAudioPlayer::GetPlayer().Open(data.audioFilePath)",
         "RecentProjectService::SavePaths(vs)",
         "ConvertDlg conDlg",
         "wizardDlg.Run(conDlg.GetConvertedFile()",
@@ -317,7 +317,7 @@ def main() -> None:
         '#include "AudioPlayerBase.h"',
         '#include "AudioPlayer.h"',
         '#include "SDLMixerAudioPlayer.h"',
-        '#include "MusicPlayer.h"',
+        '#include "AppAudioPlayer.h"',
         '#include "TimingDlg.h"',
     ]:
         if needle not in timing_impl:
@@ -331,7 +331,7 @@ def main() -> None:
         if layout_member in timing_header:
             fail(f"TimingDlg.h still declares layout member {layout_member}")
     for needle in [
-        "MusicPlayer::GetPlayer()",
+        "AppAudioPlayer::GetPlayer()",
         "LyricsTransformer::TimedToRaw(data->timedLyrics)",
         "TimeFormatter::Format(data->duration)",
         "timingCtrl.SetTimedLyrics(data->timedLyrics, data->duration)",

@@ -126,6 +126,8 @@ def main() -> None:
 
     audio_player_h = (root / "AudioPlayer.h").read_text()
     require(audio_player_h, "bool Reopen() override { return player.Reopen(); }", "AudioPlayer reopen delegation")
+    app_audio_player_h = (root / "AppAudioPlayer.h").read_text()
+    require(app_audio_player_h, "typedef AudioPlayer<SDLMixerAudioPlayer> AppAudioPlayer;", "AppAudioPlayer SDL_mixer boundary")
     audio_player_base_h = (root / "AudioPlayerBase.h").read_text()
     reject(audio_player_base_h, "AudioPlayerEvent", "AudioPlayerBase dead event wrapper")
     reject(audio_player_base_h, "APE_Type_", "AudioPlayerBase dead event type")
@@ -159,8 +161,11 @@ def main() -> None:
 
     if (root / "Croon.h").exists():
         fail("obsolete Croon.h umbrella header still exists")
+    if (root / "MusicPlayer.h").exists():
+        fail("obsolete MusicPlayer compatibility facade still exists")
     croon_upp = (root / "Croon.upp").read_text()
     reject(croon_upp, "Croon.h", "Croon.upp obsolete umbrella header")
+    reject(croon_upp, "MusicPlayer.h", "Croon.upp obsolete music player facade")
     for path in sorted(root.glob("*")):
         if path.suffix not in {".cpp", ".h"}:
             continue
@@ -213,7 +218,7 @@ def main() -> None:
         '#include "AudioPlayerBase.h"',
         '#include "AudioPlayer.h"',
         '#include "SDLMixerAudioPlayer.h"',
-        '#include "MusicPlayer.h"',
+        '#include "AppAudioPlayer.h"',
         '#include "TimingDlg.h"',
         '#include "GatherDlg.h"',
         '#include "VidThumbnail.h"',
@@ -235,10 +240,10 @@ def main() -> None:
         "MediaProcessRunner proc",
         "proc.Start(ffmpegLoc)",
         "Config::Set(FFMPEG_LOCATION, ffmpegLoc)",
-        "MusicPlayer::InitPlayer()",
+        "AppAudioPlayer::InitPlayer()",
         "KarData data;",
         "MainWindow(data).Run()",
-        "MusicPlayer::DeInitPlayer()",
+        "AppAudioPlayer::DeInitPlayer()",
     ]:
         require(croon_cpp, needle, "Croon app launch workflow")
     reject(croon_cpp, "MainWindow(KarData::GetGlobal()).Run()", "Croon launch global data wiring")
@@ -1016,7 +1021,7 @@ def main() -> None:
     require(project_list_cpp, "ProjectList::ProjectList(KarData& data, WizardDlg& wizardDlg) : data(data), wizardDlg(wizardDlg)", "ProjectList injected wizard constructor")
     require(project_list_cpp, "data = pick(tdata)", "ProjectList injected data load")
     require(project_list_cpp, "wizardDlg.Run(conDlg.GetConvertedFile()", "ProjectList injected wizard workflow")
-    require(project_list_cpp, "MusicPlayer::GetPlayer().Open(data.audioFilePath)", "ProjectList injected data audio open")
+    require(project_list_cpp, "AppAudioPlayer::GetPlayer().Open(data.audioFilePath)", "ProjectList injected data audio open")
     require(project_list_cpp, "LyricsTransformer::TimedToRaw(data.timedLyrics, true)", "ProjectList injected data list refresh")
     reject(project_list_cpp, "KarData& data = KarData::GetGlobal()", "ProjectList direct global data alias")
     reject(project_list_cpp, "KarData::GetGlobal().audioFilePath", "ProjectList direct global audio access")

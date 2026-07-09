@@ -50,7 +50,7 @@ using namespace Upp;
 #include "AudioPlayerBase.h"
 #include "AudioPlayer.h"
 #include "SDLMixerAudioPlayer.h"
-#include "MusicPlayer.h"
+#include "AppAudioPlayer.h"
 #include "GatherDlg.h"
 #include "SaveProjectDlg.h"
 #include "VidThumbnail.h"
@@ -121,7 +121,7 @@ ProjectList::ProjectList(KarData& data, WizardDlg& wizardDlg) : data(data), wiza
                 WhenLoadingProject();
                 this->data = pick(tdata);
                 UpdateList();
-                if (!MusicPlayer::GetPlayer().Open(this->data.audioFilePath)) {
+                if (!AppAudioPlayer::GetPlayer().Open(this->data.audioFilePath)) {
                     Exclamation("Player is unable to load audio file. You will not be able to set timing!");
                 }
                 WhenProjectLoaded();
@@ -144,7 +144,7 @@ ProjectList::ProjectList(KarData& data, WizardDlg& wizardDlg) : data(data), wiza
                             WhenLoadingProject();
                             this->data = pick(tdata);
                             UpdateList();
-                            if (!MusicPlayer::GetPlayer().Open(this->data.audioFilePath)) {
+                            if (!AppAudioPlayer::GetPlayer().Open(this->data.audioFilePath)) {
                                 Exclamation("Player is unable to load audio file. You will not be able to set timing!");
                             }
                             WhenProjectLoaded();
@@ -159,7 +159,7 @@ ProjectList::ProjectList(KarData& data, WizardDlg& wizardDlg) : data(data), wiza
                         WhenLoadingProject();
                         this->data = pick(tdata);
                         UpdateList();
-                        if (!MusicPlayer::GetPlayer().Open(this->data.audioFilePath)) {
+                        if (!AppAudioPlayer::GetPlayer().Open(this->data.audioFilePath)) {
                             Exclamation("Player is unable to load audio file. You will not be able to set timing!");
                         }
                         WhenProjectLoaded();
@@ -208,7 +208,7 @@ void ProjectList::NewProject() {
             Config::Set(MUSIC_DIR, ::GetFileDirectory(~fsel));
             if (wizardDlg.Run(conDlg.GetConvertedFile(), conDlg.GetDurationn(), ~fsel) == IDOK) {
                 UpdateList();
-                if (!MusicPlayer::GetPlayer().Open(data.audioFilePath)) {
+                if (!AppAudioPlayer::GetPlayer().Open(data.audioFilePath)) {
                     Exclamation("Player is unable to load audio file. You will not be able to set timing!");
                 }
                 WhenProjectLoaded();
@@ -231,7 +231,7 @@ void ProjectList::OpenProject() {
             WhenLoadingProject();
             data = pick(tdata);
             UpdateList();
-            if (!MusicPlayer::GetPlayer().Open(data.audioFilePath)) {
+            if (!AppAudioPlayer::GetPlayer().Open(data.audioFilePath)) {
                 Exclamation("Player is unable to load audio file. You will not be able to set timing!");
             }
             Config::Set(PROJECT_DIR, GetFileDirectory(~fsel));

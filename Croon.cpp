@@ -67,7 +67,7 @@ using namespace Upp;
 #include "AudioPlayerBase.h"
 #include "AudioPlayer.h"
 #include "SDLMixerAudioPlayer.h"
-#include "MusicPlayer.h"
+#include "AppAudioPlayer.h"
 #include "TimingDlg.h"
 #include "GatherDlg.h"
 #include "VidThumbnail.h"
@@ -110,10 +110,10 @@ void RunCroon() {
         Config::Set(FFMPEG_LOCATION, ffmpegLoc);
     }
     
-    MusicPlayer::InitPlayer();
+    AppAudioPlayer::InitPlayer();
     
     KarData data;
     MainWindow(data).Run();
     
-    MusicPlayer::DeInitPlayer();
+    AppAudioPlayer::DeInitPlayer();
 }

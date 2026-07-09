@@ -60,7 +60,7 @@ using namespace Upp;
 #include "AudioPlayerBase.h"
 #include "AudioPlayer.h"
 #include "SDLMixerAudioPlayer.h"
-#include "MusicPlayer.h"
+#include "AppAudioPlayer.h"
 #include "TimingDlg.h"
 #include "GatherDlg.h"
 #include "VidThumbnail.h"
@@ -317,7 +317,7 @@ void Project::ReplaceAudio() {
     if (fsel.ExecuteOpen("Open Music File")) {
         ConvertDlg conDlg;
         if (conDlg.Run(~fsel) == IDOK) {
-            if (!MusicPlayer::GetPlayer().Open(conDlg.GetConvertedFile())) {
+            if (!AppAudioPlayer::GetPlayer().Open(conDlg.GetConvertedFile())) {
                 Exclamation("Player is unable to load audio file.");
                 return;
             }

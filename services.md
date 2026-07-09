@@ -4,6 +4,7 @@ This file records service boundaries expected during migration. Some services be
 
 ## Extracted Services
 
+- `AppAudioPlayer`: application audio playback boundary backed by SDL_mixer.
 - `AppIdentity`: product name, version, project extension, app data name, temp prefixes, and metadata attachment names.
 - `AppPaths`: runtime data directory creation and simple file discovery helpers.
 - `AzLyricsProvider`: AZLyrics provider name, URL construction, and page extraction rules.

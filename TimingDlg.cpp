@@ -29,7 +29,7 @@ using namespace Upp;
 #include "AudioPlayerBase.h"
 #include "AudioPlayer.h"
 #include "SDLMixerAudioPlayer.h"
-#include "MusicPlayer.h"
+#include "AppAudioPlayer.h"
 #include "TimingDlg.h"
 
 TimingDlg::TimingDlg() {
@@ -42,18 +42,18 @@ TimingDlg::TimingDlg() {
 
     sliderCtrl.WhenSlideFinish = [=] {
         double value = (double)sliderCtrl.GetData();
-        auto& player = MusicPlayer::GetPlayer();
+        auto& player = AppAudioPlayer::GetPlayer();
         player.Seek(value/100.0f*player.Duration());
     };
     timingCtrl.WhenDoneTiming << [=] {
     };
     timingCtrl.WhenInterrupt << [=] {
-        if (MusicPlayer::GetPlayer().IsPlaying()) {
+        if (AppAudioPlayer::GetPlayer().IsPlaying()) {
             TogglePlay();
         }
     };
     timingCtrl.WhenPlayAt << [=] (auto position) {
-        auto& player = MusicPlayer::GetPlayer();
+        auto& player = AppAudioPlayer::GetPlayer();
         player.Seek(position);
         if (!player.IsPlaying()) {
             TogglePlay();
@@ -61,7 +61,7 @@ TimingDlg::TimingDlg() {
     };
     timingCtrl.WhenDirty << [=] { dirty = true; };
     timingCtrl.WhenTiming << [=] (auto _) {
-        return MusicPlayer::GetPlayer().IsPlaying();
+        return AppAudioPlayer::GetPlayer().IsPlaying();
     };
     
     playBtn << [=] {
@@ -81,7 +81,7 @@ TimingDlg::TimingDlg() {
 }
 
 void TimingDlg::Close() {
-    MusicPlayer::GetPlayer().Pause();
+    AppAudioPlayer::GetPlayer().Pause();
     if (PromptYesNoCancel("Save changes and close?") == 1) {
         data->timedLyrics = timingCtrl.GetTimedLyrics();
         data->rawLyrics = LyricsTransformer::TimedToRaw(data->timedLyrics);
@@ -101,7 +101,7 @@ bool TimingDlg::Key(dword key, int count) {
 
 void TimingDlg::PollProgress() {
     SetTimeCallback(100, [=] {
-        auto& player = MusicPlayer::GetPlayer();
+        auto& player = AppAudioPlayer::GetPlayer();
         if (!player.IsOpen()) {
             playBtn.SetLabel("Play");
             player.Reopen();
@@ -122,7 +122,7 @@ void TimingDlg::Populate() {
 }
 
 void TimingDlg::SetProgress(double position) {
-    auto& player = MusicPlayer::GetPlayer();
+    auto& player = AppAudioPlayer::GetPlayer();
     auto duration = player.Duration();
     if (duration > 0.0f) {
         sliderCtrl.SetData((int)(position/duration*100.0));
@@ -136,7 +136,7 @@ void TimingDlg::SetProgress(double position) {
 }
 
 void TimingDlg::TogglePlay() {
-    auto& player = MusicPlayer::GetPlayer();
+    auto& player = AppAudioPlayer::GetPlayer();
     if (!player.IsPlaying()) {
         timingCtrl.ReadyForTiming();
         player.Play();

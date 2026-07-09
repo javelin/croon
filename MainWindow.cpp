@@ -63,7 +63,7 @@ using namespace Upp;
 #include "AudioPlayerBase.h"
 #include "AudioPlayer.h"
 #include "SDLMixerAudioPlayer.h"
-#include "MusicPlayer.h"
+#include "AppAudioPlayer.h"
 #include "TimingDlg.h"
 #include "GatherDlg.h"
 #include "VidThumbnail.h"
