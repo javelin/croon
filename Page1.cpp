@@ -20,7 +20,6 @@ using namespace Upp;
 #include "AppIdentity.h"
 #include "KarData.h"
 #include "Visualization.h"
-#include "FfmpegCommandBuilder.h"
 #include "LyricsTransformer.h"
 #include "MediaProcessRunner.h"
 #include "RecentProjectService.h"
