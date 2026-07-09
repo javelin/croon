@@ -14,28 +14,37 @@ def main() -> None:
 
     root = Path(sys.argv[1])
     ffmpeg_h = (root / "FfmpegCommandBuilder.h").read_text()
+    ffmpeg_export_h = (root / "FfmpegExportCommandBuilder.h").read_text()
     for needle in [
         "ExportWithBackgroundVideo",
         "ExportWithVisualization",
         "AppIdentity::ProjectAttachmentMetadata()",
         "AppIdentity::ProductName()",
-        '"libx264"',
-        "subtitles=%s[v]",
     ]:
         if needle not in ffmpeg_h:
             fail(f"FfmpegCommandBuilder.h missing {needle}")
+    for needle in [
+        "WithBackgroundVideo",
+        "WithVisualization",
+        '"libx264"',
+        "subtitles=%s[v]",
+    ]:
+        if needle not in ffmpeg_export_h:
+            fail(f"FfmpegExportCommandBuilder.h missing {needle}")
 
     export_cpp = (root / "ExportDlg.cpp").read_text()
     for needle in [
         'AppIdentity::TempFileName(".ass")',
         "SubtitleGenerator::ToAss(*data, 4)",
         "FfmpegAudioCommandBuilder::Dehiss",
-        "FfmpegCommandBuilder::ExportWithVisualization",
-        "FfmpegCommandBuilder::ExportWithBackgroundVideo",
-        "FfmpegCommandBuilder::GenerateCoverImage",
+        "FfmpegExportCommandBuilder::WithVisualization",
+        "FfmpegExportCommandBuilder::WithBackgroundVideo",
+        "FfmpegExportCommandBuilder::GenerateCoverImage",
     ]:
         if needle not in export_cpp:
             fail(f"ExportDlg.cpp missing {needle}")
+    if "FfmpegCommandBuilder::" in export_cpp:
+        fail("ExportDlg.cpp still calls broad ffmpeg command builder")
 
     if (root / "Util.cpp").exists() or (root / "Util.h").exists():
         fail("Util compatibility facade should not exist")

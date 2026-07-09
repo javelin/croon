@@ -40,6 +40,7 @@ file
 	ExportDlg.h,
 	FfmpegAudioCommandBuilder.h,
 	FfmpegCommandBuilder.h,
+	FfmpegExportCommandBuilder.h,
 	FfmpegProgressParser.cpp,
 	FfmpegProgressParser.h,
 	FfmpegThumbnailCommandBuilder.h,

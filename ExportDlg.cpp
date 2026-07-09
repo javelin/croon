@@ -21,7 +21,7 @@ using namespace Upp;
 #include "KarData.h"
 #include "Visualization.h"
 #include "FfmpegAudioCommandBuilder.h"
-#include "FfmpegCommandBuilder.h"
+#include "FfmpegExportCommandBuilder.h"
 #include "LyricsTransformer.h"
 #include "MediaProcessRunner.h"
 #include "RecentProjectService.h"
@@ -140,7 +140,7 @@ void ExportDlg::DehissAudio() {
 }
 
 void ExportDlg::ExportViz() {
-    args = FfmpegCommandBuilder::ExportWithVisualization(*data, assFilePath, outputPath, dehissedAudioFilepath, length != 1);
+    args = FfmpegExportCommandBuilder::WithVisualization(*data, assFilePath, outputPath, dehissedAudioFilepath, length != 1);
     if (args.IsEmpty()) {
         ErrorOK("Unknown visualization type. Unable to save video.");
         phase = Finished;
@@ -176,7 +176,7 @@ void ExportDlg::ExportBg() {
         Hide();
     }
     
-    args = FfmpegCommandBuilder::ExportWithBackgroundVideo(*data, assFilePath, outputPath, dehissedAudioFilepath, length != 1);
+    args = FfmpegExportCommandBuilder::WithBackgroundVideo(*data, assFilePath, outputPath, dehissedAudioFilepath, length != 1);
     
     if (length > 1) {
         args.Insert(15, IntStr(length));
@@ -214,7 +214,7 @@ void ExportDlg::GenThumbnail() {
     }
     auto ts = thumbnailTS < 0.0f && data->timedLyrics.GetCount() > 1 ?
                         min<double>(data->timedLyrics[1].time + 1.0f, data->duration - 1.0f):thumbnailTS;
-    auto vs = FfmpegCommandBuilder::GenerateCoverImage(outputPath, tnPath, max<double>(ts, 0.0f));
+    auto vs = FfmpegExportCommandBuilder::GenerateCoverImage(outputPath, tnPath, max<double>(ts, 0.0f));
     if (!FileExists(tnPath) || FileDelete(tnPath)) {
         bool res = process.Start(ffmpeg, vs);
         if (!res) {

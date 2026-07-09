@@ -23,6 +23,7 @@ using namespace Upp;
 
 #include <Croon/FfmpegAudioCommandBuilder.h>
 #include <Croon/FfmpegCommandBuilder.h>
+#include <Croon/FfmpegExportCommandBuilder.h>
 
 namespace {
 
@@ -82,6 +83,15 @@ CONSOLE_APP_MAIN
 	commandData.videoFilePath = "video.mp4";
 	commandData.audioFilePath = "audio.ogg";
 	commandData.infoFilePath = "croon.json";
+	CheckEq(FfmpegExportCommandBuilder::WithBackgroundVideo(commandData, "song.ass", "song.mp4", "clean.ogg", false), {
+		"-stream_loop", "-1", "-i", "video.mp4", "-i", "clean.ogg", "-map_metadata:s", "-1",
+		"-filter_complex", "[0:v]subtitles=song.ass[v]", "-map", "[v]", "-map", "1:a",
+		"-shortest", "-c:v", "libx264", "-c:a", "copy",
+		"-metadata", "title=", "-metadata", "artist=", "-metadata", "composer=",
+		"-metadata", "copyright=", "-metadata", "genre=", "-metadata", "year=0",
+		"-metadata", "comment=Year: 0\nOriginal Video: ", "-metadata", "lyrics=", "song.mp4"
+	}, "WithBackgroundVideo");
+
 	CheckEq(FfmpegCommandBuilder::ProjectSaveWithBackgroundVideo(commandData, "song.croon"), {
 		"-i", "video.mp4", "-i", "audio.ogg", "-map", "0:v:0", "-map", "1:a:0",
 		"-map_metadata:s", "-1", "-attach", "croon.json",

@@ -168,7 +168,7 @@ def main() -> None:
         '#include "LyricsPartsCtrl.h"',
         '#include "ListCtrl.h"',
         '#include "AppIdentity.h"',
-        '#include "KarData.h"\n#include "Visualization.h"\n#include "FfmpegAudioCommandBuilder.h"\n#include "FfmpegCommandBuilder.h"',
+        '#include "KarData.h"\n#include "Visualization.h"\n#include "FfmpegAudioCommandBuilder.h"\n#include "FfmpegExportCommandBuilder.h"',
         '#include "LyricsTransformer.h"',
         '#include "MediaProcessRunner.h"',
         '#include "RecentProjectService.h"',
@@ -188,9 +188,9 @@ def main() -> None:
         "AppIdentity::TempFileName(\".ass\")",
         "SubtitleGenerator::ToAss(*data, 4)",
         "FfmpegAudioCommandBuilder::Dehiss",
-        "FfmpegCommandBuilder::ExportWithVisualization",
-        "FfmpegCommandBuilder::ExportWithBackgroundVideo",
-        "FfmpegCommandBuilder::GenerateCoverImage",
+        "FfmpegExportCommandBuilder::WithVisualization",
+        "FfmpegExportCommandBuilder::WithBackgroundVideo",
+        "FfmpegExportCommandBuilder::GenerateCoverImage",
         "process.Start(ffmpeg",
     ]:
         if needle not in export_impl:
