@@ -31,7 +31,6 @@ using namespace Upp;
 #include "RichTextBuilder.h"
 #include "TextTools.h"
 #include "Visualization.h"
-#include "FfmpegCommandBuilder.h"
 #include "MediaProcessRunner.h"
 #include "RecentProjectService.h"
 #include "ListCtrl.h"

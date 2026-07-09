@@ -33,7 +33,6 @@ using namespace Upp;
 #include "UiScaler.h"
 #include "GenreCatalog.h"
 #include "Visualization.h"
-#include "FfmpegCommandBuilder.h"
 #include "FfmpegProgressParser.h"
 #include "MediaProcessRunner.h"
 #include "RecentProjectService.h"
