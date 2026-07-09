@@ -13,15 +13,10 @@ def main() -> None:
         fail("expected repository root argument")
 
     root = Path(sys.argv[1])
-    ffmpeg_h = (root / "FfmpegCommandBuilder.h").read_text()
     ffmpeg_export_h = (root / "FfmpegExportCommandBuilder.h").read_text()
     ffmpeg_project_h = (root / "FfmpegProjectCommandBuilder.h").read_text()
-    for needle in [
-        "ExportWithBackgroundVideo",
-        "ExportWithVisualization",
-    ]:
-        if needle not in ffmpeg_h:
-            fail(f"FfmpegCommandBuilder.h missing {needle}")
+    if (root / "FfmpegCommandBuilder.h").exists():
+        fail("obsolete FfmpegCommandBuilder compatibility facade still exists")
     for needle in [
         "AppIdentity::ProjectAttachmentMetadata()",
         "AppIdentity::ProductName()",

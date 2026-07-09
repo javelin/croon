@@ -122,9 +122,13 @@ def main() -> None:
         fail("Croon.upp links SDL2 twice on POSIX")
     if "\tFfmpeg.h," in upp:
         fail("Croon.upp should not list obsolete Ffmpeg.h alias")
+    if "\tFfmpegCommandBuilder.h," in upp:
+        fail("Croon.upp should not list obsolete FfmpegCommandBuilder facade")
 
     if (root / "Croon.h").exists():
         fail("obsolete Croon.h umbrella header still exists")
+    if (root / "FfmpegCommandBuilder.h").exists():
+        fail("obsolete FfmpegCommandBuilder compatibility facade still exists")
 
     croon_cpp = (root / "Croon.cpp").read_text()
     if "CroonImg" not in croon_cpp:
