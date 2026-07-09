@@ -11,9 +11,11 @@ This file records service boundaries expected during migration. Some services be
 - `DownloadDefaults`: shared HTTP download defaults such as the browser user agent.
 - `ProjectSerializer`: versioned JSON serialization and deserialization for Croon project metadata.
 - `LyricsTransformer`: deterministic conversion between raw lyric text and Croon timed lyric rows.
-- `FfmpegCommandBuilder`: deterministic command argument construction.
+- `FfmpegAudioCommandBuilder`: deterministic audio conversion and dehiss command argument construction.
+- `FfmpegExportCommandBuilder`: deterministic rendered export and cover image command argument construction.
 - `FfmpegProgressParser`: timestamp extraction from `ffmpeg` progress output.
-- `FfmpegThumbnailCommandBuilder`: narrow thumbnail generation command argument construction.
+- `FfmpegProjectCommandBuilder`: deterministic project save, load, and attachment listing command argument construction.
+- `FfmpegThumbnailCommandBuilder`: deterministic thumbnail generation command argument construction.
 - `GenreCatalog`: shared application genre reference list.
 - `KarData`: project data model passed explicitly through the runtime UI composition graph.
 - `LyricsDownloadService`: internal active lyrics provider naming, provider-neutral URL and extraction delegation for future provider work, download status reporting, and opaque download workflow. AZLyrics-specific naming stays inside `AzLyricsProvider`.

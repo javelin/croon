@@ -649,29 +649,13 @@ def main() -> None:
     require(project_serializer_h, "CompatibilityLabel", "ProjectSerializer compatibility label contract")
     require(project_serializer_h, "SupportsJson", "ProjectSerializer JSON support contract")
 
-    ffmpeg_h = (root / "FfmpegCommandBuilder.h").read_text()
-    reject(ffmpeg_h, "VIZ::", "ffmpeg visualization alias dependency")
-    require(ffmpeg_h, '#include "FfmpegAudioCommandBuilder.h"', "ffmpeg audio command dependency")
-    require(ffmpeg_h, '#include "FfmpegExportCommandBuilder.h"', "ffmpeg export command dependency")
-    require(ffmpeg_h, '#include "FfmpegProjectCommandBuilder.h"', "ffmpeg project command dependency")
-    require(ffmpeg_h, '#include "FfmpegThumbnailCommandBuilder.h"', "ffmpeg thumbnail command dependency")
-    require(ffmpeg_h, "Vector<String>", "ffmpeg argument-vector contract")
-    require(ffmpeg_h, "FfmpegAudioCommandBuilder::ConvertToVorbis(audioPath, outputPath)", "ffmpeg audio conversion delegation")
-    require(ffmpeg_h, "FfmpegAudioCommandBuilder::Dehiss(audioPath, outputPath, factor)", "ffmpeg dehiss delegation")
-    require(ffmpeg_h, "FfmpegExportCommandBuilder::WithBackgroundVideo(data, assFilePath, outputPath, audioFilepath, preview)", "ffmpeg background export delegation")
-    require(ffmpeg_h, "FfmpegExportCommandBuilder::WithVisualization(data, assFilePath, outputPath, audioFilepath, preview)", "ffmpeg visualization export delegation")
-    require(ffmpeg_h, "FfmpegExportCommandBuilder::GenerateCoverImage(videoPath, outputPath, thumbnailTS)", "ffmpeg cover image delegation")
-    require(ffmpeg_h, "FfmpegProjectCommandBuilder::DumpAttachmentAndGenerateThumbnail(projectPath, infoFilePath, outputPath, width, height)", "ffmpeg project listing delegation")
-    require(ffmpeg_h, "FfmpegProjectCommandBuilder::ExtractAudioAndInfo(projectPath, audioFilePath, infoFilePath)", "ffmpeg project audio extraction delegation")
-    require(ffmpeg_h, "FfmpegProjectCommandBuilder::ExtractVideo(projectPath, videoFilePath)", "ffmpeg project video extraction delegation")
-    require(ffmpeg_h, "FfmpegProjectCommandBuilder::SaveWithBackgroundVideo(data, outputPath)", "ffmpeg project background save delegation")
-    require(ffmpeg_h, "FfmpegProjectCommandBuilder::SaveWithVisualization(data, outputPath)", "ffmpeg project visualization save delegation")
-    require(ffmpeg_h, "FfmpegThumbnailCommandBuilder::Generate(videoPath, outputPath, width, height)", "ffmpeg thumbnail helper delegation")
-    reject(ffmpeg_h, "TimedLyricsToRaw", "ffmpeg utility lyrics wrapper dependency")
-    reject(ffmpeg_h, "FormatTime2", "ffmpeg utility time wrapper dependency")
     legacy_ext = ".mu" + "se"
     legacy_name = "Mu" + "se"
-    reject(ffmpeg_h, "filename=" + legacy_ext[1:] + ".info", "ffmpeg metadata contract")
+    if (root / "FfmpegCommandBuilder.h").exists():
+        fail("obsolete FfmpegCommandBuilder compatibility facade still exists")
+
+    croon_upp = (root / "Croon.upp").read_text()
+    reject(croon_upp, "FfmpegCommandBuilder.h", "obsolete ffmpeg command builder facade package entry")
 
     ffmpeg_audio_h = (root / "FfmpegAudioCommandBuilder.h").read_text()
     require(ffmpeg_audio_h, "struct FfmpegAudioCommandBuilder", "ffmpeg audio builder declaration")
@@ -705,6 +689,7 @@ def main() -> None:
     require(ffmpeg_project_h, "AppIdentity::ProjectAttachmentMetadata()", "project attachment contract")
     require(ffmpeg_project_h, "AppIdentity::ProductName()", "project metadata contract")
     require(ffmpeg_project_h, '"00:00:01"', "ffmpeg project listing thumbnail seek contract")
+    reject(ffmpeg_project_h, "filename=" + legacy_ext[1:] + ".info", "ffmpeg metadata contract")
 
     ffmpeg_thumbnail_h = (root / "FfmpegThumbnailCommandBuilder.h").read_text()
     require(ffmpeg_thumbnail_h, "struct FfmpegThumbnailCommandBuilder", "ffmpeg thumbnail builder declaration")

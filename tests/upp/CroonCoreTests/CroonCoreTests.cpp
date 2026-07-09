@@ -22,9 +22,9 @@ using namespace Upp;
 #include <Croon/Visualization.h>
 
 #include <Croon/FfmpegAudioCommandBuilder.h>
-#include <Croon/FfmpegCommandBuilder.h>
 #include <Croon/FfmpegExportCommandBuilder.h>
 #include <Croon/FfmpegProjectCommandBuilder.h>
+#include <Croon/FfmpegThumbnailCommandBuilder.h>
 
 namespace {
 
@@ -69,7 +69,7 @@ CONSOLE_APP_MAIN
 		"-i", "song.ogg", "-af", "afftdn=nr=42", "clean.ogg"
 	}, "Dehiss");
 
-	CheckEq(FfmpegCommandBuilder::GenerateThumbnail("video.mp4", "thumb.png", 256, 256), {
+	CheckEq(FfmpegThumbnailCommandBuilder::Generate("video.mp4", "thumb.png", 256, 256), {
 		"-i", "video.mp4", "-ss", "00:00:06", "-vframes", "1",
 		"-vf", "crop='min(iw,ih)':'min(iw,ih)',scale=256:256", "thumb.png"
 	}, "GenerateThumbnail");
