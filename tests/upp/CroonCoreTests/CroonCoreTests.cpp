@@ -21,6 +21,7 @@ using namespace Upp;
 #include <Croon/RecentProjectService.h>
 #include <Croon/Visualization.h>
 
+#include <Croon/FfmpegAudioCommandBuilder.h>
 #include <Croon/FfmpegCommandBuilder.h>
 
 namespace {
@@ -58,13 +59,13 @@ String LoadFixture(const char *name) {
 
 CONSOLE_APP_MAIN
 {
-	CheckEq(FfmpegCommandBuilder::ConvertAudioToVorbis("song.mp3", "song.ogg"), {
+	CheckEq(FfmpegAudioCommandBuilder::ConvertToVorbis("song.mp3", "song.ogg"), {
 		"-i", "song.mp3", "-vn", "-acodec", "libvorbis", "song.ogg"
-	}, "ConvertAudioToVorbis");
+	}, "ConvertToVorbis");
 
-	CheckEq(FfmpegCommandBuilder::DehissAudio("song.ogg", "clean.ogg", 42), {
+	CheckEq(FfmpegAudioCommandBuilder::Dehiss("song.ogg", "clean.ogg", 42), {
 		"-i", "song.ogg", "-af", "afftdn=nr=42", "clean.ogg"
-	}, "DehissAudio");
+	}, "Dehiss");
 
 	CheckEq(FfmpegCommandBuilder::GenerateThumbnail("video.mp4", "thumb.png", 256, 256), {
 		"-i", "video.mp4", "-ss", "00:00:06", "-vframes", "1",

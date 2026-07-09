@@ -651,12 +651,15 @@ def main() -> None:
 
     ffmpeg_h = (root / "FfmpegCommandBuilder.h").read_text()
     reject(ffmpeg_h, "VIZ::", "ffmpeg visualization alias dependency")
+    require(ffmpeg_h, '#include "FfmpegAudioCommandBuilder.h"', "ffmpeg audio command dependency")
     require(ffmpeg_h, '#include "FfmpegThumbnailCommandBuilder.h"', "ffmpeg thumbnail command dependency")
     require(ffmpeg_h, '#include "LyricsTransformer.h"', "ffmpeg lyrics transformer dependency")
     require(ffmpeg_h, '#include "TimeFormatter.h"', "ffmpeg time formatter dependency")
     require(ffmpeg_h, "AppIdentity::ProjectAttachmentMetadata()", "project attachment contract")
     require(ffmpeg_h, "AppIdentity::ProductName()", "project metadata contract")
     require(ffmpeg_h, "Vector<String>", "ffmpeg argument-vector contract")
+    require(ffmpeg_h, "FfmpegAudioCommandBuilder::ConvertToVorbis(audioPath, outputPath)", "ffmpeg audio conversion delegation")
+    require(ffmpeg_h, "FfmpegAudioCommandBuilder::Dehiss(audioPath, outputPath, factor)", "ffmpeg dehiss delegation")
     require(ffmpeg_h, "FfmpegThumbnailCommandBuilder::Generate(videoPath, outputPath, width, height)", "ffmpeg thumbnail helper delegation")
     require(ffmpeg_h, "LyricsTransformer::TimedToRaw", "ffmpeg lyrics metadata serialization")
     require(ffmpeg_h, "TimeFormatter::Clock", "ffmpeg thumbnail timestamp formatting")
@@ -665,6 +668,13 @@ def main() -> None:
     legacy_ext = ".mu" + "se"
     legacy_name = "Mu" + "se"
     reject(ffmpeg_h, "filename=" + legacy_ext[1:] + ".info", "ffmpeg metadata contract")
+
+    ffmpeg_audio_h = (root / "FfmpegAudioCommandBuilder.h").read_text()
+    require(ffmpeg_audio_h, "struct FfmpegAudioCommandBuilder", "ffmpeg audio builder declaration")
+    require(ffmpeg_audio_h, "ConvertToVorbis(String audioPath, String outputPath)", "ffmpeg audio conversion declaration")
+    require(ffmpeg_audio_h, "Dehiss(String audioPath, String outputPath, int factor=30)", "ffmpeg dehiss declaration")
+    require(ffmpeg_audio_h, '"libvorbis"', "ffmpeg audio conversion codec")
+    require(ffmpeg_audio_h, 'Format("afftdn=nr=%d", factor)', "ffmpeg dehiss filter contract")
 
     ffmpeg_thumbnail_h = (root / "FfmpegThumbnailCommandBuilder.h").read_text()
     require(ffmpeg_thumbnail_h, "struct FfmpegThumbnailCommandBuilder", "ffmpeg thumbnail builder declaration")

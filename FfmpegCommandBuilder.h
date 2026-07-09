@@ -6,30 +6,18 @@
 #ifndef _Croon_FfmpegCommandBuilder_h_
 #define _Croon_FfmpegCommandBuilder_h_
 
+#include "FfmpegAudioCommandBuilder.h"
 #include "FfmpegThumbnailCommandBuilder.h"
 #include "LyricsTransformer.h"
 #include "TimeFormatter.h"
 
 struct FfmpegCommandBuilder {
     static Vector<String> ConvertAudioToVorbis(String audioPath, String outputPath) {
-        return {
-            "-i",
-            audioPath,
-            "-vn",
-            "-acodec",
-            "libvorbis",
-            outputPath
-        };
+        return FfmpegAudioCommandBuilder::ConvertToVorbis(audioPath, outputPath);
     }
     
     static Vector<String> DehissAudio(String audioPath, String outputPath, int factor=30) {
-        return {
-            "-i",
-            audioPath,
-            "-af",
-            Format("afftdn=nr=%d", factor),
-            outputPath
-        };
+        return FfmpegAudioCommandBuilder::Dehiss(audioPath, outputPath, factor);
     }
     
     static Vector<String> DumpAttachmentAndGenerateThumbnail(String projectPath, String infoFilePath, String outputPath, int width, int height) {

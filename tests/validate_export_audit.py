@@ -29,6 +29,7 @@ def main() -> None:
     for needle in [
         'AppIdentity::TempFileName(".ass")',
         "SubtitleGenerator::ToAss(*data, 4)",
+        "FfmpegAudioCommandBuilder::Dehiss",
         "FfmpegCommandBuilder::ExportWithVisualization",
         "FfmpegCommandBuilder::ExportWithBackgroundVideo",
         "FfmpegCommandBuilder::GenerateCoverImage",

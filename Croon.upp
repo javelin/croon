@@ -38,6 +38,7 @@ file
 	DownloadDlg.h,
 	ExportDlg.cpp,
 	ExportDlg.h,
+	FfmpegAudioCommandBuilder.h,
 	FfmpegCommandBuilder.h,
 	FfmpegProgressParser.cpp,
 	FfmpegProgressParser.h,

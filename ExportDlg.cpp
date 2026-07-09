@@ -20,6 +20,7 @@ using namespace Upp;
 #include "AppIdentity.h"
 #include "KarData.h"
 #include "Visualization.h"
+#include "FfmpegAudioCommandBuilder.h"
 #include "FfmpegCommandBuilder.h"
 #include "LyricsTransformer.h"
 #include "MediaProcessRunner.h"
@@ -126,7 +127,7 @@ void ExportDlg::ExportASS() {
 
 void ExportDlg::DehissAudio() {
     if (!dehissedAudioFilepath.IsEmpty()) {
-        args = FfmpegCommandBuilder::DehissAudio(data->audioFilePath, dehissedAudioFilepath);
+        args = FfmpegAudioCommandBuilder::Dehiss(data->audioFilePath, dehissedAudioFilepath);
         StartExport();
     }
     else {

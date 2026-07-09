@@ -20,7 +20,7 @@ using namespace Upp;
 #include "AppIdentity.h"
 #include "KarData.h"
 #include "Visualization.h"
-#include "FfmpegCommandBuilder.h"
+#include "FfmpegAudioCommandBuilder.h"
 #include "LyricsTransformer.h"
 #include "MediaProcessRunner.h"
 #include "RecentProjectService.h"
@@ -105,7 +105,7 @@ int ConvertDlg::Run(String audioPath) {
 
 void ConvertDlg::StartConversion() {
     outputPath = AppIdentity::TempFileName(".ogg");
-    auto res = process.Start(ffmpeg, FfmpegCommandBuilder::ConvertAudioToVorbis(audioPath, outputPath));
+    auto res = process.Start(ffmpeg, FfmpegAudioCommandBuilder::ConvertToVorbis(audioPath, outputPath));
     if (!res) {
         Exclamation("Unable to convert audio file!");
         Break(IDOK);
