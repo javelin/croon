@@ -148,7 +148,6 @@ def main() -> None:
         '#include "AppIdentity.h"',
         '#include "KarData.h"\n#include "Visualization.h"',
         '#include "VideoCatalog.h"',
-        '#include "FfmpegCommandBuilder.h"',
         '#include "LyricsTransformer.h"',
         '#include "MediaProcessRunner.h"',
         '#include "RecentProjectService.h"',
