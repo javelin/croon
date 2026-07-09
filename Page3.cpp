@@ -45,16 +45,11 @@ Page3::Page3(KarData& data, GatherDlg& gatherDlg, String gatherKey) :
     videoLst.SetOrientation(ListCtrl::VerticalGrid, UiScaler::X(200), UiScaler::Y(200));
     tab.Add(videoLst.HSizePosZ(5, 5).VSizePosZ(5, 5), "Videos");
     String videoDir = Config::Get(VIDEO_DIR, GetHomeDirectory());
-    Vector<String> paths = VideoCatalog::FindVideoFiles(videoDir);
+    Vector<VideoCatalogItem> cachedVideos = VideoCatalog::FindCachedThumbnails(videoDir);
     
-    for (int i = 0; i < paths.GetCount(); ++i) {
-        String tnPath = VideoCatalog::ThumbnailPath(paths[i]);
-        
-        Image img = VideoCatalog::LoadThumbnail(paths[i]);
-        if (img) {
-            ++vidCount;
-            AddVideoItem(&videoLst, paths[i], tnPath, img, &vizLst);
-        }
+    for (int i = 0; i < cachedVideos.GetCount(); ++i) {
+        ++vidCount;
+        AddVideoItem(&videoLst, cachedVideos[i].videoPath, cachedVideos[i].thumbnailPath, cachedVideos[i].thumbnail, &vizLst);
     }
     videoLst.Highlight(0);
     

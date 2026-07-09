@@ -32,7 +32,7 @@ Croon runtime UI code owns and passes `KarData` explicitly from `RunCroon` throu
 
 ### VideoCatalog Owns Video Discovery
 
-Configured video directory enumeration, thumbnail file path construction, and cached thumbnail image loading belong behind `VideoCatalog`. `Page3` may still bind controls directly until a later cache service moves expensive thumbnail reuse and background scanning out of constructors.
+Configured video directory enumeration, cached video listing, thumbnail file path construction, and cached thumbnail image loading belong behind `VideoCatalog`. `Page3` may still bind controls directly until a later cache service moves expensive thumbnail reuse and background scanning out of constructors.
 
 ## Deferred Decisions
 

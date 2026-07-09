@@ -270,7 +270,7 @@ def main() -> None:
     require(decisions_md, "### Explicit Runtime Project State", "explicit runtime project state decision")
     require(decisions_md, "legacy global `KarData` accessor has been removed", "removed global data decision")
     require(decisions_md, "### VideoCatalog Owns Video Discovery", "VideoCatalog discovery decision")
-    require(decisions_md, "Configured video directory enumeration, thumbnail file path construction, and cached thumbnail image loading belong behind `VideoCatalog`", "VideoCatalog enumeration ownership decision")
+    require(decisions_md, "Configured video directory enumeration, cached video listing, thumbnail file path construction, and cached thumbnail image loading belong behind `VideoCatalog`", "VideoCatalog enumeration ownership decision")
     require(decisions_md, "legacy product artifacts outside the `.croon` metadata compatibility policy", "legacy product artifact deferred decision")
     reject(decisions_md, "Whether to remove global project state after the first functional migration.", "resolved global project state deferred decision")
     require(decisions_md, "expand `VideoCatalog` into a `VideoLibraryCache`", "video library cache deferred decision")
@@ -425,7 +425,7 @@ def main() -> None:
     require(services_md, "opaque download workflow", "LyricsDownloadService opaque workflow documentation")
     require(services_md, "download status reporting", "LyricsDownloadService status documentation")
     require(services_md, "AZLyrics-specific naming stays inside `AzLyricsProvider`", "LyricsDownloadService provider-specific naming documentation")
-    require(services_md, "`VideoCatalog`: video file discovery, thumbnail path, and cached thumbnail loading boundary for configured video directories", "VideoCatalog service documentation")
+    require(services_md, "`VideoCatalog`: video file discovery, cached video listing, thumbnail path, and cached thumbnail loading boundary for configured video directories", "VideoCatalog service documentation")
     require(services_md, "`VideoLibraryCache`: deferred service", "VideoLibraryCache planned service documentation")
     require(services_md, "sharing video candidates between `WizardDlg` and `VideoDlg`", "VideoCatalog dialog sharing documentation")
 
@@ -756,7 +756,7 @@ def main() -> None:
         "ConfigService.cpp": ["AppPaths::DataDirectory"],
         "GatherDlg.cpp": ["VideoCatalog::FindVideoFiles", "VideoCatalog::ThumbnailPath", "VideoCatalog::HasThumbnail", "VideoCatalog::LoadThumbnail", "VideoCatalog::DeleteThumbnail"],
         "Page1.cpp": ["GenreCatalog::List"],
-        "Page3.cpp": ["VideoCatalog::FindVideoFiles", "VideoCatalog::ThumbnailPath", "VideoCatalog::LoadThumbnail"],
+        "Page3.cpp": ["VideoCatalog::FindCachedThumbnails"],
         "Project.cpp": ["GenreCatalog::List"],
         "VideoCatalog.cpp": ["AppPaths::DataDirectory", "AppPaths::FindFiles"],
     }
@@ -886,9 +886,13 @@ def main() -> None:
     require(page3_cpp, "gatherDlg.WhenVideoAdded", "Page3 injected gather event")
     require(page3_cpp, "gatherDlg.Run(~fsel)", "Page3 injected gather run")
     require(page3_cpp, "LyricsTransformer::RawToUntimed(this->data)", "Page3 injected data timing conversion")
-    require(page3_cpp, "VideoCatalog::FindVideoFiles(videoDir)", "Page3 injected video discovery service")
-    require(page3_cpp, "VideoCatalog::ThumbnailPath(paths[i])", "Page3 video thumbnail path service")
-    require(page3_cpp, "VideoCatalog::LoadThumbnail(paths[i])", "Page3 video thumbnail loading service")
+    require(page3_cpp, "VideoCatalog::FindCachedThumbnails(videoDir)", "Page3 cached video listing service")
+    require(page3_cpp, "cachedVideos[i].videoPath", "Page3 cached video path binding")
+    require(page3_cpp, "cachedVideos[i].thumbnailPath", "Page3 cached thumbnail path binding")
+    require(page3_cpp, "cachedVideos[i].thumbnail", "Page3 cached thumbnail image binding")
+    reject(page3_cpp, "VideoCatalog::FindVideoFiles(videoDir)", "Page3 raw video discovery dependency")
+    reject(page3_cpp, "VideoCatalog::ThumbnailPath(paths[i])", "Page3 raw thumbnail path dependency")
+    reject(page3_cpp, "VideoCatalog::LoadThumbnail(paths[i])", "Page3 raw thumbnail loading dependency")
     reject(page3_cpp, "AppPaths::DataDirectory()", "Page3 raw thumbnail directory dependency")
     reject(page3_cpp, "StreamRaster::LoadFileAny(tnPath)", "Page3 raw thumbnail loading dependency")
     require(page3_cpp, "saveDlg.Run(savePath, this->data)", "Page3 injected data save contract")
@@ -904,7 +908,12 @@ def main() -> None:
     require(page3_h, "GatherDlg& gatherDlg", "Page3 injected gather member")
 
     video_catalog_h = (root / "VideoCatalog.h").read_text()
+    require(video_catalog_h, "struct VideoCatalogItem", "VideoCatalog item declaration")
+    require(video_catalog_h, "String videoPath", "VideoCatalog item video path")
+    require(video_catalog_h, "String thumbnailPath", "VideoCatalog item thumbnail path")
+    require(video_catalog_h, "Image thumbnail", "VideoCatalog item thumbnail image")
     require(video_catalog_h, "FindVideoFiles(String videoDir)", "VideoCatalog discovery declaration")
+    require(video_catalog_h, "FindCachedThumbnails(String videoDir)", "VideoCatalog cached thumbnail declaration")
     require(video_catalog_h, "ThumbnailPath(String videoPath)", "VideoCatalog thumbnail path declaration")
     require(video_catalog_h, "HasThumbnail(String videoPath)", "VideoCatalog thumbnail existence declaration")
     require(video_catalog_h, "LoadThumbnail(String videoPath)", "VideoCatalog thumbnail loading declaration")
@@ -914,6 +923,12 @@ def main() -> None:
     require(video_catalog_cpp, "#include <Draw/Draw.h>", "VideoCatalog image loading dependency")
     require(video_catalog_cpp, '#include "AppPaths.h"\n#include "VideoCatalog.h"', "VideoCatalog direct dependencies")
     require(video_catalog_cpp, 'AppPaths::FindFiles(videoDir, "*.mp4")', "VideoCatalog mp4 discovery contract")
+    require(video_catalog_cpp, "Vector<VideoCatalogItem> VideoCatalog::FindCachedThumbnails(String videoDir)", "VideoCatalog cached thumbnail implementation")
+    require(video_catalog_cpp, "Vector<String> paths = FindVideoFiles(videoDir)", "VideoCatalog cached listing discovery")
+    require(video_catalog_cpp, "Image thumbnail = LoadThumbnail(paths[i])", "VideoCatalog cached listing thumbnail load")
+    require(video_catalog_cpp, "item.videoPath = paths[i]", "VideoCatalog cached listing video path")
+    require(video_catalog_cpp, "item.thumbnailPath = ThumbnailPath(paths[i])", "VideoCatalog cached listing thumbnail path")
+    require(video_catalog_cpp, "item.thumbnail = thumbnail", "VideoCatalog cached listing thumbnail image")
     require(video_catalog_cpp, "AppendFileName(AppPaths::DataDirectory(), GetFileName(videoPath))", "VideoCatalog thumbnail data path contract")
     require(video_catalog_cpp, 'tnPath.Replace(".mp4", ".thumbnail.png")', "VideoCatalog thumbnail extension contract")
     require(video_catalog_cpp, "FileExists(ThumbnailPath(videoPath))", "VideoCatalog thumbnail existence contract")

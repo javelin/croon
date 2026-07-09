@@ -14,6 +14,21 @@ Vector<String> VideoCatalog::FindVideoFiles(String videoDir) {
     return AppPaths::FindFiles(videoDir, "*.mp4");
 }
 
+Vector<VideoCatalogItem> VideoCatalog::FindCachedThumbnails(String videoDir) {
+    Vector<VideoCatalogItem> items;
+    Vector<String> paths = FindVideoFiles(videoDir);
+    for (int i = 0; i < paths.GetCount(); ++i) {
+        Image thumbnail = LoadThumbnail(paths[i]);
+        if (thumbnail) {
+            VideoCatalogItem& item = items.Add();
+            item.videoPath = paths[i];
+            item.thumbnailPath = ThumbnailPath(paths[i]);
+            item.thumbnail = thumbnail;
+        }
+    }
+    return items;
+}
+
 String VideoCatalog::ThumbnailPath(String videoPath) {
     String tnPath = AppendFileName(AppPaths::DataDirectory(), GetFileName(videoPath));
     tnPath.Replace(".mp4", ".thumbnail.png");

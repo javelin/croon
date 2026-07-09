@@ -180,9 +180,10 @@ def main() -> None:
     if "TabCtrl tab;" in page3_header:
         fail("Page3.h still declares layout member TabCtrl tab")
     for needle in [
-        "VideoCatalog::FindVideoFiles(videoDir)",
-        "VideoCatalog::ThumbnailPath(paths[i])",
-        "VideoCatalog::LoadThumbnail(paths[i])",
+        "VideoCatalog::FindCachedThumbnails(videoDir)",
+        "cachedVideos[i].videoPath",
+        "cachedVideos[i].thumbnailPath",
+        "cachedVideos[i].thumbnail",
         "Visualization::Thumbnail(\"@@freqs\")",
         "gatherDlg.WhenVideoAdded",
         "gatherDlg.Run(~fsel)",

@@ -23,7 +23,7 @@ This file records service boundaries expected during migration. Some services be
 - `TextTools`: shared text spacing, filtering, and display-shortening helpers.
 - `TimeFormatter`: timestamp and count-in duration formatting helpers.
 - `UiScaler`: U++ zoom-ratio scaling helpers for layout dimensions.
-- `VideoCatalog`: video file discovery, thumbnail path, and cached thumbnail loading boundary for configured video directories.
+- `VideoCatalog`: video file discovery, cached video listing, thumbnail path, and cached thumbnail loading boundary for configured video directories.
 - `MediaProcessRunner`: process execution boundary for `ffmpeg` and related long-running tasks.
 
 ## Planned Services
