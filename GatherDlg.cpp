@@ -20,7 +20,6 @@ using namespace Upp;
 #include "AppIdentity.h"
 #include "KarData.h"
 #include "Visualization.h"
-#include "FfmpegCommandBuilder.h"
 #include "LyricsTransformer.h"
 #include "MediaProcessRunner.h"
 #include "RecentProjectService.h"
@@ -92,7 +91,7 @@ GatherDlg::GatherDlg() {
             }
         }
         
-        procArgs = FfmpegCommandBuilder::GenerateThumbnail(paths[curPath], tnPath, ThumbnailDim, ThumbnailDim);
+        procArgs = VideoCatalog::BuildThumbnailCommand(paths[curPath]);
         
         bool res = process.Start(ffmpeg, procArgs, nullptr, nullptr);
         if (!res) {

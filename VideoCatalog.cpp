@@ -7,6 +7,7 @@
 
 using namespace Upp;
 
+#include "Constants.h"
 #include "AppPaths.h"
 #include "VideoCatalog.h"
 
@@ -47,4 +48,18 @@ Image VideoCatalog::LoadThumbnail(String videoPath) {
 
 bool VideoCatalog::DeleteThumbnail(String videoPath) {
     return FileDelete(ThumbnailPath(videoPath));
+}
+
+Vector<String> VideoCatalog::BuildThumbnailCommand(String videoPath) {
+    return {
+        "-i",
+        videoPath,
+        "-ss",
+        "00:00:06",
+        "-vframes",
+        "1",
+        "-vf",
+        Format("crop='min(iw,ih)':'min(iw,ih)',scale=%d:%d", ThumbnailDim, ThumbnailDim),
+        ThumbnailPath(videoPath)
+    };
 }
