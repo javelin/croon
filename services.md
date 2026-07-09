@@ -13,6 +13,7 @@ This file records service boundaries expected during migration. Some services be
 - `LyricsTransformer`: deterministic conversion between raw lyric text and Croon timed lyric rows.
 - `FfmpegCommandBuilder`: deterministic command argument construction.
 - `FfmpegProgressParser`: timestamp extraction from `ffmpeg` progress output.
+- `FfmpegThumbnailCommandBuilder`: narrow thumbnail generation command argument construction.
 - `GenreCatalog`: shared application genre reference list.
 - `KarData`: project data model passed explicitly through the runtime UI composition graph.
 - `LyricsDownloadService`: internal active lyrics provider naming, provider-neutral URL and extraction delegation for future provider work, download status reporting, and opaque download workflow. AZLyrics-specific naming stays inside `AzLyricsProvider`.

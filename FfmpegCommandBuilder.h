@@ -6,6 +6,7 @@
 #ifndef _Croon_FfmpegCommandBuilder_h_
 #define _Croon_FfmpegCommandBuilder_h_
 
+#include "FfmpegThumbnailCommandBuilder.h"
 #include "LyricsTransformer.h"
 #include "TimeFormatter.h"
 
@@ -136,18 +137,7 @@ struct FfmpegCommandBuilder {
     }
     
     static Vector<String> GenerateThumbnail(String videoPath, String outputPath, int width, int height) {
-        return {
-            "-i",
-            videoPath,
-            "-ss",
-            "00:00:06",
-            "-vframes",
-            "1",
-            "-vf",
-            Format("crop='min(iw,ih)':'min(iw,ih)',scale=%d:%d",
-                    width, height),
-            outputPath
-        };
+        return FfmpegThumbnailCommandBuilder::Generate(videoPath, outputPath, width, height);
     }
     
     static Vector<String> ProjectExtractAudioAndInfo(String projectPath, String audioFilePath, String infoFilePath) {

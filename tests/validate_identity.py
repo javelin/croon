@@ -29,6 +29,7 @@ def main() -> None:
         "ProjectSerializer.h",
         "FfmpegProgressParser.cpp",
         "FfmpegProgressParser.h",
+        "FfmpegThumbnailCommandBuilder.h",
         "GenreCatalog.cpp",
         "GenreCatalog.h",
         "LyricsDownloadService.cpp",
@@ -77,6 +78,7 @@ def main() -> None:
         "ProjectSerializer.h" not in upp or
         "FfmpegProgressParser.cpp" not in upp or
         "FfmpegProgressParser.h" not in upp or
+        "FfmpegThumbnailCommandBuilder.h" not in upp or
         "GenreCatalog.cpp" not in upp or
         "GenreCatalog.h" not in upp or
         "LyricsDownloadService.cpp" not in upp or

@@ -9,6 +9,7 @@ using namespace Upp;
 
 #include "Constants.h"
 #include "AppPaths.h"
+#include "FfmpegThumbnailCommandBuilder.h"
 #include "VideoCatalog.h"
 
 Vector<String> VideoCatalog::FindVideoFiles(String videoDir) {
@@ -51,15 +52,5 @@ bool VideoCatalog::DeleteThumbnail(String videoPath) {
 }
 
 Vector<String> VideoCatalog::BuildThumbnailCommand(String videoPath) {
-    return {
-        "-i",
-        videoPath,
-        "-ss",
-        "00:00:06",
-        "-vframes",
-        "1",
-        "-vf",
-        Format("crop='min(iw,ih)':'min(iw,ih)',scale=%d:%d", ThumbnailDim, ThumbnailDim),
-        ThumbnailPath(videoPath)
-    };
+    return FfmpegThumbnailCommandBuilder::Generate(videoPath, ThumbnailPath(videoPath), ThumbnailDim, ThumbnailDim);
 }

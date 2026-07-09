@@ -651,11 +651,13 @@ def main() -> None:
 
     ffmpeg_h = (root / "FfmpegCommandBuilder.h").read_text()
     reject(ffmpeg_h, "VIZ::", "ffmpeg visualization alias dependency")
+    require(ffmpeg_h, '#include "FfmpegThumbnailCommandBuilder.h"', "ffmpeg thumbnail command dependency")
     require(ffmpeg_h, '#include "LyricsTransformer.h"', "ffmpeg lyrics transformer dependency")
     require(ffmpeg_h, '#include "TimeFormatter.h"', "ffmpeg time formatter dependency")
     require(ffmpeg_h, "AppIdentity::ProjectAttachmentMetadata()", "project attachment contract")
     require(ffmpeg_h, "AppIdentity::ProductName()", "project metadata contract")
     require(ffmpeg_h, "Vector<String>", "ffmpeg argument-vector contract")
+    require(ffmpeg_h, "FfmpegThumbnailCommandBuilder::Generate(videoPath, outputPath, width, height)", "ffmpeg thumbnail helper delegation")
     require(ffmpeg_h, "LyricsTransformer::TimedToRaw", "ffmpeg lyrics metadata serialization")
     require(ffmpeg_h, "TimeFormatter::Clock", "ffmpeg thumbnail timestamp formatting")
     reject(ffmpeg_h, "TimedLyricsToRaw", "ffmpeg utility lyrics wrapper dependency")
@@ -663,6 +665,14 @@ def main() -> None:
     legacy_ext = ".mu" + "se"
     legacy_name = "Mu" + "se"
     reject(ffmpeg_h, "filename=" + legacy_ext[1:] + ".info", "ffmpeg metadata contract")
+
+    ffmpeg_thumbnail_h = (root / "FfmpegThumbnailCommandBuilder.h").read_text()
+    require(ffmpeg_thumbnail_h, "struct FfmpegThumbnailCommandBuilder", "ffmpeg thumbnail builder declaration")
+    require(ffmpeg_thumbnail_h, "Generate(String videoPath, String outputPath, int width, int height)", "ffmpeg thumbnail builder generate contract")
+    require(ffmpeg_thumbnail_h, '"00:00:06"', "ffmpeg thumbnail seek contract")
+    require(ffmpeg_thumbnail_h, '"-vframes"', "ffmpeg thumbnail frame contract")
+    require(ffmpeg_thumbnail_h, "Format(\"crop='min(iw,ih)':'min(iw,ih)',scale=%d:%d\"", "ffmpeg thumbnail crop-scale contract")
+    require(ffmpeg_thumbnail_h, "outputPath", "ffmpeg thumbnail output path contract")
 
     ffmpeg_progress_parser_h = (root / "FfmpegProgressParser.h").read_text()
     require(ffmpeg_progress_parser_h, "ParseTimestamp", "ffmpeg progress parser contract")
@@ -922,7 +932,7 @@ def main() -> None:
     video_catalog_cpp = (root / "VideoCatalog.cpp").read_text()
     reject(video_catalog_cpp, '#include "Croon.h"', "VideoCatalog app shell dependency")
     require(video_catalog_cpp, "#include <Draw/Draw.h>", "VideoCatalog image loading dependency")
-    require(video_catalog_cpp, '#include "Constants.h"\n#include "AppPaths.h"\n#include "VideoCatalog.h"', "VideoCatalog direct dependencies")
+    require(video_catalog_cpp, '#include "Constants.h"\n#include "AppPaths.h"\n#include "FfmpegThumbnailCommandBuilder.h"\n#include "VideoCatalog.h"', "VideoCatalog direct dependencies")
     require(video_catalog_cpp, 'AppPaths::FindFiles(videoDir, "*.mp4")', "VideoCatalog mp4 discovery contract")
     require(video_catalog_cpp, "Vector<VideoCatalogItem> VideoCatalog::FindCachedThumbnails(String videoDir)", "VideoCatalog cached thumbnail implementation")
     require(video_catalog_cpp, "Vector<String> paths = FindVideoFiles(videoDir)", "VideoCatalog cached listing discovery")
@@ -937,10 +947,7 @@ def main() -> None:
     require(video_catalog_cpp, "StreamRaster::LoadFileAny(tnPath)", "VideoCatalog thumbnail loading contract")
     require(video_catalog_cpp, "FileDelete(ThumbnailPath(videoPath))", "VideoCatalog thumbnail deletion contract")
     require(video_catalog_cpp, "Vector<String> VideoCatalog::BuildThumbnailCommand(String videoPath)", "VideoCatalog thumbnail command implementation")
-    require(video_catalog_cpp, '"00:00:06"', "VideoCatalog thumbnail seek contract")
-    require(video_catalog_cpp, '"-vframes"', "VideoCatalog thumbnail frame contract")
-    require(video_catalog_cpp, "ThumbnailDim, ThumbnailDim", "VideoCatalog thumbnail dimension contract")
-    require(video_catalog_cpp, "ThumbnailPath(videoPath)", "VideoCatalog thumbnail command output path")
+    require(video_catalog_cpp, "FfmpegThumbnailCommandBuilder::Generate(videoPath, ThumbnailPath(videoPath), ThumbnailDim, ThumbnailDim)", "VideoCatalog thumbnail command delegation")
 
     gather_dlg_cpp = (root / "GatherDlg.cpp").read_text()
     require(gather_dlg_cpp, '#include "VideoCatalog.h"', "GatherDlg direct VideoCatalog dependency")
