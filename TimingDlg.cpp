@@ -5,15 +5,6 @@
 
 #include <CtrlLib/CtrlLib.h>
 
-#include <atomic>
-#ifdef PLATFORM_POSIX
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_mixer.h>
-#else
-#include <SDL.h>
-#include <SDL_mixer.h>
-#endif
-
 using namespace Upp;
 
 #include "KarData.h"
