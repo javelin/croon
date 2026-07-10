@@ -18,6 +18,10 @@ using namespace Upp;
 #include "RecentProjectService.h"
 #include "ProjectLoader.h"
 
+ProjectLoader::ProjectLoader() {
+    ffmpeg = Config::Get(FFMPEG_LOCATION);
+}
+
 void ProjectLoader::LoadProjects() {
     projects = RecentProjectService::LoadPaths();
     curPath = 0;

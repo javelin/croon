@@ -350,6 +350,8 @@ def main() -> None:
     loader_h = (root / "ProjectLoader.h").read_text()
     if "MediaProcessRunner process;" not in loader_h:
         fail("ProjectLoader does not use MediaProcessRunner")
+    if "Config::Get(FFMPEG_LOCATION)" in loader_h:
+        fail("ProjectLoader.h performs inline configuration lookup")
 
     croon_cpp = (root / "Croon.cpp").read_text()
     if "MediaProcessRunner proc;" not in croon_cpp:
