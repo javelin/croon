@@ -152,6 +152,10 @@ Project::Project(KarData& projectData, VideoDlg& videoDialog) : videoPath(""), d
     tab.Add(previewRT.HSizePosZ(5, 5).VSizePosZ(5, 5), "ASS Preview");
 }
 
+Project::~Project() {
+    CleanUp();
+}
+
 void Project::Populate() {
     SetDirty(false);
     titleEd.SetData(data.title);

@@ -920,6 +920,8 @@ def main() -> None:
     require(project_cpp, "saveDlg.Run(savePath, data)", "Project injected data save-as")
     require(project_cpp, "LyricsTransformer::RawToUntimed(data)", "Project injected data lyrics update")
     require(project_cpp, "expDlg.Run(data, outputPath, length)", "Project injected data export")
+    require(project_cpp, "Project::~Project()", "Project destructor implementation")
+    require(project_cpp, "Project::~Project() {\n    CleanUp();\n}", "Project destructor cleanup")
     reject(project_cpp, "auto& data = KarData::GetGlobal()", "Project direct global data alias")
     reject(project_cpp, "KarData::GetGlobal().", "Project direct global field access")
     reject(project_cpp, "SaveProjectDlg().Run(KarData::GetGlobal()", "Project direct global save access")
@@ -927,7 +929,9 @@ def main() -> None:
     project_h = (root / "Project.h").read_text()
     reject(project_h, "    Project();", "Project default global data declaration")
     reject(project_h, "    Project(KarData& data);", "Project compatibility video declaration")
+    reject(project_h, "~Project() { CleanUp(); }", "Project inline cleanup destructor")
     require(project_h, "Project(KarData& data, VideoDlg& videoDlg)", "Project injected video declaration")
+    require(project_h, "virtual ~Project();", "Project destructor declaration")
     require(project_h, "KarData& data", "Project injected data member")
     require(project_h, "VideoDlg& videoDlg", "Project injected video member")
 

@@ -12,7 +12,7 @@ class VideoDlg;
 class Project : public WithCroonProjectLayout<ParentCtrl> {
 public:
     Project(KarData& data, VideoDlg& videoDlg);
-    virtual ~Project() { CleanUp(); }
+    virtual ~Project();
     void Populate();
     void SaveProject();
     void SaveProjectAs();
