@@ -158,10 +158,13 @@ def main() -> None:
     reject(sdl_mixer_audio_player_cpp, '#include "Croon.h"', "SDLMixerAudioPlayer app shell dependency")
     require(sdl_mixer_audio_player_h, '#include "AudioPlayerBase.h"', "SDLMixerAudioPlayer direct base dependency")
     for needle in [
-        "#include <Core/Core.h>",
         "#include <atomic>",
         "#include <SDL2/SDL.h>",
         "#include <SDL2/SDL_mixer.h>",
+    ]:
+        require(sdl_mixer_audio_player_h, needle, "SDLMixerAudioPlayer backend header dependency")
+    for needle in [
+        "#include <Core/Core.h>",
         '#include "SDLMixerAudioPlayer.h"',
     ]:
         require(sdl_mixer_audio_player_cpp, needle, "SDLMixerAudioPlayer direct dependency")
@@ -194,11 +197,8 @@ def main() -> None:
     croon_cpp = (root / "Croon.cpp").read_text()
     for needle in [
         "#include <CtrlLib/CtrlLib.h>",
-        "#include <atomic>",
         "#include <ctime>",
         "#include <filesystem>",
-        "#include <SDL2/SDL.h>",
-        "#include <SDL2/SDL_mixer.h>",
         "#define IMAGECLASS CroonImg",
         "#define IMAGEFILE <Croon/Croon.iml>",
         "#include <Draw/iml_header.h>",
@@ -252,6 +252,8 @@ def main() -> None:
         '#include "MainWindow.h"',
     ]:
         require(croon_cpp, needle, "Croon app shell direct dependency")
+    for needle in ["#include <atomic>", "#include <SDL2/SDL.h>", "#include <SDL2/SDL_mixer.h>", "#include <SDL.h>", "#include <SDL_mixer.h>"]:
+        reject(croon_cpp, needle, "Croon app shell direct SDL/audio dependency")
     for needle in [
         "Config::Get(FFMPEG_LOCATION)",
         "MediaProcessRunner proc",

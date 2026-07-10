@@ -6,6 +6,16 @@
 #ifndef _Croon_SDLMixerAudioPlayer_h_
 #define _Croon_SDLMixerAudioPlayer_h_
 
+#include <atomic>
+
+#ifdef PLATFORM_POSIX
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
+#else
+#include <SDL.h>
+#include <SDL_mixer.h>
+#endif
+
 #include "AudioPlayerBase.h"
 
 class SDLMixerAudioPlayer : public AudioPlayerBase {

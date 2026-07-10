@@ -69,11 +69,8 @@ def main() -> None:
         fail("MainWindow.cpp still depends on Croon.h")
     for needle in [
         "#include <CtrlLib/CtrlLib.h>",
-        "#include <atomic>",
         "#include <ctime>",
         "#include <filesystem>",
-        "#include <SDL2/SDL.h>",
-        "#include <SDL2/SDL_mixer.h>",
         '#include "Constants.h"',
         '#include "AppIdentity.h"',
         '#include "AppPaths.h"',
@@ -125,6 +122,9 @@ def main() -> None:
     ]:
         if needle not in mainwindow_impl:
             fail(f"MainWindow.cpp missing direct dependency {needle}")
+    for needle in ["#include <atomic>", "#include <SDL2/SDL.h>", "#include <SDL2/SDL_mixer.h>", "#include <SDL.h>", "#include <SDL_mixer.h>"]:
+        if needle in mainwindow_impl:
+            fail(f"MainWindow.cpp has stale direct SDL/audio dependency {needle}")
     for needle in [
         "MainWindow::MainWindow(KarData& data) : videoDlg(data), wizardDlg(data), project(data, videoDlg), projects(data, wizardDlg)",
         "Add(projects.HSizePos().VSizePos())",
@@ -152,10 +152,7 @@ def main() -> None:
         fail("Project.cpp still depends on Croon.h")
     for needle in [
         "#include <CtrlLib/CtrlLib.h>",
-        "#include <atomic>",
         "#include <filesystem>",
-        "#include <SDL2/SDL.h>",
-        "#include <SDL2/SDL_mixer.h>",
         '#include "Constants.h"',
         '#include "AppIdentity.h"',
         '#include "AppPaths.h"',
@@ -197,6 +194,9 @@ def main() -> None:
     ]:
         if needle not in project_impl:
             fail(f"Project.cpp missing direct dependency {needle}")
+    for needle in ["#include <atomic>", "#include <SDL2/SDL.h>", "#include <SDL2/SDL_mixer.h>", "#include <SDL.h>", "#include <SDL_mixer.h>"]:
+        if needle in project_impl:
+            fail(f"Project.cpp has stale direct SDL/audio dependency {needle}")
     for needle in [
         "GenreCatalog::List()",
         "Project::Project(KarData& projectData, VideoDlg& videoDialog) : videoPath(\"\"), data(projectData), videoDlg(videoDialog)",
@@ -220,10 +220,7 @@ def main() -> None:
         fail("ProjectList.cpp still depends on Croon.h")
     for needle in [
         "#include <CtrlLib/CtrlLib.h>",
-        "#include <atomic>",
         "#include <ctime>",
-        "#include <SDL2/SDL.h>",
-        "#include <SDL2/SDL_mixer.h>",
         '#include "Constants.h"',
         '#include "AppIdentity.h"',
         '#include "ConfigService.h"\n#include "Config.h"',
@@ -260,6 +257,9 @@ def main() -> None:
     ]:
         if needle not in project_list_impl:
             fail(f"ProjectList.cpp missing direct dependency {needle}")
+    for needle in ["#include <atomic>", "#include <SDL2/SDL.h>", "#include <SDL2/SDL_mixer.h>", "#include <SDL.h>", "#include <SDL_mixer.h>"]:
+        if needle in project_list_impl:
+            fail(f"ProjectList.cpp has stale direct SDL/audio dependency {needle}")
     for needle in [
         "RTHelper rth",
         "ProjectList::ProjectList(KarData& data, WizardDlg& wizardDlg) : data(data), wizardDlg(wizardDlg)",
@@ -294,9 +294,6 @@ def main() -> None:
         fail("TimingDlg.cpp still depends on Croon.h")
     for needle in [
         "#include <CtrlLib/CtrlLib.h>",
-        "#include <atomic>",
-        "#include <SDL2/SDL.h>",
-        "#include <SDL2/SDL_mixer.h>",
         '#include "KarData.h"',
         '#include "LyricsTransformer.h"',
         '#include "TimeFormatter.h"',
@@ -310,6 +307,9 @@ def main() -> None:
     ]:
         if needle not in timing_impl:
             fail(f"TimingDlg.cpp missing direct dependency {needle}")
+    for needle in ["#include <atomic>", "#include <SDL2/SDL.h>", "#include <SDL2/SDL_mixer.h>", "#include <SDL.h>", "#include <SDL_mixer.h>"]:
+        if needle in timing_impl:
+            fail(f"TimingDlg.cpp has stale direct SDL/audio dependency {needle}")
     if "CtrlLayout(*this" not in timing_impl:
         fail("TimingDlg constructor does not call CtrlLayout")
     constructor_body = timing_impl.split("TimingDlg::TimingDlg()", 1)[-1].split("\n}\n", 1)[0]
