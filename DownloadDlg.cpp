@@ -32,22 +32,42 @@ using namespace Upp;
 #include "DownloadDefaults.h"
 #include "DownloadDlg.h"
 
-DownloadDlg::DownloadDlg() {
+struct DownloadDlg::RequestState {
+    HttpRequest request;
+};
+
+DownloadDlg::DownloadDlg() : request(new RequestState) {
     WhenAbortingProcess = [=] (bool byUser) {
-        if (byUser && request.IsOpen()) {
-            request.Abort();
+        if (byUser && Request().request.IsOpen()) {
+            Request().request.Abort();
         }
     };
     WhenUpdateProgress << [=] {
         static int phase = -1;
-        if (phase < request.GetPhase()) phase = request.GetPhase();
+        if (phase < Request().request.GetPhase()) phase = Request().request.GetPhase();
         progress.Set(phase, HttpRequest::FINISHED - HttpRequest::BEGIN);
-        monitor.SetLabel(request.GetPhaseName());
+        monitor.SetLabel(Request().request.GetPhaseName());
     };
 }
 
+DownloadDlg::~DownloadDlg() {
+    delete request;
+}
+
+DownloadDlg::RequestState& DownloadDlg::Request() {
+    return *request;
+}
+
+const DownloadDlg::RequestState& DownloadDlg::Request() const {
+    return *request;
+}
+
+String DownloadDlg::GetContent() const {
+    return Request().request.GetContent();
+}
+
 int DownloadDlg::Run(String url, String title, String userAgent) {
-    request.Url(url).UserAgent(userAgent).New();
+    Request().request.Url(url).UserAgent(userAgent).New();
     SetTimeCallback(80, [=] {
         PollProgress();
     }, timerId);
@@ -56,15 +76,15 @@ int DownloadDlg::Run(String url, String title, String userAgent) {
 
 void DownloadDlg::PollProgress() {
     SetTimeCallback(20, [=] {
-        if (request.Do()) {
+        if (Request().request.Do()) {
             UpdateProgress();
             PollProgress();
         }
         else {
-            int code = request.GetStatusCode();
+            int code = Request().request.GetStatusCode();
             ProcessEnded(code);
-            if (request.IsSuccess()) {
-                WhenDownloadSuccess(request.GetContent());
+            if (Request().request.IsSuccess()) {
+                WhenDownloadSuccess(Request().request.GetContent());
                 Break(IDOK);
             }
             else {

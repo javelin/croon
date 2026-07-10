@@ -116,7 +116,17 @@ def main() -> None:
         if needle not in convert_impl:
             fail(f"ConvertDlg.cpp missing conversion workflow {needle}")
 
+    download_header = (root / "DownloadDlg.h").read_text()
     download_impl = (root / "DownloadDlg.cpp").read_text()
+    if "HttpRequest" in download_header:
+        fail("DownloadDlg.h exposes HttpRequest storage")
+    for needle in [
+        "struct RequestState",
+        "RequestState* request",
+        "String GetContent() const",
+    ]:
+        if needle not in download_header:
+            fail(f"DownloadDlg.h missing opaque request contract {needle}")
     if '#include "Croon.h"' in download_impl:
         fail("DownloadDlg.cpp still depends on Croon.h")
     for needle in [
@@ -144,12 +154,17 @@ def main() -> None:
         if needle not in download_impl:
             fail(f"DownloadDlg.cpp missing direct dependency {needle}")
     for needle in [
-        "request.Abort()",
+        "struct DownloadDlg::RequestState",
+        "HttpRequest request",
+        "DownloadDlg::~DownloadDlg()",
+        "DownloadDlg::RequestState& DownloadDlg::Request()",
+        "String DownloadDlg::GetContent() const",
+        "Request().request.Abort()",
         "HttpRequest::FINISHED - HttpRequest::BEGIN",
-        "request.Url(url).UserAgent(userAgent).New()",
-        "request.Do()",
-        "request.IsSuccess()",
-        "WhenDownloadSuccess(request.GetContent())",
+        "Request().request.Url(url).UserAgent(userAgent).New()",
+        "Request().request.Do()",
+        "Request().request.IsSuccess()",
+        "WhenDownloadSuccess(Request().request.GetContent())",
     ]:
         if needle not in download_impl:
             fail(f"DownloadDlg.cpp missing download workflow {needle}")

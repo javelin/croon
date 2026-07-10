@@ -9,17 +9,21 @@
 class DownloadDlg : public ProgressDlg {
 public:
     DownloadDlg();
+    ~DownloadDlg();
     int Run(String url, String title="Download", String userAgent=DownloadDefaults::UserAgent());
-    String GetContent() const { return request.GetContent(); }
+    String GetContent() const;
     
     Event<String> WhenDownloadSuccess;
     
 private:
+    struct RequestState;
+    RequestState& Request();
+    const RequestState& Request() const;
     void PollProgress() override;
     void ExtractLyrics(String content);
     
 private:
-    HttpRequest request;
+    RequestState* request;
 };
 
 #endif
