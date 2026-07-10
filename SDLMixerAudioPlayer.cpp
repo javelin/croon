@@ -11,36 +11,33 @@ using namespace Upp;
 
 SDLMixerAudioPlayer SDLMixerAudioPlayer::player;
 
+void SDLMixerAudioPlayer::ReportError(const String& error) {
+    LOGF(error);
+}
+
 bool SDLMixerAudioPlayer::Open(const String& filename) {
     if (SDL_Init(SDL_INIT_AUDIO) < 0) {
-        LastError(String("SDL_Init Error: ") + SDL_GetError());
-        LOGF(LastError());
-        WhenError(LastError());
+        ReportError(String("SDL_Init Error: ") + SDL_GetError());
         return false;
     }
     
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
-        LastError(String("Mix_OpenAudio Error: ") + Mix_GetError());
-        LOGF(LastError());
-        WhenError(LastError());
+        ReportError(String("Mix_OpenAudio Error: ") + Mix_GetError());
         return false;
     }
     
     music = Mix_LoadMUS(filename);
     if (!music) {
-        LastError(String("Mix_LoadMUS Error: ") + Mix_GetError());
-        LOGF(LastError());
+        ReportError(String("Mix_LoadMUS Error: ") + Mix_GetError());
         Mix_CloseAudio();
-        WhenError(LastError());
         return false;
     }
     
     if (Mix_PlayMusic(music, 1) == -1) {
-        LastError(String("Mix_PlayMusic Error: ") + Mix_GetError());
+        ReportError(String("Mix_PlayMusic Error: ") + Mix_GetError());
         Mix_FreeMusic(music);
         Mix_CloseAudio();
         music = nullptr;
-        WhenError(LastError());
         return false;
     }
     
@@ -74,12 +71,10 @@ bool SDLMixerAudioPlayer::Play() {
 bool SDLMixerAudioPlayer::Seek(double seconds) {
     int res = Mix_SetMusicPosition(seconds);
     if (res != 0) {
-        LastError(String("Mix_SetMusicPosition Error: ") + Mix_GetError());
-        LOGF(LastError());
+        ReportError(String("Mix_SetMusicPosition Error: ") + Mix_GetError());
         Mix_CloseAudio();
         Mix_FreeMusic(music);
         music = nullptr;
-        WhenError(LastError());
         state = Closed;
     }
     return res == 0;
@@ -89,9 +84,7 @@ bool SDLMixerAudioPlayer::Close() {
     if (state == Closed) return false;
     int res = Mix_HaltMusic();
     if (res != 0) {
-        LastError(String("Mix_HaltMusic Error: ") + Mix_GetError());
-        LOGF(LastError());
-        WhenError(LastError());
+        ReportError(String("Mix_HaltMusic Error: ") + Mix_GetError());
     }
     state = Closed;
     Mix_CloseAudio();

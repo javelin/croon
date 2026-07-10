@@ -146,13 +146,15 @@ def main() -> None:
     reject(sdl_mixer_audio_player_h, " override", "SDLMixerAudioPlayer unused override marker")
     reject(sdl_mixer_audio_player_h, "State() override", "SDLMixerAudioPlayer unused state accessor")
     reject(sdl_mixer_audio_player_h, "GetPath() const override", "SDLMixerAudioPlayer unused path accessor")
+    reject(sdl_mixer_audio_player_h, "LastError", "SDLMixerAudioPlayer unused last-error API")
+    reject(sdl_mixer_audio_player_h, "WhenError", "SDLMixerAudioPlayer unused error event")
+    reject(sdl_mixer_audio_player_h, "lastError", "SDLMixerAudioPlayer unused error storage")
     reject(sdl_mixer_audio_player_cpp, "initialized", "SDLMixerAudioPlayer dead initialized storage")
+    reject(sdl_mixer_audio_player_cpp, "LastError", "SDLMixerAudioPlayer unused last-error implementation")
+    reject(sdl_mixer_audio_player_cpp, "WhenError", "SDLMixerAudioPlayer unused error event usage")
     reject(sdl_mixer_audio_player_cpp, '#include "Croon.h"', "SDLMixerAudioPlayer app shell dependency")
     require(sdl_mixer_audio_player_h, "enum AudioPlayerState", "SDLMixerAudioPlayer state contract")
-    require(sdl_mixer_audio_player_h, "const String& LastError() const", "SDLMixerAudioPlayer error accessor")
-    require(sdl_mixer_audio_player_h, "Event<String> WhenError", "SDLMixerAudioPlayer error event")
-    require(sdl_mixer_audio_player_h, "void LastError(const String& error)", "SDLMixerAudioPlayer error setter")
-    require(sdl_mixer_audio_player_h, "String lastError", "SDLMixerAudioPlayer error storage")
+    require(sdl_mixer_audio_player_h, "void ReportError(const String& error)", "SDLMixerAudioPlayer private error reporting")
     for needle in [
         "#include <atomic>",
         "#include <SDL2/SDL.h>",
@@ -171,7 +173,8 @@ def main() -> None:
         "Mix_PlayMusic",
         "Mix_SetMusicPosition",
         "Mix_HaltMusic",
-        "WhenError(LastError())",
+        "void SDLMixerAudioPlayer::ReportError",
+        "ReportError(String(",
     ]:
         require(sdl_mixer_audio_player_cpp, needle, "SDLMixerAudioPlayer playback contract")
 

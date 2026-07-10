@@ -29,7 +29,6 @@ public:
     static SDLMixerAudioPlayer& GetPlayer() { return player; }
     SDLMixerAudioPlayer() : state(Closed), music(nullptr) {}
     virtual ~SDLMixerAudioPlayer() { if (music) { Mix_FreeMusic(music); Mix_CloseAudio(); } }
-    const String& LastError() const { return lastError; }
     bool Open(const String& filename);
     bool Pause();
     bool Play();
@@ -40,16 +39,14 @@ public:
     bool Reopen() { Close(); return Open(path); }
     double Duration();
     double Position();
-    Event<String> WhenError;
     
 private:
-    void LastError(const String& error) { lastError = error; }
+    void ReportError(const String& error);
 
     static SDLMixerAudioPlayer player;
     std::atomic<AudioPlayerState> state;
     Mix_Music* music;
     String path;
-    String lastError;
 };
 
 #endif
