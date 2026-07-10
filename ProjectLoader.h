@@ -3,7 +3,7 @@
 
 class ProjectLoader : public ProgressIndicator {
 public:
-    ProjectLoader() { ffmpeg = Config::Get(FFMPEG_LOCATION); }
+    ProjectLoader();
     void LoadProjects();
     Event<String /*path*/,
             String /*title*/,

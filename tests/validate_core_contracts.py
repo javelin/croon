@@ -348,6 +348,9 @@ def main() -> None:
     require(architecture_md, "legacy global data and dialog accessors have been retired", "global accessor retirement documentation")
 
     project_loader_cpp = (root / "ProjectLoader.cpp").read_text()
+    project_loader_h = (root / "ProjectLoader.h").read_text()
+    reject(project_loader_h, "Config::Get(FFMPEG_LOCATION)", "ProjectLoader inline config lookup")
+    require(project_loader_h, "ProjectLoader();", "ProjectLoader constructor declaration")
     reject(project_loader_cpp, '#include "Croon.h"', "ProjectLoader app shell dependency")
     for needle in [
         "#include <CtrlLib/CtrlLib.h>",
@@ -365,6 +368,8 @@ def main() -> None:
     ]:
         require(project_loader_cpp, needle, "ProjectLoader direct dependency")
     require(project_loader_cpp, "RecentProjectService::LoadPaths()", "ProjectLoader recent-project load contract")
+    require(project_loader_cpp, "ProjectLoader::ProjectLoader()", "ProjectLoader constructor implementation")
+    require(project_loader_cpp, "ffmpeg = Config::Get(FFMPEG_LOCATION)", "ProjectLoader ffmpeg config lookup")
     require(project_loader_cpp, "AppIdentity::TempFileName", "ProjectLoader temp-file identity contract")
     require(project_loader_cpp, "FfmpegProjectCommandBuilder::DumpAttachmentAndGenerateThumbnail", "ProjectLoader ffmpeg command contract")
     require(project_loader_cpp, "String metadata = LoadFile(infoFilePath)", "ProjectLoader metadata read contract")
