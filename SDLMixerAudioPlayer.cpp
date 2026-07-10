@@ -17,13 +17,16 @@ using namespace Upp;
 
 #include "SDLMixerAudioPlayer.h"
 
-SDLMixerAudioPlayer SDLMixerAudioPlayer::player;
-
 void SDLMixerAudioPlayer::InitPlayer() {
 }
 
 void SDLMixerAudioPlayer::DeInitPlayer() {
     SDL_Quit();
+}
+
+SDLMixerAudioPlayer& SDLMixerAudioPlayer::GetPlayer() {
+    static SDLMixerAudioPlayer player;
+    return player;
 }
 
 SDLMixerAudioPlayer::SDLMixerAudioPlayer() : state(Closed), music(nullptr) {

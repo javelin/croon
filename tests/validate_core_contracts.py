@@ -175,6 +175,8 @@ def main() -> None:
     reject(sdl_mixer_audio_player_h, "SDL_Quit()", "SDLMixerAudioPlayer inline SDL shutdown")
     reject(sdl_mixer_audio_player_h, "Mix_FreeMusic", "SDLMixerAudioPlayer inline SDL cleanup")
     reject(sdl_mixer_audio_player_h, "Mix_PlayingMusic", "SDLMixerAudioPlayer inline SDL state check")
+    reject(sdl_mixer_audio_player_h, "static SDLMixerAudioPlayer player", "SDLMixerAudioPlayer header-owned singleton storage")
+    reject(sdl_mixer_audio_player_cpp, "SDLMixerAudioPlayer SDLMixerAudioPlayer::player", "SDLMixerAudioPlayer global singleton storage")
     reject(sdl_mixer_audio_player_cpp, "initialized", "SDLMixerAudioPlayer dead initialized storage")
     reject(sdl_mixer_audio_player_cpp, "LastError", "SDLMixerAudioPlayer unused last-error implementation")
     reject(sdl_mixer_audio_player_cpp, "WhenError", "SDLMixerAudioPlayer unused error event usage")
@@ -182,6 +184,7 @@ def main() -> None:
     require(sdl_mixer_audio_player_h, "enum AudioPlayerState", "SDLMixerAudioPlayer state contract")
     require(sdl_mixer_audio_player_h, "#include <Core/Core.h>", "SDLMixerAudioPlayer public String dependency")
     require(sdl_mixer_audio_player_h, "typedef struct Mix_Music Mix_Music", "SDLMixerAudioPlayer opaque music declaration")
+    require(sdl_mixer_audio_player_h, "static SDLMixerAudioPlayer& GetPlayer()", "SDLMixerAudioPlayer singleton accessor contract")
     require(sdl_mixer_audio_player_h, "bool Open(const Upp::String& filename)", "SDLMixerAudioPlayer open contract")
     require(sdl_mixer_audio_player_h, "virtual ~SDLMixerAudioPlayer()", "SDLMixerAudioPlayer cleanup declaration")
     require(sdl_mixer_audio_player_h, "bool IsPlaying()", "SDLMixerAudioPlayer state check declaration")
@@ -208,6 +211,8 @@ def main() -> None:
         "Mix_HaltMusic",
         "Mix_PlayingMusic",
         "void SDLMixerAudioPlayer::DeInitPlayer()",
+        "SDLMixerAudioPlayer& SDLMixerAudioPlayer::GetPlayer()",
+        "static SDLMixerAudioPlayer player",
         "SDLMixerAudioPlayer::~SDLMixerAudioPlayer()",
         "void SDLMixerAudioPlayer::ReportError",
         "ReportError(String(",

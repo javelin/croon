@@ -22,7 +22,7 @@ public:
 
     static void InitPlayer();
     static void DeInitPlayer();
-    static SDLMixerAudioPlayer& GetPlayer() { return player; }
+    static SDLMixerAudioPlayer& GetPlayer();
     SDLMixerAudioPlayer();
     virtual ~SDLMixerAudioPlayer();
     bool Open(const Upp::String& filename);
@@ -39,7 +39,6 @@ public:
 private:
     void ReportError(const Upp::String& error);
 
-    static SDLMixerAudioPlayer player;
     std::atomic<AudioPlayerState> state;
     Mix_Music* music;
     Upp::String path;
