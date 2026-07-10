@@ -481,6 +481,8 @@ def main() -> None:
     download_dlg_cpp = (root / "DownloadDlg.cpp").read_text()
     require(download_dlg_h, "DownloadDefaults::UserAgent()", "DownloadDlg user-agent default")
     reject(download_dlg_h, "HttpRequest", "DownloadDlg header HTTP request dependency")
+    reject(download_dlg_h, "ExtractLyrics", "DownloadDlg lyrics extraction dependency")
+    reject(download_dlg_cpp, "DownloadDlg::ExtractLyrics", "DownloadDlg lyrics extraction implementation")
     reject(download_dlg_h, "RequestState* request", "DownloadDlg raw request-state ownership")
     reject(download_dlg_cpp, "new RequestState", "DownloadDlg raw request-state allocation")
     require(download_dlg_h, "#include <memory>", "DownloadDlg request ownership dependency")

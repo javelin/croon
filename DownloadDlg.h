@@ -22,7 +22,6 @@ private:
     RequestState& Request();
     const RequestState& Request() const;
     void PollProgress() override;
-    void ExtractLyrics(String content);
     
 private:
     std::unique_ptr<RequestState> request;

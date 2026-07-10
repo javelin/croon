@@ -122,8 +122,12 @@ def main() -> None:
         fail("DownloadDlg.h exposes HttpRequest storage")
     if "RequestState* request" in download_header:
         fail("DownloadDlg.h uses raw request-state ownership")
+    if "ExtractLyrics" in download_header:
+        fail("DownloadDlg.h still declares lyrics extraction")
     if "new RequestState" in download_impl:
         fail("DownloadDlg.cpp uses raw request-state allocation")
+    if "DownloadDlg::ExtractLyrics" in download_impl:
+        fail("DownloadDlg.cpp still implements lyrics extraction")
     for needle in [
         "#include <memory>",
         "struct RequestState",
