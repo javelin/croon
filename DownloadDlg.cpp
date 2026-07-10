@@ -36,7 +36,7 @@ struct DownloadDlg::RequestState {
     HttpRequest request;
 };
 
-DownloadDlg::DownloadDlg() : request(new RequestState) {
+DownloadDlg::DownloadDlg() : request(std::make_unique<RequestState>()) {
     WhenAbortingProcess = [=] (bool byUser) {
         if (byUser && Request().request.IsOpen()) {
             Request().request.Abort();

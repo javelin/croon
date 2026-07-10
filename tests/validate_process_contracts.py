@@ -122,6 +122,8 @@ def main() -> None:
         fail("DownloadDlg.h exposes HttpRequest storage")
     if "RequestState* request" in download_header:
         fail("DownloadDlg.h uses raw request-state ownership")
+    if "new RequestState" in download_impl:
+        fail("DownloadDlg.cpp uses raw request-state allocation")
     for needle in [
         "#include <memory>",
         "struct RequestState",
@@ -159,6 +161,7 @@ def main() -> None:
     for needle in [
         "struct DownloadDlg::RequestState",
         "HttpRequest request",
+        "request(std::make_unique<RequestState>())",
         "DownloadDlg::~DownloadDlg() = default",
         "DownloadDlg::RequestState& DownloadDlg::Request()",
         "String DownloadDlg::GetContent() const",

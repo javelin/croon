@@ -478,12 +478,15 @@ def main() -> None:
     require(download_defaults_h, "Chrome/60.0.3112.90", "DownloadDefaults legacy user-agent value")
 
     download_dlg_h = (root / "DownloadDlg.h").read_text()
+    download_dlg_cpp = (root / "DownloadDlg.cpp").read_text()
     require(download_dlg_h, "DownloadDefaults::UserAgent()", "DownloadDlg user-agent default")
     reject(download_dlg_h, "HttpRequest", "DownloadDlg header HTTP request dependency")
     reject(download_dlg_h, "RequestState* request", "DownloadDlg raw request-state ownership")
+    reject(download_dlg_cpp, "new RequestState", "DownloadDlg raw request-state allocation")
     require(download_dlg_h, "#include <memory>", "DownloadDlg request ownership dependency")
     require(download_dlg_h, "struct RequestState", "DownloadDlg opaque request state")
     require(download_dlg_h, "std::unique_ptr<RequestState> request", "DownloadDlg opaque request storage")
+    require(download_dlg_cpp, "request(std::make_unique<RequestState>())", "DownloadDlg request-state construction")
 
     decisions_md = (root / "decisions.md").read_text()
     require(decisions_md, "AZLyrics remains an internal implementation detail", "internal lyrics provider decision")
