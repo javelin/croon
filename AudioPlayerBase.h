@@ -6,31 +6,18 @@
 #ifndef _Croon_AudioPlayerBase_h_
 #define _Croon_AudioPlayerBase_h_
 
-struct IAudioPlayer {
+class AudioPlayerBase {
+public:
 	enum AudioPlayerState {
         Playing = 0,
         Paused,
         Closed
     };
-    virtual const String& LastError() const = 0;
-    virtual bool Open(const String& filename) = 0;
-    virtual bool Pause() = 0;
-    virtual bool Play() = 0;
-    virtual bool Seek(double seconds) = 0;
-    virtual bool Close() = 0;
-    virtual bool IsPlaying() = 0;
-    virtual bool IsOpen() = 0;
-    virtual bool Reopen() = 0;
-    virtual double Duration() = 0;
-    virtual double Position() = 0;
-    
-    Event<String> WhenError;
-};
 
-class AudioPlayerBase : public IAudioPlayer {
-public:
     AudioPlayerBase() : lastError("") {}
-    virtual const String& LastError() const override { return lastError; }
+    const String& LastError() const { return lastError; }
+
+    Event<String> WhenError;
 	
 protected:
     void LastError(const String& error) { lastError = error; }

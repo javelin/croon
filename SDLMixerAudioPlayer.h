@@ -15,16 +15,16 @@ public:
     static SDLMixerAudioPlayer& GetPlayer() { return player; }
     SDLMixerAudioPlayer() : state(Closed), music(nullptr) {}
     virtual ~SDLMixerAudioPlayer() { if (music) { Mix_FreeMusic(music); Mix_CloseAudio(); } }
-    bool Open(const String& filename) override;
-    bool Pause() override;
-    bool Play() override;
-    bool Seek(double seconds) override;
-    bool Close() override;
-    bool IsPlaying() override { if (!Mix_PlayingMusic()) Close(); return state == Playing; }
-    bool IsOpen() override { if (!Mix_PlayingMusic()) Close(); return state != Closed; }
-    bool Reopen() override { Close(); return Open(path); }
-    double Duration() override;
-    double Position() override;
+    bool Open(const String& filename);
+    bool Pause();
+    bool Play();
+    bool Seek(double seconds);
+    bool Close();
+    bool IsPlaying() { if (!Mix_PlayingMusic()) Close(); return state == Playing; }
+    bool IsOpen() { if (!Mix_PlayingMusic()) Close(); return state != Closed; }
+    bool Reopen() { Close(); return Open(path); }
+    double Duration();
+    double Position();
     
 private:
     static SDLMixerAudioPlayer player;
