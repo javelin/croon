@@ -314,7 +314,7 @@ void Project::ReplaceAudio() {
     if (fsel.ExecuteOpen("Open Music File")) {
         ConvertDlg conDlg;
         if (conDlg.Run(~fsel) == IDOK) {
-            if (!AppAudioPlayer::GetPlayer().Open(conDlg.GetConvertedFile())) {
+            if (!AppAudioPlayer::Open(conDlg.GetConvertedFile())) {
                 Exclamation("Player is unable to load audio file.");
                 return;
             }

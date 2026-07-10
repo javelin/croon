@@ -207,7 +207,7 @@ def main() -> None:
         "TimingDlg tDlg",
         "LyricsPartsDlg lpDlg",
         "ConvertDlg conDlg",
-        "AppAudioPlayer::GetPlayer().Open(conDlg.GetConvertedFile())",
+        "AppAudioPlayer::Open(conDlg.GetConvertedFile())",
         "std::filesystem::path savePath",
         "ExportDlg expDlg",
         "menu.Sub(\"Project\"",
@@ -265,7 +265,7 @@ def main() -> None:
         "ProjectList::ProjectList(KarData& data, WizardDlg& wizardDlg) : data(data), wizardDlg(wizardDlg)",
         "loader.WhenProjectLoaded",
         "OpenProjectDlg opDlg",
-        "AppAudioPlayer::GetPlayer().Open(data.audioFilePath)",
+        "AppAudioPlayer::Open(data.audioFilePath)",
         "RecentProjectService::SavePaths(vs)",
         "ConvertDlg conDlg",
         "wizardDlg.Run(conDlg.GetConvertedFile()",
@@ -319,15 +319,20 @@ def main() -> None:
         if layout_member in timing_header:
             fail(f"TimingDlg.h still declares layout member {layout_member}")
     for needle in [
-        "AppAudioPlayer::GetPlayer()",
+        "AppAudioPlayer::IsPlaying()",
+        "AppAudioPlayer::Seek(position)",
+        "AppAudioPlayer::Duration()",
+        "AppAudioPlayer::Position()",
         "LyricsTransformer::TimedToRaw(data->timedLyrics)",
         "TimeFormatter::Format(data->duration)",
         "timingCtrl.SetTimedLyrics(data->timedLyrics, data->duration)",
         "timingCtrl.SetMusicPosition(position, duration)",
-        "player.Seek(value/100.0f*player.Duration())",
+        "AppAudioPlayer::Seek(value/100.0f*AppAudioPlayer::Duration())",
     ]:
         if needle not in timing_impl:
             fail(f"TimingDlg.cpp missing timing workflow {needle}")
+    if "AppAudioPlayer::GetPlayer()" in timing_impl:
+        fail("TimingDlg.cpp reaches through AppAudioPlayer to backend singleton")
 
     video_lay = (root / "CroonVideoDlg.lay").read_text()
     for layout in [

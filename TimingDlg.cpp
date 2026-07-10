@@ -39,26 +39,24 @@ TimingDlg::TimingDlg() {
 
     sliderCtrl.WhenSlideFinish = [=] {
         double value = (double)sliderCtrl.GetData();
-        auto& player = AppAudioPlayer::GetPlayer();
-        player.Seek(value/100.0f*player.Duration());
+        AppAudioPlayer::Seek(value/100.0f*AppAudioPlayer::Duration());
     };
     timingCtrl.WhenDoneTiming << [=] {
     };
     timingCtrl.WhenInterrupt << [=] {
-        if (AppAudioPlayer::GetPlayer().IsPlaying()) {
+        if (AppAudioPlayer::IsPlaying()) {
             TogglePlay();
         }
     };
     timingCtrl.WhenPlayAt << [=] (auto position) {
-        auto& player = AppAudioPlayer::GetPlayer();
-        player.Seek(position);
-        if (!player.IsPlaying()) {
+        AppAudioPlayer::Seek(position);
+        if (!AppAudioPlayer::IsPlaying()) {
             TogglePlay();
         }
     };
     timingCtrl.WhenDirty << [=] { dirty = true; };
     timingCtrl.WhenTiming << [=] (auto _) {
-        return AppAudioPlayer::GetPlayer().IsPlaying();
+        return AppAudioPlayer::IsPlaying();
     };
     
     playBtn << [=] {
@@ -78,7 +76,7 @@ TimingDlg::TimingDlg() {
 }
 
 void TimingDlg::Close() {
-    AppAudioPlayer::GetPlayer().Pause();
+    AppAudioPlayer::Pause();
     if (PromptYesNoCancel("Save changes and close?") == 1) {
         data->timedLyrics = timingCtrl.GetTimedLyrics();
         data->rawLyrics = LyricsTransformer::TimedToRaw(data->timedLyrics);
@@ -98,15 +96,14 @@ bool TimingDlg::Key(dword key, int count) {
 
 void TimingDlg::PollProgress() {
     SetTimeCallback(100, [=] {
-        auto& player = AppAudioPlayer::GetPlayer();
-        if (!player.IsOpen()) {
+        if (!AppAudioPlayer::IsOpen()) {
             playBtn.SetLabel("Play");
-            player.Reopen();
-            SetProgress(player.Duration());
+            AppAudioPlayer::Reopen();
+            SetProgress(AppAudioPlayer::Duration());
             timingCtrl.PlayBackDone();
         }
-        else if (player.IsPlaying()) {
-            SetProgress(player.Position());
+        else if (AppAudioPlayer::IsPlaying()) {
+            SetProgress(AppAudioPlayer::Position());
             PollProgress();
         }
     }, timerId);
@@ -119,8 +116,7 @@ void TimingDlg::Populate() {
 }
 
 void TimingDlg::SetProgress(double position) {
-    auto& player = AppAudioPlayer::GetPlayer();
-    auto duration = player.Duration();
+    auto duration = AppAudioPlayer::Duration();
     if (duration > 0.0f) {
         sliderCtrl.SetData((int)(position/duration*100.0));
         timingCtrl.SetMusicPosition(position, duration);
@@ -133,15 +129,14 @@ void TimingDlg::SetProgress(double position) {
 }
 
 void TimingDlg::TogglePlay() {
-    auto& player = AppAudioPlayer::GetPlayer();
-    if (!player.IsPlaying()) {
+    if (!AppAudioPlayer::IsPlaying()) {
         timingCtrl.ReadyForTiming();
-        player.Play();
+        AppAudioPlayer::Play();
         PollProgress();
         playBtn.SetLabel("Pause");
     }
     else {
-        player.Pause();
+        AppAudioPlayer::Pause();
         playBtn.SetLabel("Play");
     }
 }
