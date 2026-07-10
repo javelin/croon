@@ -50,9 +50,7 @@ DownloadDlg::DownloadDlg() : request(new RequestState) {
     };
 }
 
-DownloadDlg::~DownloadDlg() {
-    delete request;
-}
+DownloadDlg::~DownloadDlg() = default;
 
 DownloadDlg::RequestState& DownloadDlg::Request() {
     return *request;

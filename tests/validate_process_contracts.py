@@ -120,9 +120,12 @@ def main() -> None:
     download_impl = (root / "DownloadDlg.cpp").read_text()
     if "HttpRequest" in download_header:
         fail("DownloadDlg.h exposes HttpRequest storage")
+    if "RequestState* request" in download_header:
+        fail("DownloadDlg.h uses raw request-state ownership")
     for needle in [
+        "#include <memory>",
         "struct RequestState",
-        "RequestState* request",
+        "std::unique_ptr<RequestState> request",
         "String GetContent() const",
     ]:
         if needle not in download_header:
@@ -156,7 +159,7 @@ def main() -> None:
     for needle in [
         "struct DownloadDlg::RequestState",
         "HttpRequest request",
-        "DownloadDlg::~DownloadDlg()",
+        "DownloadDlg::~DownloadDlg() = default",
         "DownloadDlg::RequestState& DownloadDlg::Request()",
         "String DownloadDlg::GetContent() const",
         "Request().request.Abort()",

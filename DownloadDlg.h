@@ -6,6 +6,8 @@
 #ifndef _Croon_DownloadDlg_h_
 #define _Croon_DownloadDlg_h_
 
+#include <memory>
+
 class DownloadDlg : public ProgressDlg {
 public:
     DownloadDlg();
@@ -23,7 +25,7 @@ private:
     void ExtractLyrics(String content);
     
 private:
-    RequestState* request;
+    std::unique_ptr<RequestState> request;
 };
 
 #endif
