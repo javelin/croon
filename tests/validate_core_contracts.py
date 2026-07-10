@@ -168,20 +168,34 @@ def main() -> None:
     reject(sdl_mixer_audio_player_h, "LastError", "SDLMixerAudioPlayer unused last-error API")
     reject(sdl_mixer_audio_player_h, "WhenError", "SDLMixerAudioPlayer unused error event")
     reject(sdl_mixer_audio_player_h, "lastError", "SDLMixerAudioPlayer unused error storage")
+    reject(sdl_mixer_audio_player_h, "#include <SDL2/SDL.h>", "SDLMixerAudioPlayer public SDL dependency")
+    reject(sdl_mixer_audio_player_h, "#include <SDL2/SDL_mixer.h>", "SDLMixerAudioPlayer public SDL_mixer dependency")
+    reject(sdl_mixer_audio_player_h, "#include <SDL.h>", "SDLMixerAudioPlayer public SDL dependency")
+    reject(sdl_mixer_audio_player_h, "#include <SDL_mixer.h>", "SDLMixerAudioPlayer public SDL_mixer dependency")
+    reject(sdl_mixer_audio_player_h, "SDL_Quit()", "SDLMixerAudioPlayer inline SDL shutdown")
+    reject(sdl_mixer_audio_player_h, "Mix_FreeMusic", "SDLMixerAudioPlayer inline SDL cleanup")
+    reject(sdl_mixer_audio_player_h, "Mix_PlayingMusic", "SDLMixerAudioPlayer inline SDL state check")
     reject(sdl_mixer_audio_player_cpp, "initialized", "SDLMixerAudioPlayer dead initialized storage")
     reject(sdl_mixer_audio_player_cpp, "LastError", "SDLMixerAudioPlayer unused last-error implementation")
     reject(sdl_mixer_audio_player_cpp, "WhenError", "SDLMixerAudioPlayer unused error event usage")
     reject(sdl_mixer_audio_player_cpp, '#include "Croon.h"', "SDLMixerAudioPlayer app shell dependency")
     require(sdl_mixer_audio_player_h, "enum AudioPlayerState", "SDLMixerAudioPlayer state contract")
-    require(sdl_mixer_audio_player_h, "void ReportError(const String& error)", "SDLMixerAudioPlayer private error reporting")
+    require(sdl_mixer_audio_player_h, "#include <Core/Core.h>", "SDLMixerAudioPlayer public String dependency")
+    require(sdl_mixer_audio_player_h, "typedef struct Mix_Music Mix_Music", "SDLMixerAudioPlayer opaque music declaration")
+    require(sdl_mixer_audio_player_h, "bool Open(const Upp::String& filename)", "SDLMixerAudioPlayer open contract")
+    require(sdl_mixer_audio_player_h, "virtual ~SDLMixerAudioPlayer()", "SDLMixerAudioPlayer cleanup declaration")
+    require(sdl_mixer_audio_player_h, "bool IsPlaying()", "SDLMixerAudioPlayer state check declaration")
+    require(sdl_mixer_audio_player_h, "bool IsOpen()", "SDLMixerAudioPlayer open-state declaration")
+    require(sdl_mixer_audio_player_h, "bool Reopen()", "SDLMixerAudioPlayer reopen declaration")
+    require(sdl_mixer_audio_player_h, "void ReportError(const Upp::String& error)", "SDLMixerAudioPlayer private error reporting")
     for needle in [
         "#include <atomic>",
-        "#include <SDL2/SDL.h>",
-        "#include <SDL2/SDL_mixer.h>",
     ]:
         require(sdl_mixer_audio_player_h, needle, "SDLMixerAudioPlayer backend header dependency")
     for needle in [
         "#include <Core/Core.h>",
+        "#include <SDL2/SDL.h>",
+        "#include <SDL2/SDL_mixer.h>",
         '#include "SDLMixerAudioPlayer.h"',
     ]:
         require(sdl_mixer_audio_player_cpp, needle, "SDLMixerAudioPlayer direct dependency")
@@ -192,6 +206,9 @@ def main() -> None:
         "Mix_PlayMusic",
         "Mix_SetMusicPosition",
         "Mix_HaltMusic",
+        "Mix_PlayingMusic",
+        "void SDLMixerAudioPlayer::DeInitPlayer()",
+        "SDLMixerAudioPlayer::~SDLMixerAudioPlayer()",
         "void SDLMixerAudioPlayer::ReportError",
         "ReportError(String(",
     ]:

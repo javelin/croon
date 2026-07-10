@@ -7,15 +7,40 @@
 
 using namespace Upp;
 
+#ifdef PLATFORM_POSIX
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
+#else
+#include <SDL.h>
+#include <SDL_mixer.h>
+#endif
+
 #include "SDLMixerAudioPlayer.h"
 
 SDLMixerAudioPlayer SDLMixerAudioPlayer::player;
+
+void SDLMixerAudioPlayer::InitPlayer() {
+}
+
+void SDLMixerAudioPlayer::DeInitPlayer() {
+    SDL_Quit();
+}
+
+SDLMixerAudioPlayer::SDLMixerAudioPlayer() : state(Closed), music(nullptr) {
+}
+
+SDLMixerAudioPlayer::~SDLMixerAudioPlayer() {
+    if (music) {
+        Mix_FreeMusic(music);
+        Mix_CloseAudio();
+    }
+}
 
 void SDLMixerAudioPlayer::ReportError(const String& error) {
     LOGF(error);
 }
 
-bool SDLMixerAudioPlayer::Open(const String& filename) {
+bool SDLMixerAudioPlayer::Open(const Upp::String& filename) {
     if (SDL_Init(SDL_INIT_AUDIO) < 0) {
         ReportError(String("SDL_Init Error: ") + SDL_GetError());
         return false;
@@ -91,4 +116,19 @@ bool SDLMixerAudioPlayer::Close() {
     Mix_FreeMusic(music);
     music = nullptr;
     return res == 0;
+}
+
+bool SDLMixerAudioPlayer::IsPlaying() {
+    if (!Mix_PlayingMusic()) Close();
+    return state == Playing;
+}
+
+bool SDLMixerAudioPlayer::IsOpen() {
+    if (!Mix_PlayingMusic()) Close();
+    return state != Closed;
+}
+
+bool SDLMixerAudioPlayer::Reopen() {
+    Close();
+    return Open(path);
 }

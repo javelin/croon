@@ -6,15 +6,11 @@
 #ifndef _Croon_SDLMixerAudioPlayer_h_
 #define _Croon_SDLMixerAudioPlayer_h_
 
+#include <Core/Core.h>
+
 #include <atomic>
 
-#ifdef PLATFORM_POSIX
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_mixer.h>
-#else
-#include <SDL.h>
-#include <SDL_mixer.h>
-#endif
+typedef struct Mix_Music Mix_Music;
 
 class SDLMixerAudioPlayer {
 public:
@@ -24,29 +20,29 @@ public:
         Closed
     };
 
-    static void InitPlayer() {}
-    static void DeInitPlayer() { SDL_Quit(); }
+    static void InitPlayer();
+    static void DeInitPlayer();
     static SDLMixerAudioPlayer& GetPlayer() { return player; }
-    SDLMixerAudioPlayer() : state(Closed), music(nullptr) {}
-    virtual ~SDLMixerAudioPlayer() { if (music) { Mix_FreeMusic(music); Mix_CloseAudio(); } }
-    bool Open(const String& filename);
+    SDLMixerAudioPlayer();
+    virtual ~SDLMixerAudioPlayer();
+    bool Open(const Upp::String& filename);
     bool Pause();
     bool Play();
     bool Seek(double seconds);
     bool Close();
-    bool IsPlaying() { if (!Mix_PlayingMusic()) Close(); return state == Playing; }
-    bool IsOpen() { if (!Mix_PlayingMusic()) Close(); return state != Closed; }
-    bool Reopen() { Close(); return Open(path); }
+    bool IsPlaying();
+    bool IsOpen();
+    bool Reopen();
     double Duration();
     double Position();
     
 private:
-    void ReportError(const String& error);
+    void ReportError(const Upp::String& error);
 
     static SDLMixerAudioPlayer player;
     std::atomic<AudioPlayerState> state;
     Mix_Music* music;
-    String path;
+    Upp::String path;
 };
 
 #endif
