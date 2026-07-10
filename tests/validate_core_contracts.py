@@ -135,20 +135,12 @@ def main() -> None:
     require(app_audio_player_h, "static bool IsPlaying()", "AppAudioPlayer playing-state contract")
     require(app_audio_player_h, "static double Duration()", "AppAudioPlayer duration contract")
     require(app_audio_player_h, "static SDLMixerAudioPlayer& Player()", "AppAudioPlayer private backend accessor")
-    audio_player_base_h = (root / "AudioPlayerBase.h").read_text()
-    reject(audio_player_base_h, "struct IAudioPlayer", "AudioPlayerBase unused audio interface")
-    reject(audio_player_base_h, "public IAudioPlayer", "AudioPlayerBase unused interface inheritance")
-    reject(audio_player_base_h, "= 0;", "AudioPlayerBase pure virtual interface member")
-    reject(audio_player_base_h, "AudioPlayerEvent", "AudioPlayerBase dead event wrapper")
-    reject(audio_player_base_h, "APE_Type_", "AudioPlayerBase dead event type")
-    reject(audio_player_base_h, "bool opened", "AudioPlayerBase dead opened flag")
-    reject(audio_player_base_h, "bool playing", "AudioPlayerBase dead playing flag")
-    reject(audio_player_base_h, "WhenProgress", "AudioPlayerBase unused progress event")
-    reject(audio_player_base_h, "WhenPlaybackDone", "AudioPlayerBase unused playback-done event")
-    reject(audio_player_base_h, "virtual AudioPlayerState State()", "AudioPlayerBase unused state accessor")
-    reject(audio_player_base_h, "virtual String GetPath() const", "AudioPlayerBase unused path accessor")
+    if (root / "AudioPlayerBase.h").exists():
+        fail("obsolete AudioPlayerBase wrapper still exists")
     sdl_mixer_audio_player_h = (root / "SDLMixerAudioPlayer.h").read_text()
     sdl_mixer_audio_player_cpp = (root / "SDLMixerAudioPlayer.cpp").read_text()
+    reject(sdl_mixer_audio_player_h, '#include "AudioPlayerBase.h"', "SDLMixerAudioPlayer obsolete audio base dependency")
+    reject(sdl_mixer_audio_player_h, "public AudioPlayerBase", "SDLMixerAudioPlayer obsolete audio base inheritance")
     reject(sdl_mixer_audio_player_h, "initialized", "SDLMixerAudioPlayer dead initialized flag")
     reject(sdl_mixer_audio_player_h, "GetPosition", "SDLMixerAudioPlayer dead position declaration")
     reject(sdl_mixer_audio_player_h, " override", "SDLMixerAudioPlayer unused override marker")
@@ -156,7 +148,11 @@ def main() -> None:
     reject(sdl_mixer_audio_player_h, "GetPath() const override", "SDLMixerAudioPlayer unused path accessor")
     reject(sdl_mixer_audio_player_cpp, "initialized", "SDLMixerAudioPlayer dead initialized storage")
     reject(sdl_mixer_audio_player_cpp, '#include "Croon.h"', "SDLMixerAudioPlayer app shell dependency")
-    require(sdl_mixer_audio_player_h, '#include "AudioPlayerBase.h"', "SDLMixerAudioPlayer direct base dependency")
+    require(sdl_mixer_audio_player_h, "enum AudioPlayerState", "SDLMixerAudioPlayer state contract")
+    require(sdl_mixer_audio_player_h, "const String& LastError() const", "SDLMixerAudioPlayer error accessor")
+    require(sdl_mixer_audio_player_h, "Event<String> WhenError", "SDLMixerAudioPlayer error event")
+    require(sdl_mixer_audio_player_h, "void LastError(const String& error)", "SDLMixerAudioPlayer error setter")
+    require(sdl_mixer_audio_player_h, "String lastError", "SDLMixerAudioPlayer error storage")
     for needle in [
         "#include <atomic>",
         "#include <SDL2/SDL.h>",
@@ -189,6 +185,7 @@ def main() -> None:
     reject(croon_upp, "Croon.h", "Croon.upp obsolete umbrella header")
     reject(croon_upp, "MusicPlayer.h", "Croon.upp obsolete music player facade")
     reject(croon_upp, "\tAudioPlayer.h,", "Croon.upp obsolete generic audio wrapper")
+    reject(croon_upp, "\tAudioPlayerBase.h,", "Croon.upp obsolete audio base wrapper")
     for path in sorted(root.glob("*")):
         if path.suffix not in {".cpp", ".h"}:
             continue
