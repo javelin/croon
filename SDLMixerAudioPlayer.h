@@ -25,8 +25,6 @@ public:
     bool Reopen() override { Close(); return Open(path); }
     double Duration() override;
     double Position() override;
-    AudioPlayerState State() override { return state; }
-    String GetPath() const override { return path; }
     
 private:
     static SDLMixerAudioPlayer player;

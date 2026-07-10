@@ -23,12 +23,8 @@ struct IAudioPlayer {
     virtual bool Reopen() = 0;
     virtual double Duration() = 0;
     virtual double Position() = 0;
-    virtual AudioPlayerState State() = 0;
-    virtual String GetPath() const = 0;
     
     Event<String> WhenError;
-    Event<double> WhenProgress;
-    Event<> WhenPlaybackDone;
 };
 
 class AudioPlayerBase : public IAudioPlayer {
