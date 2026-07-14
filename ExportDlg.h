@@ -37,7 +37,6 @@ private:
     String assFilePath;
     Vector<String> args;
     double thumbnailTS{0.0f};
-    int runCode{0};
     String renderTime;
     int progressVal{0};
     String ffmpeg;
