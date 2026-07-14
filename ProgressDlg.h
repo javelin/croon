@@ -10,12 +10,7 @@ class ProgressDlg : public WithCroonProgressLayout<TopWindow> {
 public:
     ProgressDlg();
     virtual void Close() override;
-    virtual int RunDlg(const char* title) {
-        auto ret = Title(title).Run();
-        TopWindow::Close();
-        Hide();
-        return ret;
-    }
+    virtual int RunDlg(const char* title);
     
     Event<bool> WhenAbortingProcess;
     Event<bool> WhenProcessAborted;
@@ -26,13 +21,13 @@ public:
     Gate<> WhenWarnOnClose;
     
 protected:
-    virtual void ProcessAborted() { WhenProcessAborted(false); }
-    virtual void ProcessAbortedByUser() { WhenProcessAborted(true); }
+    virtual void ProcessAborted();
+    virtual void ProcessAbortedByUser();
     virtual void PollProgress();
-    virtual bool ProcessEnded(int code) { return WhenProcessEnded(code); }
-    virtual void ProcessOutput(String output) { WhenProcessOutput(output); }
-    virtual void StartNextProcess() { WhenStartNextProcess(); }
-    virtual void UpdateProgress() { WhenUpdateProgress(); }
+    virtual bool ProcessEnded(int code);
+    virtual void ProcessOutput(String output);
+    virtual void StartNextProcess();
+    virtual void UpdateProgress();
     
 public:
     static const int timerId{1};

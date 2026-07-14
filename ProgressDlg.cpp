@@ -59,6 +59,21 @@ void ProgressDlg::Close() {
     else TopWindow::Close();
 }
 
+int ProgressDlg::RunDlg(const char* title) {
+    auto ret = Title(title).Run();
+    TopWindow::Close();
+    Hide();
+    return ret;
+}
+
+void ProgressDlg::ProcessAborted() {
+    WhenProcessAborted(false);
+}
+
+void ProgressDlg::ProcessAbortedByUser() {
+    WhenProcessAborted(true);
+}
+
 void ProgressDlg::PollProgress() {
     SetTimeCallback(100, [=] {
         String output;
@@ -86,4 +101,20 @@ void ProgressDlg::PollProgress() {
             }, timerId);
         }
     }, timerId);
+}
+
+bool ProgressDlg::ProcessEnded(int code) {
+    return WhenProcessEnded(code);
+}
+
+void ProgressDlg::ProcessOutput(String output) {
+    WhenProcessOutput(output);
+}
+
+void ProgressDlg::StartNextProcess() {
+    WhenStartNextProcess();
+}
+
+void ProgressDlg::UpdateProgress() {
+    WhenUpdateProgress();
 }

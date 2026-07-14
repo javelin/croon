@@ -33,6 +33,17 @@ def main() -> None:
     for old_member in ["Label monitor;", "ProgressIndicator progress;", "Button cancelBtn;"]:
         if old_member in header:
             fail(f"ProgressDlg still declares layout-owned member {old_member}")
+    for inline_body in [
+        "Title(title).Run()",
+        "WhenProcessAborted(false)",
+        "WhenProcessAborted(true)",
+        "return WhenProcessEnded(code)",
+        "WhenProcessOutput(output)",
+        "WhenStartNextProcess()",
+        "WhenUpdateProgress()",
+    ]:
+        if inline_body in header:
+            fail(f"ProgressDlg.h still owns inline process wrapper {inline_body}")
 
     impl = (root / "ProgressDlg.cpp").read_text()
     if '#include "Croon.h"' in impl:
@@ -61,6 +72,24 @@ def main() -> None:
             fail(f"ProgressDlg.cpp missing direct dependency {needle}")
     if "CtrlLayout(*this, \"Progress\")" not in impl:
         fail("ProgressDlg constructor does not apply Designer layout")
+    for needle in [
+        "int ProgressDlg::RunDlg(const char* title)",
+        "Title(title).Run()",
+        "void ProgressDlg::ProcessAborted()",
+        "WhenProcessAborted(false)",
+        "void ProgressDlg::ProcessAbortedByUser()",
+        "WhenProcessAborted(true)",
+        "bool ProgressDlg::ProcessEnded(int code)",
+        "return WhenProcessEnded(code)",
+        "void ProgressDlg::ProcessOutput(String output)",
+        "WhenProcessOutput(output)",
+        "void ProgressDlg::StartNextProcess()",
+        "WhenStartNextProcess()",
+        "void ProgressDlg::UpdateProgress()",
+        "WhenUpdateProgress()",
+    ]:
+        if needle not in impl:
+            fail(f"ProgressDlg.cpp missing process wrapper {needle}")
     for needle in [
         "process.IsRunning()",
         "process.Kill()",
