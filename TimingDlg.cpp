@@ -76,6 +76,12 @@ void TimingDlg::Close() {
     }
 }
 
+int TimingDlg::Run(KarData& karData) {
+    data = &karData;
+    Populate();
+    return TopWindow::Run();
+}
+
 bool TimingDlg::Key(dword key, int count) {
     switch (key) {
     case K_P:

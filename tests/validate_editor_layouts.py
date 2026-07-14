@@ -288,6 +288,8 @@ def main() -> None:
     timing_header = (root / "TimingDlg.h").read_text()
     if "WithCroonTimingDlgLayout<TopWindow>" not in timing_header:
         fail("TimingDlg does not inherit WithCroonTimingDlgLayout")
+    if "data = &karData;\n        Populate();\n        return TopWindow::Run();" in timing_header:
+        fail("TimingDlg.h still owns inline run setup")
 
     timing_impl = (root / "TimingDlg.cpp").read_text()
     if '#include "Croon.h"' in timing_impl:
@@ -312,6 +314,14 @@ def main() -> None:
             fail(f"TimingDlg.cpp has stale direct SDL/audio dependency {needle}")
     if "CtrlLayout(*this" not in timing_impl:
         fail("TimingDlg constructor does not call CtrlLayout")
+    for needle in [
+        "int TimingDlg::Run(KarData& karData)",
+        "data = &karData",
+        "Populate()",
+        "return TopWindow::Run()",
+    ]:
+        if needle not in timing_impl:
+            fail(f"TimingDlg.cpp missing run setup {needle}")
     constructor_body = timing_impl.split("TimingDlg::TimingDlg()", 1)[-1].split("\n}\n", 1)[0]
     if "*this <<" in constructor_body:
         fail("TimingDlg still hardcodes top-level child placement")
