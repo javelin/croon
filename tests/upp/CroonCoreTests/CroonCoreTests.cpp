@@ -91,7 +91,7 @@ CONSOLE_APP_MAIN
 	CheckEq(FfmpegExportCommandBuilder::WithBackgroundVideo(commandData, "song.ass", "song.mp4", "clean.ogg", false), {
 		"-stream_loop", "-1", "-i", "video.mp4", "-i", "clean.ogg", "-map_metadata:s", "-1",
 		"-filter_complex", "[0:v]subtitles=song.ass[v]", "-map", "[v]", "-map", "1:a",
-		"-shortest", "-c:v", "libx264", "-c:a", "copy",
+		"-shortest", "-c:v", "libx265", "-c:a", "copy",
 		"-metadata", "title=", "-metadata", "artist=", "-metadata", "composer=",
 		"-metadata", "copyright=", "-metadata", "genre=", "-metadata", "year=0",
 		"-metadata", "comment=Year: 0\nOriginal Video: ", "-metadata", "lyrics=", "song.mp4"

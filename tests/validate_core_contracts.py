@@ -809,7 +809,7 @@ def main() -> None:
     require(ffmpeg_export_cpp, '#include "Visualization.h"', "ffmpeg export visualization dependency")
     require(ffmpeg_export_cpp, "LyricsTransformer::TimedToRaw", "ffmpeg export lyrics metadata serialization")
     require(ffmpeg_export_cpp, "TimeFormatter::Clock", "ffmpeg export cover timestamp formatting")
-    require(ffmpeg_export_cpp, '"libx264"', "ffmpeg export video codec")
+    require(ffmpeg_export_cpp, '"libx265"', "ffmpeg export video codec")
     require(ffmpeg_export_cpp, "subtitles=%s[v]", "ffmpeg background subtitle filter")
 
     ffmpeg_project_h = (root / "FfmpegProjectCommandBuilder.h").read_text()
