@@ -25,6 +25,18 @@ bool ParseMetadataObject(const String& json, Value& js) {
 
 }
 
+String ProjectSerializer::FormatVersion() {
+    return AppIdentity::Version();
+}
+
+String ProjectSerializer::NormalizeReadVersion(const String& version) {
+    return version.IsEmpty() ? FormatVersion() : version;
+}
+
+bool ProjectSerializer::SupportsVersion(const String& version) {
+    return NormalizeReadVersion(version) == FormatVersion();
+}
+
 String ProjectSerializer::ReadVersion(const String& json) {
     Value js;
     if (!ParseMetadataObject(json, js)) return String::GetVoid();

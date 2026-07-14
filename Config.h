@@ -9,23 +9,13 @@
 class Config {
 public:
     ~Config();
-    static String Get(const String& key, const String& defaultValue=String::GetVoid()) {
-        return ConfigService::Get(key, defaultValue);
-    }
-    static Config& Set(const String& key, String value) {
-        ConfigService::Set(key, value);
-        return config;
-    }
-    static int GetInt(const String& key, int defaultValue=0) {
-        return ConfigService::GetInt(key, defaultValue);
-    }
-    static Config& Set(const String& key, int value) {
-        ConfigService::Set(key, value);
-        return config;
-    }
-    static Config& GetConfig() { return config; }
-    void Serialize() { ConfigService::Serialize(); }
-    static int GetFontSize() { return ConfigService::GetFontSize(); }
+    static String Get(const String& key, const String& defaultValue=String::GetVoid());
+    static Config& Set(const String& key, String value);
+    static int GetInt(const String& key, int defaultValue=0);
+    static Config& Set(const String& key, int value);
+    static Config& GetConfig();
+    void Serialize();
+    static int GetFontSize();
 
 public:
     static const int DefaultFontSize;
@@ -33,7 +23,7 @@ public:
     static const int MaxFontSize;
 
 private:
-    Config() {}
+    Config();
     
 private:
     static Config config;

@@ -7,26 +7,8 @@
 #define _Croon_FfmpegAudioCommandBuilder_h_
 
 struct FfmpegAudioCommandBuilder {
-    static Vector<String> ConvertToVorbis(String audioPath, String outputPath) {
-        return {
-            "-i",
-            audioPath,
-            "-vn",
-            "-acodec",
-            "libvorbis",
-            outputPath
-        };
-    }
-    
-    static Vector<String> Dehiss(String audioPath, String outputPath, int factor=30) {
-        return {
-            "-i",
-            audioPath,
-            "-af",
-            Format("afftdn=nr=%d", factor),
-            outputPath
-        };
-    }
+    static Vector<String> ConvertToVorbis(String audioPath, String outputPath);
+    static Vector<String> Dehiss(String audioPath, String outputPath, int factor=30);
 };
 
 #endif

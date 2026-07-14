@@ -8,54 +8,20 @@
 
 class Page : public Ctrl {
 public:
-    Page() : Page("") {}
-    Page(String name) : pageName(name), enableNext(false), enablePrev(true) {
-        prevBtn.SetLabel("< Back").Disable();
-        prevBtn.Hide();
-        prevBtn << [=] { WhenPreviousPage(); };
-        nextBtn.SetLabel("Next >").Disable();
-        nextBtn.Hide();
-        nextBtn << [=] { WhenNextPage(); };
-        WantFocus(true);
-    }
-    Button& GetPrevButton() { return prevBtn; }
-    Button& GetNextButton() { return nextBtn; }
-    virtual const String& GetPageName() const { return pageName; }
-    virtual void HidePage() {
-        Disable();
-        Hide();
-        PageHidden();
-    }
-    virtual void ShowPage() {
-        Show();
-        Enable();
-        PageShown();
-    }
-    virtual void PageShown() {
-        Populate();
-        ShowButtons();
-        WhenShown();
-    }
-    virtual void PageHidden() {
-        SaveData();
-        HideButtons();
-        WhenHidden();
-    }
-    virtual void Reset() {};
-    virtual void Populate() {}
-    virtual void SaveData() {}
-    virtual void HideButtons() {
-        prevBtn.Disable();
-        prevBtn.Hide();
-        nextBtn.Disable();
-        nextBtn.Hide();
-    }
-    virtual void ShowButtons() {
-        prevBtn.Enable(enablePrev);
-        prevBtn.Show();
-        nextBtn.Enable(enableNext);
-        nextBtn.Show();
-    }
+    Page();
+    Page(String name);
+    Button& GetPrevButton();
+    Button& GetNextButton();
+    virtual const String& GetPageName() const;
+    virtual void HidePage();
+    virtual void ShowPage();
+    virtual void PageShown();
+    virtual void PageHidden();
+    virtual void Reset();
+    virtual void Populate();
+    virtual void SaveData();
+    virtual void HideButtons();
+    virtual void ShowButtons();
     
     Event<> WhenPreviousPage;
     Event<> WhenNextPage;
@@ -71,4 +37,3 @@ protected:
 };
 
 #endif
-

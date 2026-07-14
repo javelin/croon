@@ -5,7 +5,14 @@ uses
 
 file
 	CroonCoreTests.cpp,
+	AppIdentity.cpp,
 	AzLyricsProvider.cpp,
+	Config.cpp,
+	DownloadDefaults.cpp,
+	FfmpegAudioCommandBuilder.cpp,
+	FfmpegExportCommandBuilder.cpp,
+	FfmpegProjectCommandBuilder.cpp,
+	FfmpegThumbnailCommandBuilder.cpp,
 	KarData.cpp,
 	ProjectSerializer.cpp,
 	RecentProjectService.cpp,
@@ -14,6 +21,7 @@ file
 	SubtitleLineProcessor.cpp,
 	TextTools.cpp,
 	TimeFormatter.cpp,
+	Visualization.cpp,
 	CroonCoreTestSupport.cpp;
 
 mainconfig

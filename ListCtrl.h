@@ -8,11 +8,7 @@
 
 class OverLayCtrl : public ParentCtrl {
 public:
-    virtual Image MouseEvent(int event, Point p, int zdelta, dword keyflags) override {
-        Ctrl* parent = GetParent();
-        if (parent) return parent->MouseEvent(event, p, zdelta, keyflags);
-        return ParentCtrl::MouseEvent(event, p, zdelta, keyflags);
-    }
+    virtual Image MouseEvent(int event, Point p, int zdelta, dword keyflags) override;
 };
 
 class ListChildCtrl : public ParentCtrl, public Pte<ListChildCtrl> {
@@ -21,13 +17,13 @@ public:
     ListChildCtrl(ListChildCtrl&& ctrl);
     ListChildCtrl& SetCtrl(Ctrl& ctrl, bool consumeMouseEvents);
     ListChildCtrl& ConsumeMouseEvents(bool consume=true);
-    ListChildCtrl& NoConsumeMouseEvents() { return ConsumeMouseEvents(false); }
-    const Ctrl* GetCtrl() const { return child; }
-    Ctrl* GetCtrl() { return child; }
-    void Highlight(bool set=true) { focusFrame.SetColor(set ? LtRed():normal); }
-    virtual void LeftDouble(Point p, dword keyflags) override { WhenLeftDouble(); }
-    virtual void LeftUp(Point p, dword keyflags) override { WhenLeftUp(); }
-    virtual void RightUp(Point p, dword keyflags) override { WhenRightUp(); }
+    ListChildCtrl& NoConsumeMouseEvents();
+    const Ctrl* GetCtrl() const;
+    Ctrl* GetCtrl();
+    void Highlight(bool set=true);
+    virtual void LeftDouble(Point p, dword keyflags) override;
+    virtual void LeftUp(Point p, dword keyflags) override;
+    virtual void RightUp(Point p, dword keyflags) override;
     
     Event<> WhenLeftDouble;
     Event<> WhenLeftUp;
@@ -56,42 +52,26 @@ public:
 public:
     ListCtrl();
     virtual void SetSizeHint(int w, int h);
-    virtual void SetMargin(int m) { margin = m; Refresh(); RefreshLayout(); }
+    virtual void SetMargin(int m);
     virtual bool Key(dword key, int) override;
-    virtual void MouseWheel(Point, int zdelta, dword) override {
-        scrollBar.Wheel(zdelta); }
+    virtual void MouseWheel(Point, int zdelta, dword) override;
     virtual void Layout() override;
     virtual ListChildCtrl& AddChild(Ctrl& ctrl, bool consumeMouseEvents=true);
-    ListCtrl& ConsumeMouseEvents(bool consume=true) {
-        for (auto& child : mychildren) child.ConsumeMouseEvents(consume); return *this; }
-    ListCtrl& NoConsumeMouseEvents() { return ConsumeMouseEvents(false); }
+    ListCtrl& ConsumeMouseEvents(bool consume=true);
+    ListCtrl& NoConsumeMouseEvents();
     virtual void ClearChildren();
     virtual void ClearHighlights();
-    virtual void Scroll() {
-        if (IsGrid()) {
-            LayCtrlsGrid();
-        }
-        else {
-            LayCtrls();
-        }
-    }
+    virtual void Scroll();
     virtual void LayCtrls();
     virtual void LayCtrlsGrid();
     virtual void Highlight(int item, bool set=true);
-    ListChildCtrl* GetChildCtrl(int i) {
-        if (i < 0 || i >= mychildren.GetCount()) return nullptr;
-        return &mychildren[i];
-    }
-    virtual int GetCount() const { return mychildren.GetCount(); }
+    ListChildCtrl* GetChildCtrl(int i);
+    virtual int GetCount() const;
     
-    virtual Orientation GetOrientation() const { return orientation; }
+    virtual Orientation GetOrientation() const;
     virtual void SetOrientation(Orientation o, int hintW=DefaultDim, int hintH=DefaultDim);
-    virtual int GetIndex(const ListChildCtrl& cc) const { return mychildren.GetIndex(cc); }
-    virtual bool FocusItem(int item) {
-        if (!GetChildCtrl(item)) return false;
-        ScrollToItemAndCenter(item);
-        return true;
-    }
+    virtual int GetIndex(const ListChildCtrl& cc) const;
+    virtual bool FocusItem(int item);
     
     Event<int, Ctrl*> WhenLeftDouble;
     Event<int, Ctrl*> WhenRightUp;
@@ -99,15 +79,13 @@ public:
 protected:
     virtual void ComputeTotal();
     virtual void ScrollToItemAndCenter(int item);
-    bool IsVertical() const { return orientation < Horizontal; }
-    bool IsGrid() const { return orientation == VerticalGrid || orientation == HorizontalGrid; }
+    bool IsVertical() const;
+    bool IsGrid() const;
     
-    int ItemWidth() const { return UiScaler::X(sizeHint.cx == 0 ? UiScaler::X(DefaultDim):sizeHint.cx) + margin*2; }
-    int ItemHeight() const { return UiScaler::Y(sizeHint.cy == 0 ? UiScaler::Y(DefaultDim):sizeHint.cy) + margin*2; }
-    int ItemsPerLine() const {
-        return IsGrid() ? max(IsVertical() ? GetSize().cx/ItemWidth():GetSize().cy/ItemHeight(), 1):1; }
-    int TotalLines() const {
-        return IsGrid() ? ceil((double)mychildren.GetCount()/ItemsPerLine()):mychildren.GetCount(); }
+    int ItemWidth() const;
+    int ItemHeight() const;
+    int ItemsPerLine() const;
+    int TotalLines() const;
     
 protected:
     static const int timerId{1};

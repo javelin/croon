@@ -14,9 +14,9 @@ struct ProjectSerializer {
         InvalidMetadata,
     };
 
-    static String FormatVersion() { return AppIdentity::Version(); }
-    static String NormalizeReadVersion(const String& version) { return version.IsEmpty() ? FormatVersion() : version; }
-    static bool SupportsVersion(const String& version) { return NormalizeReadVersion(version) == FormatVersion(); }
+    static String FormatVersion();
+    static String NormalizeReadVersion(const String& version);
+    static bool SupportsVersion(const String& version);
     static String ReadVersion(const String& json);
     static MetadataCompatibility ReadCompatibility(const String& json);
     static String CompatibilityLabel(MetadataCompatibility compatibility);

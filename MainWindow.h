@@ -12,20 +12,9 @@ class MainWindow : public WithCroonMainWindowLayout<TopWindow> {
 public:
     MainWindow(KarData& data);
     ~MainWindow();
-    void Close() override {
-        if (project.CloseProject(true)) TopWindow::Close();
-    }
-    void ShowProject(bool show=true) {
-        projects.Enable(!show); projects.Show(!show);
-        project.Enable(show); project.Show(show);
-        SetTheMainMenu();
-    }
-    void HideProject() {
-        projects.UpdateListView();
-        project.Disable(); project.Hide();
-        projects.Enable(); projects.Show();
-        SetTheMainMenu();
-    }
+    void Close() override;
+    void ShowProject(bool show=true);
+    void HideProject();
     
 private:
     void SetTheMainMenu();

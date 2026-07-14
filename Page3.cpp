@@ -104,6 +104,12 @@ void Page3::Layout() {
     vizLst.SetSizeHint(UiScaler::X(hw), UiScaler::Y(hw));
 }
 
+void Page3::HideButtons() {
+    Page::HideButtons();
+    gatherBtn.Hide();
+    gatherBtn.Disable();
+}
+
 bool Page3::SetPath(String path) {
     auto isViz = path.StartsWith("@@");
     auto exists = false;
@@ -162,6 +168,17 @@ void Page3::AddVideoItem(ListCtrl* list, String path, String tnPath, Image img, 
     };
 }
 
+Button& Page3::GatherButton() {
+    return gatherBtn;
+}
+
+Button& Page3::GatherButton(bool show, bool enable, const char* label) {
+    if (label) gatherBtn.SetLabel(label);
+    gatherBtn.Show(show);
+    gatherBtn.Enable(enable);
+    return gatherBtn;
+}
+
 void Page3::Populate() {
     enableNext = !data.videoFilePath.IsEmpty();
     gatherBtn.Show();
@@ -185,4 +202,12 @@ void Page3::Reset() {
 void Page3::SaveData() {
     gatherBtn.Disable();
     gatherBtn.Hide();
+}
+
+void Page3::Rehint(bool set) {
+    rehint = set;
+}
+
+bool Page3::Rehint() const {
+    return rehint;
 }

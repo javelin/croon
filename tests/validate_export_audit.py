@@ -14,23 +14,29 @@ def main() -> None:
 
     root = Path(sys.argv[1])
     ffmpeg_export_h = (root / "FfmpegExportCommandBuilder.h").read_text()
+    ffmpeg_export_cpp = (root / "FfmpegExportCommandBuilder.cpp").read_text()
     ffmpeg_project_h = (root / "FfmpegProjectCommandBuilder.h").read_text()
+    ffmpeg_project_cpp = (root / "FfmpegProjectCommandBuilder.cpp").read_text()
     if (root / "FfmpegCommandBuilder.h").exists():
         fail("obsolete FfmpegCommandBuilder compatibility facade still exists")
     for needle in [
         "AppIdentity::ProjectAttachmentMetadata()",
         "AppIdentity::ProductName()",
     ]:
-        if needle not in ffmpeg_project_h:
-            fail(f"FfmpegProjectCommandBuilder.h missing {needle}")
+        if needle not in ffmpeg_project_cpp:
+            fail(f"FfmpegProjectCommandBuilder.cpp missing {needle}")
     for needle in [
         "WithBackgroundVideo",
         "WithVisualization",
-        '"libx264"',
-        "subtitles=%s[v]",
     ]:
         if needle not in ffmpeg_export_h:
             fail(f"FfmpegExportCommandBuilder.h missing {needle}")
+    for needle in [
+        '"libx264"',
+        "subtitles=%s[v]",
+    ]:
+        if needle not in ffmpeg_export_cpp:
+            fail(f"FfmpegExportCommandBuilder.cpp missing {needle}")
 
     export_cpp = (root / "ExportDlg.cpp").read_text()
     for needle in [

@@ -134,6 +134,27 @@ MainWindow::~MainWindow() {
     Config::Set(WIN_H, GetSize().cy);
 }
 
+void MainWindow::Close() {
+    if (project.CloseProject(true)) TopWindow::Close();
+}
+
+void MainWindow::ShowProject(bool show) {
+    projects.Enable(!show);
+    projects.Show(!show);
+    project.Enable(show);
+    project.Show(show);
+    SetTheMainMenu();
+}
+
+void MainWindow::HideProject() {
+    projects.UpdateListView();
+    project.Disable();
+    project.Hide();
+    projects.Enable();
+    projects.Show();
+    SetTheMainMenu();
+}
+
 void MainWindow::SetTheMainMenu() {
     auto menuFn = [this] (Bar& menu) {
             menu.Sub(AppIdentity::ProductName(), [this](Bar& bar) {

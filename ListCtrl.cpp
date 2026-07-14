@@ -12,6 +12,12 @@ using namespace Upp;
 #include "UiScaler.h"
 #include "ListCtrl.h"
 
+Image OverLayCtrl::MouseEvent(int event, Point p, int zdelta, dword keyflags) {
+    Ctrl* parent = GetParent();
+    if (parent) return parent->MouseEvent(event, p, zdelta, keyflags);
+    return ParentCtrl::MouseEvent(event, p, zdelta, keyflags);
+}
+
 ListChildCtrl::ListChildCtrl() {
     child = nullptr;
     focusFrame.SetMargins(Rect(4, 4, 4, 4));
@@ -49,6 +55,34 @@ ListChildCtrl& ListChildCtrl::ConsumeMouseEvents(bool consume) {
     else if (!consumeMouseEvents && consume) *this << overlay.HSizePos().VSizePos();
     consumeMouseEvents = consume;
     return *this;
+}
+
+ListChildCtrl& ListChildCtrl::NoConsumeMouseEvents() {
+    return ConsumeMouseEvents(false);
+}
+
+const Ctrl* ListChildCtrl::GetCtrl() const {
+    return child;
+}
+
+Ctrl* ListChildCtrl::GetCtrl() {
+    return child;
+}
+
+void ListChildCtrl::Highlight(bool set) {
+    focusFrame.SetColor(set ? LtRed():normal);
+}
+
+void ListChildCtrl::LeftDouble(Point p, dword keyflags) {
+    WhenLeftDouble();
+}
+
+void ListChildCtrl::LeftUp(Point p, dword keyflags) {
+    WhenLeftUp();
+}
+
+void ListChildCtrl::RightUp(Point p, dword keyflags) {
+    WhenRightUp();
 }
 
 ListCtrl::ListCtrl() : margin(DefaultMargin) {
@@ -156,6 +190,12 @@ void ListCtrl::SetSizeHint(int hintW, int hintH) {
     RefreshLayout();
 }
 
+void ListCtrl::SetMargin(int m) {
+    margin = m;
+    Refresh();
+    RefreshLayout();
+}
+
 ListChildCtrl& ListCtrl::AddChild(Ctrl& ctrl, bool consumeMouseEvents) {
     ListChildCtrl child;
     mychildren.Add(pick(child.SetCtrl(ctrl, consumeMouseEvents)));
@@ -182,6 +222,19 @@ ListChildCtrl& ListCtrl::AddChild(Ctrl& ctrl, bool consumeMouseEvents) {
     return mychildren.back();
 }
 
+void ListCtrl::MouseWheel(Point, int zdelta, dword) {
+    scrollBar.Wheel(zdelta);
+}
+
+ListCtrl& ListCtrl::ConsumeMouseEvents(bool consume) {
+    for (auto& child : mychildren) child.ConsumeMouseEvents(consume);
+    return *this;
+}
+
+ListCtrl& ListCtrl::NoConsumeMouseEvents() {
+    return ConsumeMouseEvents(false);
+}
+
 void ListCtrl::ClearChildren() {
     for (auto& child : mychildren) child.Remove();
     mychildren.Clear();
@@ -189,6 +242,15 @@ void ListCtrl::ClearChildren() {
 
 void ListCtrl::ClearHighlights() {
     for (auto& child : mychildren) child.Highlight(false);
+}
+
+void ListCtrl::Scroll() {
+    if (IsGrid()) {
+        LayCtrlsGrid();
+    }
+    else {
+        LayCtrls();
+    }
 }
 
 void ListCtrl::LayCtrls() {
@@ -256,11 +318,58 @@ void ListCtrl::Highlight(int item, bool set) {
     if (ch) ch->Highlight(set);
 }
 
+ListChildCtrl* ListCtrl::GetChildCtrl(int i) {
+    if (i < 0 || i >= mychildren.GetCount()) return nullptr;
+    return &mychildren[i];
+}
+
+int ListCtrl::GetCount() const {
+    return mychildren.GetCount();
+}
+
+ListCtrl::Orientation ListCtrl::GetOrientation() const {
+    return orientation;
+}
+
 void ListCtrl::SetOrientation(Orientation o, int hintW, int hintH) {
     orientation = o;
     SetSizeHint(hintW, hintH);
 }
 
+int ListCtrl::GetIndex(const ListChildCtrl& cc) const {
+    return mychildren.GetIndex(cc);
+}
+
+bool ListCtrl::FocusItem(int item) {
+    if (!GetChildCtrl(item)) return false;
+    ScrollToItemAndCenter(item);
+    return true;
+}
+
 void ListCtrl::ComputeTotal() {
     scrollBar.SetTotal((IsVertical() ? ItemHeight():ItemWidth())*TotalLines());
+}
+
+bool ListCtrl::IsVertical() const {
+    return orientation < Horizontal;
+}
+
+bool ListCtrl::IsGrid() const {
+    return orientation == VerticalGrid || orientation == HorizontalGrid;
+}
+
+int ListCtrl::ItemWidth() const {
+    return UiScaler::X(sizeHint.cx == 0 ? UiScaler::X(DefaultDim):sizeHint.cx) + margin*2;
+}
+
+int ListCtrl::ItemHeight() const {
+    return UiScaler::Y(sizeHint.cy == 0 ? UiScaler::Y(DefaultDim):sizeHint.cy) + margin*2;
+}
+
+int ListCtrl::ItemsPerLine() const {
+    return IsGrid() ? max(IsVertical() ? GetSize().cx/ItemWidth():GetSize().cy/ItemHeight(), 1):1;
+}
+
+int ListCtrl::TotalLines() const {
+    return IsGrid() ? ceil((double)mychildren.GetCount()/ItemsPerLine()):mychildren.GetCount();
 }

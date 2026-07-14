@@ -73,17 +73,30 @@ def main() -> None:
     validate_no_production_utility_wrapper_calls(root)
 
     identity_h = (root / "AppIdentity.h").read_text()
+    identity_cpp = (root / "AppIdentity.cpp").read_text()
     for needle in [
-        'ProductName() { return "Croon"; }',
-        'Version() { return "1.0"; }',
-        'ProjectExtension() { return ".croon"; }',
-        'ProjectGlob() { return "*.croon"; }',
-        'MetadataAttachmentName() { return "croon.info"; }',
-        'TempPrefix() { return "Croon_"; }',
-        'PosixDataDirectory() { return ".Croon"; }',
-        'DataDirectory() { return "Croon"; }',
+        "ProductName()",
+        "Version()",
+        "ProjectExtension()",
+        "ProjectGlob()",
+        "MetadataAttachmentName()",
+        "TempPrefix()",
+        "PosixDataDirectory()",
+        "DataDirectory()",
     ]:
         require(identity_h, needle, "AppIdentity contract")
+    for needle in [
+        'return "Croon"',
+        'return "1.0"',
+        'return ".croon"',
+        'return "*.croon"',
+        'return "croon.info"',
+        'return "Croon_"',
+        'return ".Croon"',
+        "GetTempFileName(TempPrefix())",
+    ]:
+        require(identity_cpp, needle, "AppIdentity implementation contract")
+    reject(identity_h, 'return "Croon"', "AppIdentity inline implementation")
 
     app_paths_cpp = (root / "AppPaths.cpp").read_text()
     reject(app_paths_cpp, '#include "Croon.h"', "AppPaths app shell dependency")
@@ -95,16 +108,21 @@ def main() -> None:
     require(app_paths_cpp, "PatternMatchMulti(pattern, ff.GetName())", "AppPaths file discovery")
 
     config_h = (root / "Config.h").read_text()
-    require(config_h, "ConfigService::Get(key, defaultValue)", "Config get delegation")
-    require(config_h, "ConfigService::Set(key, value)", "Config set delegation")
-    require(config_h, "ConfigService::GetInt(key, defaultValue)", "Config int get delegation")
-    require(config_h, "ConfigService::GetFontSize()", "Config font-size delegation")
+    require(config_h, "static String Get", "Config get declaration")
+    require(config_h, "static Config& Set", "Config set declaration")
+    require(config_h, "static int GetInt", "Config int get declaration")
+    require(config_h, "static int GetFontSize", "Config font-size declaration")
+    reject(config_h, "ConfigService::", "Config inline service delegation")
 
     config_cpp = (root / "Config.cpp").read_text()
     reject(config_cpp, '#include "Croon.h"', "Config app shell dependency")
     require(config_cpp, '#include "ConfigService.h"\n#include "Config.h"', "Config ordered direct dependencies")
     require(config_cpp, "Config Config::config", "Config singleton storage")
     require(config_cpp, "ConfigService::DefaultFontSize", "Config default font-size delegation")
+    require(config_cpp, "ConfigService::Get(key, defaultValue)", "Config get delegation")
+    require(config_cpp, "ConfigService::Set(key, value)", "Config set delegation")
+    require(config_cpp, "ConfigService::GetInt(key, defaultValue)", "Config int get delegation")
+    require(config_cpp, "ConfigService::GetFontSize()", "Config font-size delegation")
 
     config_service_cpp = (root / "ConfigService.cpp").read_text()
     reject(config_service_cpp, '#include "Croon.h"', "ConfigService app shell dependency")
@@ -478,9 +496,11 @@ def main() -> None:
     require(lyrics_download_service_cpp, "DownloadWithStatus(title, artist, lyrics) == DownloadOk", "LyricsDownloadService boolean compatibility wrapper")
 
     download_defaults_h = (root / "DownloadDefaults.h").read_text()
+    download_defaults_cpp = (root / "DownloadDefaults.cpp").read_text()
     require(download_defaults_h, "struct DownloadDefaults", "DownloadDefaults boundary")
     require(download_defaults_h, "UserAgent()", "DownloadDefaults user-agent contract")
-    require(download_defaults_h, "Chrome/60.0.3112.90", "DownloadDefaults legacy user-agent value")
+    reject(download_defaults_h, "Chrome/60.0.3112.90", "DownloadDefaults inline user-agent value")
+    require(download_defaults_cpp, "Chrome/60.0.3112.90", "DownloadDefaults legacy user-agent value")
 
     download_dlg_h = (root / "DownloadDlg.h").read_text()
     download_dlg_cpp = (root / "DownloadDlg.cpp").read_text()
@@ -745,6 +765,7 @@ def main() -> None:
     require(project_serializer_h, "InvalidMetadata", "ProjectSerializer invalid compatibility-status contract")
     require(project_serializer_h, "CompatibilityLabel", "ProjectSerializer compatibility label contract")
     require(project_serializer_h, "SupportsJson", "ProjectSerializer JSON support contract")
+    reject(project_serializer_h, "AppIdentity::Version()", "ProjectSerializer inline identity dependency")
 
     legacy_ext = ".mu" + "se"
     legacy_name = "Mu" + "se"
@@ -755,46 +776,54 @@ def main() -> None:
     reject(croon_upp, "FfmpegCommandBuilder.h", "obsolete ffmpeg command builder facade package entry")
 
     ffmpeg_audio_h = (root / "FfmpegAudioCommandBuilder.h").read_text()
+    ffmpeg_audio_cpp = (root / "FfmpegAudioCommandBuilder.cpp").read_text()
     require(ffmpeg_audio_h, "struct FfmpegAudioCommandBuilder", "ffmpeg audio builder declaration")
     require(ffmpeg_audio_h, "ConvertToVorbis(String audioPath, String outputPath)", "ffmpeg audio conversion declaration")
     require(ffmpeg_audio_h, "Dehiss(String audioPath, String outputPath, int factor=30)", "ffmpeg dehiss declaration")
-    require(ffmpeg_audio_h, '"libvorbis"', "ffmpeg audio conversion codec")
-    require(ffmpeg_audio_h, 'Format("afftdn=nr=%d", factor)', "ffmpeg dehiss filter contract")
+    reject(ffmpeg_audio_h, '"libvorbis"', "ffmpeg audio inline conversion codec")
+    require(ffmpeg_audio_cpp, '"libvorbis"', "ffmpeg audio conversion codec")
+    require(ffmpeg_audio_cpp, 'Format("afftdn=nr=%d", factor)', "ffmpeg dehiss filter contract")
 
     ffmpeg_export_h = (root / "FfmpegExportCommandBuilder.h").read_text()
+    ffmpeg_export_cpp = (root / "FfmpegExportCommandBuilder.cpp").read_text()
     require(ffmpeg_export_h, "struct FfmpegExportCommandBuilder", "ffmpeg export builder declaration")
     require(ffmpeg_export_h, "WithBackgroundVideo(const KarData& data", "ffmpeg background export declaration")
     require(ffmpeg_export_h, "WithVisualization(const KarData& data", "ffmpeg visualization export declaration")
     require(ffmpeg_export_h, "GenerateCoverImage(String videoPath, String outputPath, double thumbnailTS)", "ffmpeg cover image declaration")
-    require(ffmpeg_export_h, '#include "LyricsTransformer.h"', "ffmpeg export lyrics transformer dependency")
-    require(ffmpeg_export_h, '#include "TimeFormatter.h"', "ffmpeg export time formatter dependency")
-    require(ffmpeg_export_h, '#include "Visualization.h"', "ffmpeg export visualization dependency")
-    require(ffmpeg_export_h, "LyricsTransformer::TimedToRaw", "ffmpeg export lyrics metadata serialization")
-    require(ffmpeg_export_h, "TimeFormatter::Clock", "ffmpeg export cover timestamp formatting")
-    require(ffmpeg_export_h, '"libx264"', "ffmpeg export video codec")
-    require(ffmpeg_export_h, "subtitles=%s[v]", "ffmpeg background subtitle filter")
+    reject(ffmpeg_export_h, "LyricsTransformer::TimedToRaw", "ffmpeg export inline lyrics metadata serialization")
+    require(ffmpeg_export_cpp, '#include "LyricsTransformer.h"', "ffmpeg export lyrics transformer dependency")
+    require(ffmpeg_export_cpp, '#include "TimeFormatter.h"', "ffmpeg export time formatter dependency")
+    require(ffmpeg_export_cpp, '#include "Visualization.h"', "ffmpeg export visualization dependency")
+    require(ffmpeg_export_cpp, "LyricsTransformer::TimedToRaw", "ffmpeg export lyrics metadata serialization")
+    require(ffmpeg_export_cpp, "TimeFormatter::Clock", "ffmpeg export cover timestamp formatting")
+    require(ffmpeg_export_cpp, '"libx264"', "ffmpeg export video codec")
+    require(ffmpeg_export_cpp, "subtitles=%s[v]", "ffmpeg background subtitle filter")
 
     ffmpeg_project_h = (root / "FfmpegProjectCommandBuilder.h").read_text()
+    ffmpeg_project_cpp = (root / "FfmpegProjectCommandBuilder.cpp").read_text()
     require(ffmpeg_project_h, "struct FfmpegProjectCommandBuilder", "ffmpeg project builder declaration")
     require(ffmpeg_project_h, "DumpAttachmentAndGenerateThumbnail(String projectPath", "ffmpeg project listing declaration")
     require(ffmpeg_project_h, "ExtractAudioAndInfo(String projectPath", "ffmpeg project audio extraction declaration")
     require(ffmpeg_project_h, "ExtractVideo(String projectPath", "ffmpeg project video extraction declaration")
     require(ffmpeg_project_h, "SaveWithBackgroundVideo(const KarData& data", "ffmpeg project background save declaration")
     require(ffmpeg_project_h, "SaveWithVisualization(const KarData& data", "ffmpeg project visualization save declaration")
-    require(ffmpeg_project_h, '#include "AppIdentity.h"', "ffmpeg project identity dependency")
-    require(ffmpeg_project_h, '#include "KarData.h"', "ffmpeg project data dependency")
-    require(ffmpeg_project_h, "AppIdentity::ProjectAttachmentMetadata()", "project attachment contract")
-    require(ffmpeg_project_h, "AppIdentity::ProductName()", "project metadata contract")
-    require(ffmpeg_project_h, '"00:00:01"', "ffmpeg project listing thumbnail seek contract")
+    reject(ffmpeg_project_h, "AppIdentity::ProjectAttachmentMetadata()", "ffmpeg project inline attachment contract")
+    require(ffmpeg_project_cpp, '#include "AppIdentity.h"', "ffmpeg project identity dependency")
+    require(ffmpeg_project_cpp, '#include "KarData.h"', "ffmpeg project data dependency")
+    require(ffmpeg_project_cpp, "AppIdentity::ProjectAttachmentMetadata()", "project attachment contract")
+    require(ffmpeg_project_cpp, "AppIdentity::ProductName()", "project metadata contract")
+    require(ffmpeg_project_cpp, '"00:00:01"', "ffmpeg project listing thumbnail seek contract")
     reject(ffmpeg_project_h, "filename=" + legacy_ext[1:] + ".info", "ffmpeg metadata contract")
 
     ffmpeg_thumbnail_h = (root / "FfmpegThumbnailCommandBuilder.h").read_text()
+    ffmpeg_thumbnail_cpp = (root / "FfmpegThumbnailCommandBuilder.cpp").read_text()
     require(ffmpeg_thumbnail_h, "struct FfmpegThumbnailCommandBuilder", "ffmpeg thumbnail builder declaration")
     require(ffmpeg_thumbnail_h, "Generate(String videoPath, String outputPath, int width, int height)", "ffmpeg thumbnail builder generate contract")
-    require(ffmpeg_thumbnail_h, '"00:00:06"', "ffmpeg thumbnail seek contract")
-    require(ffmpeg_thumbnail_h, '"-vframes"', "ffmpeg thumbnail frame contract")
-    require(ffmpeg_thumbnail_h, "Format(\"crop='min(iw,ih)':'min(iw,ih)',scale=%d:%d\"", "ffmpeg thumbnail crop-scale contract")
-    require(ffmpeg_thumbnail_h, "outputPath", "ffmpeg thumbnail output path contract")
+    reject(ffmpeg_thumbnail_h, '"00:00:06"', "ffmpeg thumbnail inline seek contract")
+    require(ffmpeg_thumbnail_cpp, '"00:00:06"', "ffmpeg thumbnail seek contract")
+    require(ffmpeg_thumbnail_cpp, '"-vframes"', "ffmpeg thumbnail frame contract")
+    require(ffmpeg_thumbnail_cpp, "Format(\"crop='min(iw,ih)':'min(iw,ih)',scale=%d:%d\"", "ffmpeg thumbnail crop-scale contract")
+    require(ffmpeg_thumbnail_cpp, "outputPath", "ffmpeg thumbnail output path contract")
 
     ffmpeg_progress_parser_h = (root / "FfmpegProgressParser.h").read_text()
     require(ffmpeg_progress_parser_h, "ParseTimestamp", "ffmpeg progress parser contract")
@@ -904,7 +933,6 @@ def main() -> None:
 
     direct_ui_scaler_dependencies = [
         "ListCtrl.cpp",
-        "ListCtrl.h",
         "LyricsPartsDlg.cpp",
         "MainWindow.cpp",
         "OpenProjectDlg.cpp",
@@ -1130,6 +1158,7 @@ def main() -> None:
     require(project_list_h, "WizardDlg& wizardDlg", "ProjectList injected wizard member")
 
     list_ctrl_cpp = (root / "ListCtrl.cpp").read_text()
+    list_ctrl_h = (root / "ListCtrl.h").read_text()
     reject(list_ctrl_cpp, '#include "Croon.h"', "ListCtrl app shell dependency")
     for needle in [
         "#include <CtrlLib/CtrlLib.h>",
@@ -1145,10 +1174,15 @@ def main() -> None:
         "ListCtrl::AddChild",
         "ListCtrl::LayCtrlsGrid",
         "ScrollToItemAndCenter",
+        "ListCtrl::ItemWidth",
+        "OverLayCtrl::MouseEvent",
     ]:
         require(list_ctrl_cpp, needle, "ListCtrl behavior contract")
+    for needle in ["UiScaler::", "scrollBar.Wheel", "return ParentCtrl::MouseEvent", "focusFrame.SetColor"]:
+        reject(list_ctrl_h, needle, "ListCtrl inline behavior")
 
     lyrics_parts_ctrl_cpp = (root / "LyricsPartsCtrl.cpp").read_text()
+    lyrics_parts_ctrl_h = (root / "LyricsPartsCtrl.h").read_text()
     reject(lyrics_parts_ctrl_cpp, '#include "Croon.h"', "LyricsPartsCtrl app shell dependency")
     for needle in [
         "#include <CtrlLib/CtrlLib.h>",
@@ -1162,8 +1196,12 @@ def main() -> None:
         "w.DrawLine",
         "Color(255, 220, 120)",
         "SColorText()",
+        "LyricsPartsCtrl::SetLyricsAndParts",
+        "LyricsPartsCtrl::ToggleAt",
     ]:
         require(lyrics_parts_ctrl_cpp, needle, "LyricsPartsCtrl paint contract")
+    for needle in ["sb.WhenScroll", "TrimBoth(lines[row])", "ToggleAt(p)", "SetCapture()"]:
+        reject(lyrics_parts_ctrl_h, needle, "LyricsPartsCtrl inline behavior")
 
     lyrics_editor_cpp = (root / "LyricsEditor.cpp").read_text()
     reject(lyrics_editor_cpp, '#include "Croon.h"', "LyricsEditor app shell dependency")

@@ -71,6 +71,7 @@ def main() -> None:
     upp = (root / "Croon.upp").read_text()
     if (
         "Croon.iml" not in upp or
+        "AppIdentity.cpp" not in upp or
         "AppIdentity.h" not in upp or
         "AppPaths.cpp" not in upp or
         "AppPaths.h" not in upp or
@@ -80,14 +81,19 @@ def main() -> None:
         "AzLyricsProvider.h" not in upp or
         "ConfigService.cpp" not in upp or
         "ConfigService.h" not in upp or
+        "DownloadDefaults.cpp" not in upp or
         "DownloadDefaults.h" not in upp or
         "ProjectSerializer.cpp" not in upp or
         "ProjectSerializer.h" not in upp or
+        "FfmpegAudioCommandBuilder.cpp" not in upp or
         "FfmpegAudioCommandBuilder.h" not in upp or
+        "FfmpegExportCommandBuilder.cpp" not in upp or
         "FfmpegExportCommandBuilder.h" not in upp or
         "FfmpegProgressParser.cpp" not in upp or
         "FfmpegProgressParser.h" not in upp or
+        "FfmpegProjectCommandBuilder.cpp" not in upp or
         "FfmpegProjectCommandBuilder.h" not in upp or
+        "FfmpegThumbnailCommandBuilder.cpp" not in upp or
         "FfmpegThumbnailCommandBuilder.h" not in upp or
         "GenreCatalog.cpp" not in upp or
         "GenreCatalog.h" not in upp or
@@ -110,6 +116,8 @@ def main() -> None:
         "UiScaler.h" not in upp or
         "VideoCatalog.cpp" not in upp or
         "VideoCatalog.h" not in upp or
+        "Visualization.cpp" not in upp or
+        "Visualization.h" not in upp or
         "MediaProcessRunner.cpp" not in upp or
         "MediaProcessRunner.h" not in upp
     ):
@@ -164,10 +172,10 @@ def main() -> None:
         if expected not in contracts:
             fail(f"contracts.md missing {expected}")
 
-    identity = (root / "AppIdentity.h").read_text()
+    identity = (root / "AppIdentity.cpp").read_text()
     for expected in [".croon", "croon.info", "Croon_", "Croon", "1.0"]:
         if expected not in identity:
-            fail(f"AppIdentity.h missing {expected}")
+            fail(f"AppIdentity.cpp missing {expected}")
 
 
 if __name__ == "__main__":
