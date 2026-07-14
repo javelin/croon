@@ -180,6 +180,13 @@ def main() -> None:
             fail(f"DownloadDlg.cpp missing download workflow {needle}")
 
     export_impl = (root / "ExportDlg.cpp").read_text()
+    export_header = (root / "ExportDlg.h").read_text()
+    if "PostCallback([=] { StartNextProcess(); })" in export_header:
+        fail("ExportDlg.h still owns export run process kickoff")
+    if "AppIdentity::TaggedTempFileName(\"dehissed\", \".ogg\")" in export_header:
+        fail("ExportDlg.h still owns export run temp file setup")
+    if "int Run(const KarData& karData, String outputPath, int len=1, double thumbnailTS=-1.0f);" not in export_header:
+        fail("ExportDlg.h missing export run declaration")
     if '#include "Croon.h"' in export_impl:
         fail("ExportDlg.cpp still depends on Croon.h")
     for needle in [
@@ -209,6 +216,12 @@ def main() -> None:
             fail(f"ExportDlg.cpp missing direct dependency {needle}")
     for needle in [
         "Config::Get(FFMPEG_LOCATION)",
+        "int ExportDlg::Run(const KarData& karData, String outputPath, int len, double thumbnailTS)",
+        "data = &karData",
+        "this->outputPath = outputPath",
+        "AppIdentity::TaggedTempFileName(\"dehissed\", \".ogg\")",
+        "PostCallback([=] { StartNextProcess(); })",
+        "return RunDlg(\"Export Video\")",
         "FfmpegProgressParser::ParseTimestamp",
         "AppIdentity::TempFileName(\".ass\")",
         "SubtitleGenerator::ToAss(*data, 4)",

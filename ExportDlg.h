@@ -9,15 +9,7 @@
 class ExportDlg : public ProgressDlg {
 public:
     ExportDlg();
-    int Run(const KarData& karData, String outputPath, int len=1, double thumbnailTS=-1.0f) {
-        length = len;
-        this->thumbnailTS = thumbnailTS;
-        data = &karData;
-        this->outputPath = outputPath;
-        dehissedAudioFilepath = karData.dehiss ? AppIdentity::TaggedTempFileName("dehissed", ".ogg"):"";
-        PostCallback([=] { StartNextProcess(); });
-        return RunDlg("Export Video");
-    }
+    int Run(const KarData& karData, String outputPath, int len=1, double thumbnailTS=-1.0f);
     
 private:
     enum Phase {

@@ -114,6 +114,16 @@ ExportDlg::ExportDlg() : ffmpeg(Config::Get(FFMPEG_LOCATION)) {
     WhenWarnOnClose = [=] { return phase != Finished; };
 }
 
+int ExportDlg::Run(const KarData& karData, String outputPath, int len, double thumbnailTS) {
+    length = len;
+    this->thumbnailTS = thumbnailTS;
+    data = &karData;
+    this->outputPath = outputPath;
+    dehissedAudioFilepath = karData.dehiss ? AppIdentity::TaggedTempFileName("dehissed", ".ogg"):"";
+    PostCallback([=] { StartNextProcess(); });
+    return RunDlg("Export Video");
+}
+
 void ExportDlg::ExportASS() {
     UpdateProgress();
     assFilePath = AppIdentity::TempFileName(".ass");
