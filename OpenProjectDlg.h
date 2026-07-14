@@ -10,7 +10,7 @@ class OpenProjectDlg : public ProgressDlg {
 public:
     OpenProjectDlg();
     int Run(String savePath, KarData& data);
-    void Close() override {}
+    void Close() override;
     
 private:
     enum Phase {

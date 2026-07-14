@@ -119,6 +119,9 @@ int OpenProjectDlg::Run(String projectPath, KarData& karData) {
     return RunDlg("Open Project");
 }
 
+void OpenProjectDlg::Close() {
+}
+
 void OpenProjectDlg::ExtractAudio() {
     data->infoFilePath = AppIdentity::TempFileName(".json");
     data->audioFilePath = AppIdentity::TempFileName(".ogg");

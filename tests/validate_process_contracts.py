@@ -304,6 +304,9 @@ def main() -> None:
             fail(f"GatherDlg.cpp missing thumbnail discovery workflow {needle}")
 
     open_impl = (root / "OpenProjectDlg.cpp").read_text()
+    open_header = (root / "OpenProjectDlg.h").read_text()
+    if "void Close() override {}" in open_header:
+        fail("OpenProjectDlg.h still owns inline Close override")
     if '#include "Croon.h"' in open_impl:
         fail("OpenProjectDlg.cpp still depends on Croon.h")
     for needle in [
@@ -332,6 +335,7 @@ def main() -> None:
             fail(f"OpenProjectDlg.cpp missing direct dependency {needle}")
     for needle in [
         "Config::Get(FFMPEG_LOCATION)",
+        "void OpenProjectDlg::Close()",
         "String metadata = LoadFile(data->infoFilePath)",
         "ProjectSerializer::MetadataCompatibility compatibility = ProjectSerializer::ReadCompatibility(metadata)",
         "compatibility == ProjectSerializer::UnsupportedMetadata",
