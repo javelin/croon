@@ -51,6 +51,13 @@ LyricsPartsDlg::LyricsPartsDlg() {
     lpCtrl.WhenToggle = [=](int row, int col, bool set) { dirty = true; okBtn.Enable(); };
 }
 
+int LyricsPartsDlg::Run(KarData& karData) {
+    dirty = false;
+    data = &karData;
+    Populate();
+    return TopWindow::Run();
+}
+
 void LyricsPartsDlg::Populate() {
     Vector<String> lyrics;
     Vector<Tuple<int, bool, bool, bool>> parts;

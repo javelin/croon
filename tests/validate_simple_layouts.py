@@ -74,6 +74,9 @@ def main() -> None:
             fail(f"TimingLineDlg.cpp missing behavior {needle}")
 
     lyrics_parts_impl = (root / "LyricsPartsDlg.cpp").read_text()
+    lyrics_parts_header = (root / "LyricsPartsDlg.h").read_text()
+    if "dirty = false;\n        data = &karData;\n        Populate();\n        return TopWindow::Run();" in lyrics_parts_header:
+        fail("LyricsPartsDlg.h still owns inline run setup")
     if '#include "Croon.h"' in lyrics_parts_impl:
         fail("LyricsPartsDlg.cpp still depends on Croon.h")
     for needle in [
@@ -100,6 +103,11 @@ def main() -> None:
             fail(f"LyricsPartsDlg.cpp missing direct dependency {needle}")
     for needle in [
         "CtrlLayout(*this)",
+        "int LyricsPartsDlg::Run(KarData& karData)",
+        "dirty = false",
+        "data = &karData",
+        "Populate()",
+        "return TopWindow::Run()",
         "PromptYesNo(\"Discard changes and cancel?\")",
         "lpCtrl.ClearParts()",
         "lpCtrl.WhenToggle",

@@ -5,12 +5,7 @@ class LyricsPartsDlg : public WithCroonLyricsPartsLayout<TopWindow> {
 public:
     LyricsPartsDlg();
     
-    int Run(KarData& karData) {
-        dirty = false;
-        data = &karData;
-        Populate();
-        return TopWindow::Run();
-    }
+    int Run(KarData& karData);
     
     bool IsDirty() const { return dirty; }
     Vector<Tuple<int,bool,bool,bool>> GetParts() const { return lpCtrl.GetParts(); }
