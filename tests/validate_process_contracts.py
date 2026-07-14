@@ -262,6 +262,10 @@ def main() -> None:
     ]:
         if needle not in export_impl:
             fail(f"ExportDlg.cpp missing export workflow {needle}")
+    if "ProgressDlg::Run(\"Export Video\")" in export_impl:
+        fail("ExportDlg nests modal progress runs across export phases")
+    if "runCode" in export_header or "runCode" in export_impl:
+        fail("ExportDlg still tracks obsolete nested run state")
 
     gather_impl = (root / "GatherDlg.cpp").read_text()
     if '#include "Croon.h"' in gather_impl:

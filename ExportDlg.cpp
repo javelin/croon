@@ -209,7 +209,6 @@ void ExportDlg::StartExport() {
             PollProgress();
         }
     }, timerId);
-    runCode = ProgressDlg::Run("Export Video");
 }
 
 void ExportDlg::GenThumbnail() {
