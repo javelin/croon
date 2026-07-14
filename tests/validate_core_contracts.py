@@ -550,6 +550,22 @@ def main() -> None:
     ]:
         require(media_process_runner_h, method, "MediaProcessRunner process boundary")
     require(media_process_runner_h, "LocalProcess process", "MediaProcessRunner local process ownership")
+    reject(media_process_runner_h, "return process.", "MediaProcessRunner inline forwarding")
+    reject(media_process_runner_h, "process.Kill();", "MediaProcessRunner inline forwarding")
+
+    media_process_runner_cpp = (root / "MediaProcessRunner.cpp").read_text()
+    reject(media_process_runner_cpp, '#include "Croon.h"', "MediaProcessRunner app shell dependency")
+    require(media_process_runner_cpp, '#include "MediaProcessRunner.h"', "MediaProcessRunner direct self dependency")
+    for method in [
+        "bool MediaProcessRunner::Start(const String& command)",
+        "bool MediaProcessRunner::Start(const String& executable, const Vector<String>& args)",
+        "bool MediaProcessRunner::Start(const String& executable, const Vector<String>& args, const char *envptr, const char *dir)",
+        "bool MediaProcessRunner::Read(String& output)",
+        "bool MediaProcessRunner::IsRunning()",
+        "int MediaProcessRunner::GetExitCode()",
+        "void MediaProcessRunner::Kill()",
+    ]:
+        require(media_process_runner_cpp, method, "MediaProcessRunner forwarding implementation")
 
     subtitle_generator_cpp = (root / "SubtitleGenerator.cpp").read_text()
     require(subtitle_generator_cpp, "String SubtitleGenerator::ToAss", "SubtitleGenerator ASS implementation")

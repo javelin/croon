@@ -8,33 +8,13 @@
 
 class MediaProcessRunner {
 public:
-    bool Start(const String& command) {
-        return process.Start(command);
-    }
-    
-    bool Start(const String& executable, const Vector<String>& args) {
-        return process.Start(executable, args);
-    }
-    
-    bool Start(const String& executable, const Vector<String>& args, const char *envptr, const char *dir) {
-        return process.Start(executable, args, envptr, dir);
-    }
-    
-    bool Read(String& output) {
-        return process.Read(output);
-    }
-    
-    bool IsRunning() {
-        return process.IsRunning();
-    }
-    
-    int GetExitCode() {
-        return process.GetExitCode();
-    }
-    
-    void Kill() {
-        process.Kill();
-    }
+    bool Start(const String& command);
+    bool Start(const String& executable, const Vector<String>& args);
+    bool Start(const String& executable, const Vector<String>& args, const char *envptr, const char *dir);
+    bool Read(String& output);
+    bool IsRunning();
+    int GetExitCode();
+    void Kill();
 
 private:
     LocalProcess process;

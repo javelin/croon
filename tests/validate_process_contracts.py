@@ -370,6 +370,23 @@ def main() -> None:
     if "MediaProcessRunner proc;" not in croon_cpp:
         fail("RunCroon does not validate ffmpeg through MediaProcessRunner")
 
+    runner_h = (root / "MediaProcessRunner.h").read_text()
+    if "return process.Start" in runner_h or "return process.Read" in runner_h or "process.Kill();" in runner_h:
+        fail("MediaProcessRunner.h still owns LocalProcess forwarding bodies")
+
+    runner_cpp = (root / "MediaProcessRunner.cpp").read_text()
+    for needle in [
+        "process.Start(command)",
+        "process.Start(executable, args)",
+        "process.Start(executable, args, envptr, dir)",
+        "process.Read(output)",
+        "process.IsRunning()",
+        "process.GetExitCode()",
+        "process.Kill()",
+    ]:
+        if needle not in runner_cpp:
+            fail(f"MediaProcessRunner.cpp missing forwarding body {needle}")
+
     raw_process_owners = []
     for path in root.glob("*.h"):
         if path.name == "MediaProcessRunner.h":

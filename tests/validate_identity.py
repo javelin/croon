@@ -110,6 +110,7 @@ def main() -> None:
         "UiScaler.h" not in upp or
         "VideoCatalog.cpp" not in upp or
         "VideoCatalog.h" not in upp or
+        "MediaProcessRunner.cpp" not in upp or
         "MediaProcessRunner.h" not in upp
     ):
         fail("Croon.upp does not list package-level Croon files")

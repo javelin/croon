@@ -64,6 +64,7 @@ file
 	LyricsPartsDlg.h,
 	MainWindow.cpp,
 	MainWindow.h,
+	MediaProcessRunner.cpp,
 	MediaProcessRunner.h,
 	OpenProjectDlg.cpp,
 	OpenProjectDlg.h,
