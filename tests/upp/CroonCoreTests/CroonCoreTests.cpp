@@ -67,8 +67,11 @@ CONSOLE_APP_MAIN
 	}, "ConvertToVorbis");
 
 	CheckEq(FfmpegAudioCommandBuilder::Dehiss("song.ogg", "clean.ogg", 42), {
-		"-i", "song.ogg", "-af", "afftdn=nr=42", "clean.ogg"
+		"-i", "song.ogg", "-af", "afftdn=nr=42:nf=-45:bn=1", "clean.ogg"
 	}, "Dehiss");
+	CheckEq(FfmpegAudioCommandBuilder::Dehiss("song.ogg", "clean.ogg"), {
+		"-i", "song.ogg", "-af", "afftdn=nr=15:nf=-45:bn=1", "clean.ogg"
+	}, "Dehiss default dB");
 
 	CheckEq(FfmpegThumbnailCommandBuilder::Generate("video.mp4", "thumb.png", 256, 256), {
 		"-i", "video.mp4", "-ss", "00:00:06", "-vframes", "1",

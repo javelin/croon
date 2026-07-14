@@ -20,12 +20,12 @@ Vector<String> FfmpegAudioCommandBuilder::ConvertToVorbis(String audioPath, Stri
     };
 }
 
-Vector<String> FfmpegAudioCommandBuilder::Dehiss(String audioPath, String outputPath, int factor) {
+Vector<String> FfmpegAudioCommandBuilder::Dehiss(String audioPath, String outputPath, int dB) {
     return {
         "-i",
         audioPath,
         "-af",
-        Format("afftdn=nr=%d", factor),
+        Format("afftdn=nr=%d:nf=-45:bn=1", dB),
         outputPath
     };
 }

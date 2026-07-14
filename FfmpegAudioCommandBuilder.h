@@ -8,7 +8,7 @@
 
 struct FfmpegAudioCommandBuilder {
     static Vector<String> ConvertToVorbis(String audioPath, String outputPath);
-    static Vector<String> Dehiss(String audioPath, String outputPath, int factor=30);
+    static Vector<String> Dehiss(String audioPath, String outputPath, int dB=15);
 };
 
 #endif

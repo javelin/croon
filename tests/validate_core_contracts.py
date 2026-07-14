@@ -791,10 +791,10 @@ def main() -> None:
     ffmpeg_audio_cpp = (root / "FfmpegAudioCommandBuilder.cpp").read_text()
     require(ffmpeg_audio_h, "struct FfmpegAudioCommandBuilder", "ffmpeg audio builder declaration")
     require(ffmpeg_audio_h, "ConvertToVorbis(String audioPath, String outputPath)", "ffmpeg audio conversion declaration")
-    require(ffmpeg_audio_h, "Dehiss(String audioPath, String outputPath, int factor=30)", "ffmpeg dehiss declaration")
+    require(ffmpeg_audio_h, "Dehiss(String audioPath, String outputPath, int dB=15)", "ffmpeg dehiss declaration")
     reject(ffmpeg_audio_h, '"libvorbis"', "ffmpeg audio inline conversion codec")
     require(ffmpeg_audio_cpp, '"libvorbis"', "ffmpeg audio conversion codec")
-    require(ffmpeg_audio_cpp, 'Format("afftdn=nr=%d", factor)', "ffmpeg dehiss filter contract")
+    require(ffmpeg_audio_cpp, 'Format("afftdn=nr=%d:nf=-45:bn=1", dB)', "ffmpeg dehiss filter contract")
 
     ffmpeg_export_h = (root / "FfmpegExportCommandBuilder.h").read_text()
     ffmpeg_export_cpp = (root / "FfmpegExportCommandBuilder.cpp").read_text()
