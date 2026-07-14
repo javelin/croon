@@ -63,6 +63,8 @@ def main() -> None:
         "Dialogue: 0",
         "CountInV1",
         "Grayed",
+        "SubtitleMoveTag",
+        "\\move(",
     ]:
         if needle not in subtitle_generator_cpp:
             fail(f"SubtitleGenerator.cpp missing ASS generation token {needle}")

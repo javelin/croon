@@ -39,6 +39,60 @@ using namespace Upp;
 
 #define GRAY                "&H00808080"
 
+namespace {
+
+constexpr int SubtitleBottomMargin = 120;
+constexpr int SubtitleScrollDurationMs = 450;
+
+int SubtitleSlotY(const KarData& data, int resY, int slot) {
+    int normalStep = data.fontSize;
+    int smallStep = max(1, (int)(data.fontSize * 0.7));
+    int bottom = resY - SubtitleBottomMargin;
+
+    switch (slot) {
+        case -1: return bottom - smallStep - normalStep * 3;
+        case 0:  return bottom - smallStep - normalStep * 2;
+        case 1:  return bottom - smallStep - normalStep;
+        case 2:  return bottom - smallStep;
+        case 3:  return bottom;
+        default: return bottom + smallStep;
+    }
+}
+
+int SubtitleScrollDuration(double startTS, double endTS) {
+    int eventMs = max(1, (int)((endTS - startTS) * 1000.0));
+    return min(SubtitleScrollDurationMs, eventMs);
+}
+
+String SubtitleMoveTag(const KarData& data, int resX, int resY, double startTS, double endTS,
+                       int fromSlot, int toSlot) {
+    int x = resX / 2;
+    return Format("{\\an2\\move(%d,%d,%d,%d,0,%d)}",
+                  x,
+                  SubtitleSlotY(data, resY, fromSlot),
+                  x,
+                  SubtitleSlotY(data, resY, toSlot),
+                  SubtitleScrollDuration(startTS, endTS));
+}
+
+String SubtitleGrayText(String line) {
+    line.Replace("\\(", "(");
+    line.Replace("\\)", ")");
+    if (line.StartsWith("~")) {
+        line.Remove(0);
+        line = Format("{\\i1}%s{\\i0}", line);
+    }
+    else if (line.StartsWith("(")) {
+        line = Format("{\\i1}%s{\\i0}", line);
+    }
+    else if (line.StartsWith("@")) {
+        line = line.Mid(1);
+    }
+    return line;
+}
+
+}
+
 String SubtitleGenerator::ToAss(const KarData& data, int linesToDisplay, int resX, int resY) {
     if (data.timedLyrics.IsEmpty()) return "";
     Vector<TimeLyrics> vtl;
@@ -87,6 +141,7 @@ String SubtitleGenerator::ToAss(const KarData& data, int linesToDisplay, int res
         "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text"
     };
     
+    String olderLine{""};
     String lastLine{""};
     for (int i = 1; i < vtl.GetCount(); ++i) {
         const auto& tl = vtl[i];
@@ -97,7 +152,10 @@ String SubtitleGenerator::ToAss(const KarData& data, int linesToDisplay, int res
         if (line == "\u00A0" && lastLine == "\u00A0") continue;
         bool hasCountIn = line.StartsWith("@CountIn");
         line.Replace("@CountIn", "");
-        if (hasCountIn) lastLine.Clear();
+        if (hasCountIn) {
+            olderLine.Clear();
+            lastLine.Clear();
+        }
         if (i + 1 < vtl.GetCount()) endTS = vtl[i + 1].time;
         
         String incomingLyrics;
@@ -105,7 +163,16 @@ String SubtitleGenerator::ToAss(const KarData& data, int linesToDisplay, int res
             ? SubtitleLineProcessor::LookaheadVocalPart(vtl, i + 1, data.parts, incomingLyrics)
             : SubtitleLineProcessor::ResolveVocalPart(tl.partIndex, data.parts);
         
-        for (int j = max(1, linesToDisplay - (lastLine.IsEmpty() ? 1:2)); j > 0; --j) {
+        if (!olderLine.IsEmpty()) {
+            vs.AddPick(Format("Dialogue: 0,%s,%s,Grayed,,0,0,0,,%s%s",
+                                TimeFormatter::Ass(startTS),
+                                TimeFormatter::Ass(endTS),
+                                SubtitleMoveTag(data, resX, resY, startTS, endTS, 0, -1),
+                                SubtitleGrayText(olderLine)));
+        }
+
+        int futureLines = min(2, max(1, linesToDisplay - (lastLine.IsEmpty() ? 1:2)));
+        for (int j = futureLines; j > 0; --j) {
             if (i + j < vtl.GetCount()) {
                 const auto& ntl = vtl[i + j];
                 String nextLine = TrimBoth(ntl.lyrics);
@@ -114,10 +181,11 @@ String SubtitleGenerator::ToAss(const KarData& data, int linesToDisplay, int res
                 nextLine.Replace("\\)", ")");
                 VocalPart nextPart = SubtitleLineProcessor::ResolveVocalPart(ntl.partIndex, data.parts);
                 String dimStyle = SubtitleLineProcessor::ResolveDimStyle(nextPart, nextLine, ntl.isMeta);
-                vs.AddPick(Format("Dialogue: 0,%s,%s,%s,,0,0,0,,%s%s",
+                vs.AddPick(Format("Dialogue: 0,%s,%s,%s,,0,0,0,,%s%s%s",
                                     TimeFormatter::Ass(startTS),
                                     TimeFormatter::Ass(endTS),
                                     dimStyle,
+                                    SubtitleMoveTag(data, resX, resY, startTS, endTS, j + 2, j + 1),
                                     hasCountIn ? "":"{\\fad(150,100)}",
                                     nextLine));
             }
@@ -127,31 +195,21 @@ String SubtitleGenerator::ToAss(const KarData& data, int linesToDisplay, int res
         singLine.Replace("\\(", "(");
         singLine.Replace("\\)", ")");
         String hilite = SubtitleLineProcessor::ResolveStyle(part, singLine, hasCountIn, incomingLyrics, tl.isMeta);
-        vs.AddPick(Format("Dialogue: 0,%s,%s,%s,,0,0,0,,%s",
+        vs.AddPick(Format("Dialogue: 0,%s,%s,%s,,0,0,0,,%s%s",
                             TimeFormatter::Ass(startTS),
                             TimeFormatter::Ass(endTS),
                             hilite,
+                            SubtitleMoveTag(data, resX, resY, startTS, endTS, 2, 1),
                             singLine));
         
         if (!lastLine.IsEmpty()) {
-            String grayLine = lastLine;
-            grayLine.Replace("\\(", "(");
-            grayLine.Replace("\\)", ")");
-            if (grayLine.StartsWith("~")) {
-                grayLine.Remove(0);
-                grayLine = Format("{\\i1}%s{\\i0}", grayLine);
-            }
-            else if (grayLine.StartsWith("(")) {
-                grayLine = Format("{\\i1}%s{\\i0}", grayLine);
-            }
-            else if (grayLine.StartsWith("@")) {
-                grayLine = grayLine.Mid(1);
-            }
-            vs.AddPick(Format("Dialogue: 0,%s,%s,Grayed,,0,0,0,,%s",
+            vs.AddPick(Format("Dialogue: 0,%s,%s,Grayed,,0,0,0,,%s%s",
                                 TimeFormatter::Ass(startTS),
                                 TimeFormatter::Ass(endTS),
-                                grayLine));
+                                SubtitleMoveTag(data, resX, resY, startTS, endTS, 1, 0),
+                                SubtitleGrayText(lastLine)));
         }
+        olderLine = lastLine;
         lastLine = hasCountIn ? "\u00A03... 2... 1...":line;
     }
     return Join(vs, "\n");
@@ -206,6 +264,7 @@ String SubtitleGenerator::ToRichAss(const KarData& data, int linesToDisplay, int
     rth.Fmt("@4").Text("[Events]").EFmt().NL();
     rth.Fmt("@3").Text("Format: ").EFmt("@c").Text("Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text").EFmt().NL();
     
+    String olderLine{""};
     String lastLine{""};
     for (int i = 1; i < vtl.GetCount(); ++i) {
         const auto& tl = vtl[i];
@@ -215,7 +274,10 @@ String SubtitleGenerator::ToRichAss(const KarData& data, int linesToDisplay, int
         String line = TrimBoth(tl.lyrics);
         if (line == "\u00A0" && lastLine == "\u00A0") continue;
         bool hasCountIn = line.StartsWith("@CountIn");
-        if (hasCountIn) lastLine.Clear();
+        if (hasCountIn) {
+            olderLine.Clear();
+            lastLine.Clear();
+        }
         line.Replace("@CountIn", "");
         if (i + 1 < vtl.GetCount()) endTS = vtl[i + 1].time;
         
@@ -224,7 +286,17 @@ String SubtitleGenerator::ToRichAss(const KarData& data, int linesToDisplay, int
             ? SubtitleLineProcessor::LookaheadVocalPart(vtl, i + 1, data.parts, incomingLyrics)
             : SubtitleLineProcessor::ResolveVocalPart(tl.partIndex, data.parts);
         
-        for (int j = max(1, linesToDisplay - (lastLine.IsEmpty() ? 1:2)); j > 0; --j) {
+        if (!olderLine.IsEmpty()) {
+            rth.Fmt("@3").Text("Dialogue: ")
+                .EFmt("@c").Text("0,")
+                .EFmt("@6").Text(Format("%s,%s,", TimeFormatter::Ass(startTS), TimeFormatter::Ass(endTS)))
+                .EFmt("@c").Text("Grayed,,0,0,0,,")
+                .EFmt("@m").Text(SubtitleMoveTag(data, resX, resY, startTS, endTS, 0, -1))
+                .EFmt("@0").Text(SubtitleGrayText(olderLine)).EFmt().NL();
+        }
+
+        int futureLines = min(2, max(1, linesToDisplay - (lastLine.IsEmpty() ? 1:2)));
+        for (int j = futureLines; j > 0; --j) {
             if (i + j < vtl.GetCount()) {
                 const auto& ntl = vtl[i + j];
                 String nextLine = TrimBoth(ntl.lyrics);
@@ -237,6 +309,7 @@ String SubtitleGenerator::ToRichAss(const KarData& data, int linesToDisplay, int
                     .EFmt("@c").Text("0,")
                     .EFmt("@6").Text(Format("%s,%s,", TimeFormatter::Ass(startTS), TimeFormatter::Ass(endTS)))
                     .EFmt("@c").Text(Format("%s,,0,0,0,,", dimStyle))
+                    .EFmt("@m").Text(SubtitleMoveTag(data, resX, resY, startTS, endTS, j + 2, j + 1))
                     .EFmt("@m").Text(hasCountIn ? "":"{\\fad(150,100)}")
                     .EFmt("@0").Text(nextLine).EFmt().NL();
             }
@@ -250,25 +323,18 @@ String SubtitleGenerator::ToRichAss(const KarData& data, int linesToDisplay, int
             .EFmt("@c").Text("0,")
             .EFmt("@6").Text(Format("%s,%s,", TimeFormatter::Ass(startTS), TimeFormatter::Ass(endTS)))
             .EFmt("@c").Text(Format("%s,,0,0,0,,", hilite))
+            .EFmt("@m").Text(SubtitleMoveTag(data, resX, resY, startTS, endTS, 2, 1))
             .EFmt("@0").Text(singLine).EFmt().NL();
             
         if (!lastLine.IsEmpty()) {
-            String grayLine = lastLine;
-            grayLine.Replace("\\(", "(");
-            grayLine.Replace("\\)", ")");
-            if (grayLine.StartsWith("~")) {
-                grayLine.Remove(0);
-                grayLine = Format("{\\i1}%s{\\i0}", grayLine);
-            }
-            else if (grayLine.StartsWith("(")) {
-                grayLine = Format("{\\i1}%s{\\i0}", grayLine);
-            }
             rth.Fmt("@3").Text("Dialogue: ")
                 .EFmt("@c").Text("0,")
                 .EFmt("@6").Text(Format("%s,%s,", TimeFormatter::Ass(startTS), TimeFormatter::Ass(endTS)))
                 .EFmt("@c").Text("Grayed,,0,0,0,,")
-                .EFmt("@0").Text(grayLine).EFmt().NL();
+                .EFmt("@m").Text(SubtitleMoveTag(data, resX, resY, startTS, endTS, 1, 0))
+                .EFmt("@0").Text(SubtitleGrayText(lastLine)).EFmt().NL();
         }
+        olderLine = lastLine;
         lastLine = hasCountIn ? "\u00A03... 2... 1...":line;
     }
     return rth.ToString();

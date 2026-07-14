@@ -365,14 +365,18 @@ CONSOLE_APP_MAIN
 	exportData.fontSize = 72;
 	exportData.timedLyrics.Add({exportData.duration, ""});
 	exportData.timedLyrics.Add({1.0, "Sing along"});
+	exportData.timedLyrics.Add({3.0, "Next line"});
+	exportData.timedLyrics.Add({5.0, "Second next"});
 	exportData.parts.Add(MakeTuple(1, true, false, true));
-	String ass = SubtitleGenerator::ToAss(exportData, 2);
+	String ass = SubtitleGenerator::ToAss(exportData, 4);
 	Check(ass.Find("[Script Info]") >= 0, "SubtitleGenerator emits script info section");
 	Check(ass.Find("Export Song by Export Artist") >= 0, "SubtitleGenerator includes project title");
 	Check(ass.Find("Style: V1,") >= 0, "SubtitleGenerator defines V1 style");
 	Check(ass.Find("Dialogue: 0,0:00:01.00") >= 0, "SubtitleGenerator emits timed dialogue");
-	Check(ass.Find(",V1,,0,0,0,,Sing along") >= 0, "SubtitleGenerator uses V1 style for default vocal part");
-	String richAss = SubtitleGenerator::ToRichAss(exportData, 2);
+	Check(ass.Find(",V1,,0,0,0,,{\\an2\\move(") >= 0, "SubtitleGenerator positions highlighted lines with motion");
+	Check(ass.Find("Sing along") >= 0, "SubtitleGenerator preserves highlighted lyric text");
+	Check(ass.Find("\\move(") >= 0, "SubtitleGenerator emits scrolling ASS movement tags");
+	String richAss = SubtitleGenerator::ToRichAss(exportData, 4);
 	Check(richAss.Find("@4") >= 0, "SubtitleGenerator emits rich ASS formatting");
 	Check(richAss.Find("Script Info") >= 0, "SubtitleGenerator emits rich ASS script info");
 
