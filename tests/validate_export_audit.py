@@ -32,7 +32,7 @@ def main() -> None:
         if needle not in ffmpeg_export_h:
             fail(f"FfmpegExportCommandBuilder.h missing {needle}")
     for needle in [
-        '"libx264"',
+        '"libx265"',
         "subtitles=%s[v]",
     ]:
         if needle not in ffmpeg_export_cpp:
