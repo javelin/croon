@@ -119,6 +119,8 @@ file
 	TimeFormatter.h,
 	UiScaler.cpp,
 	UiScaler.h,
+	VocalPart.cpp,
+	VocalPart.h,
 	VideoCatalog.cpp,
 	VideoCatalog.h,
 	VideoDlg.cpp,

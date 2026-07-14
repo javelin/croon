@@ -6,22 +6,24 @@
 #ifndef _Croon_TimingLine_h_
 #define _Croon_TimingLine_h_
 
+#include "VocalPart.h"
+
 class TimingLine : public Ctrl {
 public:
     TimingLine() :
-        blank(true), decor(""), lyrics(""), position(0.0f), duration(0.0f), withButtons(false)
+        blank(true), decor(""), lyrics(""), position(0.0f), duration(0.0f), withButtons(false), vocalPart(VP_NONE)
         { Initialize(withButtons); }
     TimingLine(const TimingLine& tl) :
         blank(tl.blank), decor(""), lyrics(tl.decor + tl.lyrics), position(tl.position),
-        duration(tl.duration), withButtons(tl.withButtons)
+        duration(tl.duration), withButtons(tl.withButtons), vocalPart(tl.vocalPart)
         { Initialize(withButtons); }
     TimingLine(const String& lyrics, double position) :
         blank(false), decor(""), lyrics(lyrics), position(position),
-        duration(0.0f), withButtons(true)
+        duration(0.0f), withButtons(true), vocalPart(VP_NONE)
         { Initialize(withButtons); }
     TimingLine(const String& lyrics, double position, bool withButtons) :
         blank(false), decor(""), lyrics(lyrics), position(position),
-        duration(0.0f), withButtons(withButtons)
+        duration(0.0f), withButtons(withButtons), vocalPart(VP_NONE)
         { Initialize(withButtons); }
     void Paint(Draw& w) override;
     void LeftDouble(Point pos, dword) override;
@@ -29,8 +31,10 @@ public:
     void Initialize(bool withButtons);
     double GetPosition() const { return position; }
     String GetLyrics() const { return decor + lyrics; }
+    VocalPart GetVocalPart() const { return vocalPart; }
     void SetPosition(double position);
     void SetDuration(double duration) { this->duration = duration; }
+    void SetVocalPart(VocalPart part);
     void DisplayTime();
     void Normal();
     void Highlight1();
@@ -43,6 +47,7 @@ public:
     Event<> WhenLeftClicked;
     Event<String> WhenLyricsEdited;
     Event<> WhenRetime;
+    Event<VocalPart> WhenVocalPartChanged;
     Gate<double> WhenSetPosition;
     Event<> WhenTimeButtonsDisabled;
     
@@ -51,6 +56,7 @@ public:
     Label timeLbl;
     Button decSecBtn;
     Button incSecBtn;
+    Button partBtn;
     Button retimeBtn;
     MarginFrame frame;
     
@@ -66,7 +72,11 @@ private:
     double position;
     double duration;
     bool withButtons;
+    VocalPart vocalPart;
+    Button::Style partBtnStyle;
     Color bgColor;
+
+    void SyncPartButton();
 };
 
 #endif

@@ -10,6 +10,7 @@ using namespace Upp;
 #include "Constants.h"
 #include "KarData.h"
 #include "UiScaler.h"
+#include "VocalPart.h"
 #include "TimingLine.h"
 #include "TimingCtrl.h"
 
@@ -62,6 +63,7 @@ bool TimingCtrl::Key(dword key, int count) {
 void TimingCtrl::SetRawLyrics(const String& text) {
     lines.Clear();
     lyrics.Clear();
+    vocalParts.Clear();
     int lastLF = 0;
     int pos = -1;
     while ((pos = text.Find('\n', lastLF)) > -1) {
@@ -112,6 +114,7 @@ void TimingCtrl::SetRawLyrics(const String& text) {
 
 void TimingCtrl::LyricsToLines() {
     lines.Clear();
+    vocalParts.SetCount(lyrics.GetCount() + 2, VP_NONE);
     lines.Add(TimingLine("(INTRO)", 0.0f, false));
     lines.front().WhenLeftClicked << [=] {
         KillSetTimeCallback(1000, [=] {
@@ -147,6 +150,12 @@ void TimingCtrl::LyricsToLines() {
             lyrics[i] = text;
             WhenDirty();
         };
+        tl.WhenVocalPartChanged << [=](VocalPart part) {
+            if (n >= 0 && n < vocalParts.GetCount()) {
+                vocalParts[n] = part;
+                WhenDirty();
+            }
+        };
         tl.WhenRetime << [=] {
             for (int j = n; j <= timed + 1; j++) {
                 lines[j].ResetTiming();
@@ -173,6 +182,7 @@ void TimingCtrl::LyricsToLines() {
         };
     }
     lines.Add(TimingLine());
+    ApplyPartsToLines();
 }
 
 void TimingCtrl::AddLinesToList() {
@@ -247,6 +257,17 @@ Vector<TimeLyrics> TimingCtrl::GetTimedLyrics() const {
     return lyrics;
 }
 
+Vector<Tuple<int, bool, bool, bool>> TimingCtrl::GetParts() const {
+    Vector<Tuple<int, bool, bool, bool>> parts;
+    for (int i = 1; i < lines.GetCount() - 1; i++) {
+        VocalPart part = lines[i].GetVocalPart();
+        if (VocalPartStyle::IsAssigned(part)) {
+            parts.Add(VocalPartStyle::ToParts(i, part));
+        }
+    }
+    return parts;
+}
+
 void TimingCtrl::Adjust(double ms) {
     double secs = ms/1000.f;
     for (int i = 1; i <= timed; i++) {
@@ -261,6 +282,7 @@ void TimingCtrl::Adjust(double ms) {
 void TimingCtrl::SetTimedLyrics(const Vector<TimeLyrics>& timedLyrics, double duration) {
     this->duration = duration;
     lyrics.Clear();
+    vocalParts.Clear();
     for (int i = 1; i < timedLyrics.GetCount(); ++i) {
         lyrics.Add(timedLyrics[i].lyrics);
     }
@@ -280,6 +302,23 @@ void TimingCtrl::SetTimedLyrics(const Vector<TimeLyrics>& timedLyrics, double du
     }
     else {
         listPos = timed + 1;
+    }
+}
+
+void TimingCtrl::SetParts(const Vector<Tuple<int, bool, bool, bool>>& parts) {
+    vocalParts.SetCount(lines.GetCount(), VP_NONE);
+    for (const auto& part : parts) {
+        if (part.a > 0 && part.a < vocalParts.GetCount()) {
+            vocalParts[part.a] = VocalPartStyle::FromParts(part.b, part.c);
+        }
+    }
+    ApplyPartsToLines();
+}
+
+void TimingCtrl::ApplyPartsToLines() {
+    int count = min(lines.GetCount(), vocalParts.GetCount());
+    for (int i = 1; i < count - 1; ++i) {
+        lines[i].SetVocalPart(vocalParts[i]);
     }
 }
 

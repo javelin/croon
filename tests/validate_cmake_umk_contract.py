@@ -36,6 +36,7 @@ def main() -> None:
         "LyricsTransformer.cpp",
         "SubtitleGenerator.cpp",
         "SubtitleLineProcessor.cpp",
+        "VocalPart.cpp",
         'set(CROON_NESTS "${CROON_PACKAGE_NEST},${CROON_UPPSRC}")',
         "add_custom_target(croon_umk",
         "add_dependencies(croon croon_umk)",

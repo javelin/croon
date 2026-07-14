@@ -17,6 +17,7 @@ file
 	ProjectSerializer.cpp,
 	RecentProjectService.cpp,
 	LyricsTransformer.cpp,
+	VocalPart.cpp,
 	SubtitleGenerator.cpp,
 	SubtitleLineProcessor.cpp,
 	TextTools.cpp,

@@ -6,11 +6,7 @@
 #ifndef _Croon_SubtitleLineProcessor_h_
 #define _Croon_SubtitleLineProcessor_h_
 
-enum VocalPart {
-    VP_V1,
-    VP_V2,
-    VP_B
-};
+#include "VocalPart.h"
 
 struct SubtitleLineProcessor {
     static String& ReplaceMetadata(String& line, const KarData& data, bool replaceDash=true);

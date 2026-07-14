@@ -54,6 +54,8 @@ def main() -> None:
         "TimeFormatter.h",
         "UiScaler.cpp",
         "UiScaler.h",
+        "VocalPart.cpp",
+        "VocalPart.h",
         "VideoCatalog.cpp",
         "VideoCatalog.h",
         "MediaProcessRunner.h",
@@ -114,6 +116,8 @@ def main() -> None:
         "TimeFormatter.h" not in upp or
         "UiScaler.cpp" not in upp or
         "UiScaler.h" not in upp or
+        "VocalPart.cpp" not in upp or
+        "VocalPart.h" not in upp or
         "VideoCatalog.cpp" not in upp or
         "VideoCatalog.h" not in upp or
         "Visualization.cpp" not in upp or

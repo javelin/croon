@@ -542,6 +542,7 @@ def main() -> None:
     require(services_md, "`Util`: removed legacy facade", "Util retirement documentation")
 
     subtitle_line_processor_h = (root / "SubtitleLineProcessor.h").read_text()
+    require(subtitle_line_processor_h, '#include "VocalPart.h"', "SubtitleLineProcessor vocal part dependency")
     require(subtitle_line_processor_h, "ProcessMetadata", "SubtitleLineProcessor metadata contract")
     require(subtitle_line_processor_h, "ResolveVocalPart", "SubtitleLineProcessor vocal-part contract")
     require(subtitle_line_processor_h, "ResolveStyle", "SubtitleLineProcessor style contract")
@@ -552,6 +553,7 @@ def main() -> None:
     require(subtitle_line_processor_cpp, '#include "SubtitleLineProcessor.h"', "SubtitleLineProcessor direct self dependency")
     require(subtitle_line_processor_cpp, '#include "KarData.h"', "SubtitleLineProcessor direct data dependency")
     require(subtitle_line_processor_cpp, '#include "TimeFormatter.h"', "SubtitleLineProcessor direct time formatter dependency")
+    require(subtitle_line_processor_cpp, '#include "VocalPart.h"', "SubtitleLineProcessor direct vocal part dependency")
     require(subtitle_line_processor_cpp, "TimeFormatter::CountInDuration", "SubtitleLineProcessor count-in contract")
     require(subtitle_line_processor_cpp, "ReplaceMetadata", "SubtitleLineProcessor metadata replacement")
     require(subtitle_line_processor_cpp, "LookaheadVocalPart", "SubtitleLineProcessor count-in lookahead")
@@ -594,6 +596,8 @@ def main() -> None:
     require(subtitle_generator_cpp, '#include "SubtitleGenerator.h"', "SubtitleGenerator direct self dependency")
     require(subtitle_generator_cpp, '#include "SubtitleLineProcessor.h"', "SubtitleGenerator direct line processor dependency")
     require(subtitle_generator_cpp, '#include "TimeFormatter.h"', "SubtitleGenerator direct time formatter dependency")
+    require(subtitle_generator_cpp, '#include "VocalPart.h"', "SubtitleGenerator direct vocal part dependency")
+    require(subtitle_generator_cpp, "VocalPartStyle::V1PrimaryAss()", "SubtitleGenerator shared vocal color dependency")
     require(subtitle_generator_cpp, "SubtitleLineProcessor::ProcessMetadata", "SubtitleGenerator direct metadata dependency")
     require(subtitle_generator_cpp, "SubtitleLineProcessor::ResolveStyle", "SubtitleGenerator direct style dependency")
     require(subtitle_generator_cpp, "TimeFormatter::Ass", "SubtitleGenerator direct ASS time formatting")
@@ -649,10 +653,13 @@ def main() -> None:
     require(core_tests_cpp, "SubtitleLineProcessor::ProcessMetadata", "core tests direct metadata processing dependency")
     require(core_tests_cpp, "SubtitleGenerator::ToAss", "core tests direct ASS generator dependency")
     require(core_tests_cpp, "SubtitleGenerator::ToRichAss", "core tests direct rich ASS generator dependency")
+    require(core_tests_cpp, "VocalPartStyle::Next", "core tests direct vocal part helper dependency")
+    require(core_tests_cpp, "VocalPartStyle::ToParts", "core tests vocal part tuple contract")
     require(core_tests_cpp, 'richAss.Find("@4")', "core tests rich ASS formatting assertion")
     require(core_tests_upp, "LyricsTransformer.cpp", "core tests lyrics transformer implementation")
     require(core_tests_upp, "SubtitleGenerator.cpp", "core tests subtitle generator implementation")
     require(core_tests_upp, "SubtitleLineProcessor.cpp", "core tests subtitle line processor implementation")
+    require(core_tests_upp, "VocalPart.cpp", "core tests vocal part implementation")
     reject(core_tests_upp, "CroonLyricsTestSupport.cpp", "core tests orphan lyric compatibility support")
     reject(core_tests_upp, "CroonAssTestSupport.cpp", "core tests orphan ASS compatibility support")
     reject(core_tests_cpp, "#include <Croon/Util.h>", "core tests compatibility facade include")
@@ -1241,6 +1248,7 @@ def main() -> None:
         '#include "Constants.h"',
         '#include "KarData.h"',
         '#include "UiScaler.h"',
+        '#include "VocalPart.h"',
         '#include "TimingLine.h"',
         '#include "TimingCtrl.h"',
     ]:
@@ -1251,6 +1259,8 @@ def main() -> None:
         "WhenTiming(position)",
         "ScrollToLineAndCenter",
         "Vector<TimeLyrics> TimingCtrl::GetTimedLyrics",
+        "Vector<Tuple<int, bool, bool, bool>> TimingCtrl::GetParts",
+        "void TimingCtrl::SetParts",
         "void TimingCtrl::SetTimedLyrics",
         "void TimingCtrl::Adjust",
         "void TimingCtrl::PlayBackDone",
@@ -1286,6 +1296,7 @@ def main() -> None:
         '#include "RecentProjectService.h"',
         '#include "ProjectLoader.h"',
         '#include "TimeFormatter.h"',
+        '#include "VocalPart.h"',
         '#include "TimingLine.h"',
         "#define LAYOUTFILE <Croon/Croon.lay>",
         "#include <CtrlCore/lay.h>",
@@ -1298,6 +1309,7 @@ def main() -> None:
         "TimingLineDlg tlDlg",
         "TimeFormatter::Format(position)",
         "frame.SetColor",
+        "WhenVocalPartChanged",
         "WhenTimeButtonsDisabled()",
     ]:
         require(timing_line_cpp, needle, "TimingLine behavior contract")

@@ -28,6 +28,7 @@ using namespace Upp;
 #include "RecentProjectService.h"
 #include "ProjectLoader.h"
 #include "TimeFormatter.h"
+#include "VocalPart.h"
 #include "TimingLine.h"
 
 #define LAYOUTFILE <Croon/Croon.lay>
@@ -44,15 +45,19 @@ void TimingLine::Initialize(bool withButtons) {
     WantFocus(false);
     decSecBtn.WantFocus(false);
     incSecBtn.WantFocus(false);
+    partBtn.WantFocus(false);
+    retimeBtn.WantFocus(false);
     EnableTimeBtns(false);
     if (!blank) {
         *this << timeLbl.SetLabel("").AlignVCenter().LeftPosZ(35, 65).VSizePosZ(5, 5)
-                << lyricsLbl.SetLabel(decor + lyrics).AlignVCenter().HSizePosZ(115, 40).VSizePosZ(5, 5);
+                << lyricsLbl.SetLabel(decor + lyrics).AlignVCenter().HSizePosZ(115, 65).VSizePosZ(5, 5);
         if (withButtons) {
             *this << decSecBtn.SetLabel("-").LeftPosZ(10, 20).VCenterPosZ(20)
                     << incSecBtn.SetLabel("+").LeftPosZ(90, 20).VCenterPosZ(20)
+                    << partBtn.RightPosZ(35, 20).VCenterPosZ(20)
                     << retimeBtn.SetLabel("R").RightPosZ(10, 20).VCenterPosZ(20);
         }
+        SyncPartButton();
         AddFrame(frame);
         DisplayTime();
         Normal();
@@ -77,6 +82,10 @@ void TimingLine::Initialize(bool withButtons) {
             if (PromptYesNoCancel("Reset timing from this line?") > 0) {
                 WhenRetime();
             }
+        };
+        partBtn << [=] {
+            SetVocalPart(VocalPartStyle::Next(vocalPart));
+            WhenVocalPartChanged(vocalPart);
         };
     }
 }
@@ -137,6 +146,23 @@ void TimingLine::SetPosition(double position) {
     if (this->position < 0.0f)
         this->position = 0.0f;
     DisplayTime();
+}
+
+void TimingLine::SetVocalPart(VocalPart part) {
+    vocalPart = part;
+    SyncPartButton();
+}
+
+void TimingLine::SyncPartButton() {
+    partBtnStyle = Button::StyleNormal();
+    Color color = VocalPartStyle::IndicatorColor(vocalPart);
+    for (int i = 0; i < 4; ++i) {
+        partBtnStyle.look[i] = color;
+        partBtnStyle.textcolor[i] = VocalPartStyle::IndicatorTextColor(vocalPart);
+    }
+    partBtnStyle.transparent = false;
+    partBtn.SetStyle(partBtnStyle);
+    partBtn.SetLabel(VocalPartStyle::Label(vocalPart));
 }
 
 void TimingLine::EnableTimeBtns(bool enable) {

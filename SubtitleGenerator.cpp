@@ -13,11 +13,10 @@ using namespace Upp;
 #include "SubtitleGenerator.h"
 #include "SubtitleLineProcessor.h"
 #include "TimeFormatter.h"
+#include "VocalPart.h"
 
 // Reds
 #define RED_H               "&H000000FF"
-#define STRAWBERRY_RED_H    "&H005350FA"
-#define STRAWBERRY_RED_D    "&H004644D9"
 
 // Greens
 #define MALACHITE_H         "&H0051DA0B"
@@ -25,19 +24,13 @@ using namespace Upp;
 
 // Blues
 #define BLUE_H              "&H00FF0000"
-#define LIGHT_BLUE_H        "&H00FFD590"
-#define LIGHT_BLUE_D        "&H00FFB957"
 
 // Purples
 #define PURPLE_H            "&H00FF00FF"
-#define ORCHID_H            "&H00E980ED"
-#define ORCHID_D            "&H00C66DC9"
 
 // Yellows
 #define MAIZE_H             "&H005DECFB"
 #define MAIZE_D             "&H0053CFDC"
-
-#define GRAY                "&H00808080"
 
 namespace {
 
@@ -116,14 +109,14 @@ String SubtitleGenerator::ToAss(const KarData& data, int linesToDisplay, int res
            "Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, "
            "Alignment, MarginL, MarginR, MarginV, Encoding",
         // V1: red
-        S("V1",       STRAWBERRY_RED_H, STRAWBERRY_RED_D),
-        S("V1Normal", STRAWBERRY_RED_D, STRAWBERRY_RED_H, false),
+        S("V1",       VocalPartStyle::V1PrimaryAss(), VocalPartStyle::V1SecondaryAss()),
+        S("V1Normal", VocalPartStyle::V1SecondaryAss(), VocalPartStyle::V1PrimaryAss(), false),
         // V2: blue
-        S("V2",       LIGHT_BLUE_H, LIGHT_BLUE_D),
-        S("V2Normal", LIGHT_BLUE_D, LIGHT_BLUE_H, false),
+        S("V2",       VocalPartStyle::V2PrimaryAss(), VocalPartStyle::V2SecondaryAss()),
+        S("V2Normal", VocalPartStyle::V2SecondaryAss(), VocalPartStyle::V2PrimaryAss(), false),
         // B (both): purple (V1 red + V2 blue)
-        S("B",        ORCHID_H, ORCHID_D),
-        S("BNormal",  ORCHID_D, ORCHID_H, false),
+        S("B",        VocalPartStyle::BothPrimaryAss(), VocalPartStyle::BothSecondaryAss()),
+        S("BNormal",  VocalPartStyle::BothSecondaryAss(), VocalPartStyle::BothPrimaryAss(), false),
         // BUC (backup, ~): green
         S("BUC",       MALACHITE_H, MALACHITE_D),
         S("BUCNormal", MALACHITE_D, MALACHITE_H, false),
@@ -131,11 +124,11 @@ String SubtitleGenerator::ToAss(const KarData& data, int linesToDisplay, int res
         S("MC",       MAIZE_H, MAIZE_D),
         S("MCNormal", MAIZE_D, MAIZE_H, false),
         // Count-in styles inherit vocal color: D for unbeaten, H for beaten
-        S("CountInV1", RED_H, STRAWBERRY_RED_D),
-        S("CountInV2", BLUE_H, LIGHT_BLUE_D),
-        S("CountInB",  PURPLE_H, ORCHID_D),
+        S("CountInV1", RED_H, VocalPartStyle::V1SecondaryAss()),
+        S("CountInV2", BLUE_H, VocalPartStyle::V2SecondaryAss()),
+        S("CountInB",  PURPLE_H, VocalPartStyle::BothSecondaryAss()),
         // Grayed: already displayed lines
-        S("Grayed",   GRAY, GRAY),
+        S("Grayed",   VocalPartStyle::GrayAss(), VocalPartStyle::GrayAss()),
         "",
         "[Events]",
         "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text"
@@ -239,14 +232,14 @@ String SubtitleGenerator::ToRichAss(const KarData& data, int linesToDisplay, int
     };
     
     // V1: red
-    S("V1",       STRAWBERRY_RED_H, STRAWBERRY_RED_D);
-    S("V1Normal", STRAWBERRY_RED_D, STRAWBERRY_RED_H, false);
+    S("V1",       VocalPartStyle::V1PrimaryAss(), VocalPartStyle::V1SecondaryAss());
+    S("V1Normal", VocalPartStyle::V1SecondaryAss(), VocalPartStyle::V1PrimaryAss(), false);
     // V2: blue
-    S("V2",       LIGHT_BLUE_H, LIGHT_BLUE_D);
-    S("V2Normal", LIGHT_BLUE_D, LIGHT_BLUE_H, false);
+    S("V2",       VocalPartStyle::V2PrimaryAss(), VocalPartStyle::V2SecondaryAss());
+    S("V2Normal", VocalPartStyle::V2SecondaryAss(), VocalPartStyle::V2PrimaryAss(), false);
     // B (both): purple (V1 red + V2 blue)
-    S("B",        ORCHID_H, ORCHID_D);
-    S("BNormal",  ORCHID_D, ORCHID_H, false);
+    S("B",        VocalPartStyle::BothPrimaryAss(), VocalPartStyle::BothSecondaryAss());
+    S("BNormal",  VocalPartStyle::BothSecondaryAss(), VocalPartStyle::BothPrimaryAss(), false);
     // BUC (backup, ~): green
     S("BUC",       MALACHITE_H, MALACHITE_D);
     S("BUCNormal", MALACHITE_D, MALACHITE_H, false);
@@ -254,11 +247,11 @@ String SubtitleGenerator::ToRichAss(const KarData& data, int linesToDisplay, int
     S("MC",       MAIZE_H, MAIZE_D);
     S("MCNormal", MAIZE_D, MAIZE_H, false);
     // Count-in styles inherit vocal color: D for unbeaten, H for beaten
-    S("CountInV1", STRAWBERRY_RED_H, STRAWBERRY_RED_D);
-    S("CountInV2", LIGHT_BLUE_H, LIGHT_BLUE_D);
-    S("CountInB",  ORCHID_H, ORCHID_D);
+    S("CountInV1", VocalPartStyle::V1PrimaryAss(), VocalPartStyle::V1SecondaryAss());
+    S("CountInV2", VocalPartStyle::V2PrimaryAss(), VocalPartStyle::V2SecondaryAss());
+    S("CountInB",  VocalPartStyle::BothPrimaryAss(), VocalPartStyle::BothSecondaryAss());
     // Grayed: already displayed lines
-    S("Grayed",   GRAY, GRAY);
+    S("Grayed",   VocalPartStyle::GrayAss(), VocalPartStyle::GrayAss());
     
     rth.NL();
     rth.Fmt("@4").Text("[Events]").EFmt().NL();

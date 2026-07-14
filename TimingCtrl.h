@@ -6,6 +6,8 @@
 #ifndef _Croon_TimingCtrl_h_
 #define _Croon_TimingCtrl_h_
 
+#include "VocalPart.h"
+
 class TimingCtrl : public Ctrl {
 public:
     TimingCtrl(int lineHeight = 50);
@@ -27,8 +29,10 @@ public:
     
     String GetLyrics() const { return Join(lyrics, "\n"); }
     Vector<TimeLyrics> GetTimedLyrics() const;
+    Vector<Tuple<int, bool, bool, bool>> GetParts() const;
     int GetTimed() const { return timed; }
     void SetTimedLyrics(const Vector<TimeLyrics>& timedLyrics, double duration);
+    void SetParts(const Vector<Tuple<int, bool, bool, bool>>& parts);
     
     void Adjust(double ms);
     
@@ -50,6 +54,9 @@ private:
     int listPos;
     int timed;
     bool editing{false};
+    Vector<VocalPart> vocalParts;
+
+    void ApplyPartsToLines();
 };
 
 #endif

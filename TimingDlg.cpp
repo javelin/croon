@@ -70,6 +70,7 @@ void TimingDlg::Close() {
     AppAudioPlayer::Pause();
     if (PromptYesNoCancel("Save changes and close?") == 1) {
         data->timedLyrics = timingCtrl.GetTimedLyrics();
+        data->parts = timingCtrl.GetParts();
         data->rawLyrics = LyricsTransformer::TimedToRaw(data->timedLyrics);
         data->timed = timingCtrl.GetTimed();
         TopWindow::Close();
@@ -109,6 +110,7 @@ void TimingDlg::PollProgress() {
 void TimingDlg::Populate() {
     timeLbl.SetLabel("00:00.000/" + TimeFormatter::Format(data->duration));
     timingCtrl.SetTimedLyrics(data->timedLyrics, data->duration);
+    timingCtrl.SetParts(data->parts);
     timingCtrl.SetFocus();
 }
 

@@ -12,6 +12,7 @@ using namespace Upp;
 #include "KarData.h"
 #include "SubtitleLineProcessor.h"
 #include "TimeFormatter.h"
+#include "VocalPart.h"
 
 String& SubtitleLineProcessor::ReplaceMetadata(String& line, const KarData& data, bool replaceDash) {
     auto copyright{data.owner.IsEmpty() ? String(""):
@@ -100,11 +101,8 @@ VocalPart SubtitleLineProcessor::ResolveVocalPart(int partIndex,
     if (partIndex < 0) return VP_V1;
     for (const auto& p : parts) {
         if (p.a == partIndex) {
-            bool v1 = p.b;
-            bool v2 = p.c;
-            if (v1 && v2) return VP_B;
-            if (v2)       return VP_V2;
-            return VP_V1;
+            VocalPart part = VocalPartStyle::FromParts(p.b, p.c);
+            return VocalPartStyle::IsAssigned(part) ? part:VP_V1;
         }
     }
     return VP_V1;

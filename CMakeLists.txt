@@ -137,6 +137,7 @@ if(CROON_UMK_EXECUTABLE)
             "${CMAKE_CURRENT_SOURCE_DIR}/SubtitleLineProcessor.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/TextTools.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/TimeFormatter.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/VocalPart.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/Visualization.cpp"
             "${CROON_CORE_TEST_PACKAGE}"
         COMMAND "${CMAKE_COMMAND}" -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/tests"
