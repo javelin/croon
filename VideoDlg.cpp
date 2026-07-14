@@ -64,3 +64,31 @@ VideoDlg::VideoDlg(KarData& data) : gatherDlg(), page3(data, gatherDlg) {
     };
     okBtn.Disable();
 }
+
+int VideoDlg::Run() {
+    page3.Reset();
+    SetTimeCallback(500, [=] { page3.Rehint(false); });
+    return Execute();
+}
+
+void VideoDlg::SetData(const Value& data) {
+    SetPath((String)data);
+}
+
+Value VideoDlg::GetData() const {
+    return Value(value);
+}
+
+void VideoDlg::SetPath(String path) {
+    bool found = page3.SetPath(path);
+    okBtn.Enable(found);
+    if (found) value = path;
+}
+
+Image VideoDlg::GetImage() {
+    return image;
+}
+
+String VideoDlg::GetThumbnailPath() const {
+    return tnPath;
+}

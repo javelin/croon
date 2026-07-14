@@ -9,20 +9,12 @@
 class VideoDlg : public WithCroonVideoDlgLayout<TopWindow> {
 public:
     VideoDlg(KarData& data);
-    int Run() {
-        page3.Reset();
-        SetTimeCallback(500, [=] { page3.Rehint(false); });
-        return Execute();
-    }
-    void SetData(const Value& data) override { SetPath((String)data); }
-    Value GetData() const override { return Value(value); }
-    void SetPath(String path) {
-        bool found = page3.SetPath(path);
-        okBtn.Enable(found);
-        if (found) value = path;
-    }
-    Image GetImage() { return image; }
-    String GetThumbnailPath() const { return tnPath; }
+    int Run();
+    void SetData(const Value& data) override;
+    Value GetData() const override;
+    void SetPath(String path);
+    Image GetImage();
+    String GetThumbnailPath() const;
     
 private:
     GatherDlg gatherDlg;

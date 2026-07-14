@@ -358,6 +358,15 @@ def main() -> None:
     video_header = (root / "VideoDlg.h").read_text()
     if "WithCroonVideoDlgLayout<TopWindow>" not in video_header:
         fail("VideoDlg does not inherit WithCroonVideoDlgLayout")
+    for inline_body in [
+        "page3.Reset()",
+        "SetTimeCallback(500",
+        "page3.SetPath(path)",
+        "okBtn.Enable(found)",
+        "return Value(value)",
+    ]:
+        if inline_body in video_header:
+            fail(f"VideoDlg.h still owns inline method body {inline_body}")
     for runtime_member in ["GatherDlg gatherDlg;", "Page3 page3;"]:
         if runtime_member not in video_header:
             fail(f"VideoDlg.h missing runtime member {runtime_member}")
@@ -412,6 +421,16 @@ def main() -> None:
         "SetData(path)",
         "tnPath = tnpath",
         "okBtn.Enable()",
+        "int VideoDlg::Run()",
+        "page3.Reset()",
+        "SetTimeCallback(500, [=] { page3.Rehint(false); })",
+        "return Execute()",
+        "void VideoDlg::SetData(const Value& data)",
+        "Value VideoDlg::GetData() const",
+        "void VideoDlg::SetPath(String path)",
+        "bool found = page3.SetPath(path)",
+        "Image VideoDlg::GetImage()",
+        "String VideoDlg::GetThumbnailPath() const",
     ]:
         if needle not in video_impl:
             fail(f"VideoDlg.cpp missing selection workflow {needle}")
