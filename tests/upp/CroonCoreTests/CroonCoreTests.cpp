@@ -316,7 +316,7 @@ CONSOLE_APP_MAIN
 	Check(titleLine == "Song \\(Title\\)", "SubtitleLineProcessor escapes parentheses in title");
 	String copyrightLine = "@Copyright";
 	SubtitleLineProcessor::ReplaceMetadata(copyrightLine, metaData);
-	Check(copyrightLine == "℗ 2026 Label \\(Name\\)", "SubtitleLineProcessor uses phonographic copyright metadata");
+	Check(copyrightLine == "\u2117 2026 Label \\(Name\\)", "SubtitleLineProcessor uses phonographic copyright metadata");
 	String dashLine = "-";
 	SubtitleLineProcessor::ReplaceMetadata(dashLine, metaData);
 	Check(dashLine == "\u00A0", "SubtitleLineProcessor converts dash placeholder to nbsp");
