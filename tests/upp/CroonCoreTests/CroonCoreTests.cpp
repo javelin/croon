@@ -309,9 +309,14 @@ CONSOLE_APP_MAIN
 	KarData metaData;
 	metaData.title = "Song (Title)";
 	metaData.artist = "Artist";
+	metaData.owner = "Label (Name)";
+	metaData.year = 2026;
 	String titleLine = "@Title";
 	SubtitleLineProcessor::ReplaceMetadata(titleLine, metaData);
 	Check(titleLine == "Song \\(Title\\)", "SubtitleLineProcessor escapes parentheses in title");
+	String copyrightLine = "@Copyright";
+	SubtitleLineProcessor::ReplaceMetadata(copyrightLine, metaData);
+	Check(copyrightLine == "℗ 2026 Label \\(Name\\)", "SubtitleLineProcessor uses phonographic copyright metadata");
 	String dashLine = "-";
 	SubtitleLineProcessor::ReplaceMetadata(dashLine, metaData);
 	Check(dashLine == "\u00A0", "SubtitleLineProcessor converts dash placeholder to nbsp");

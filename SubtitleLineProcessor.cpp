@@ -16,7 +16,7 @@ using namespace Upp;
 
 String& SubtitleLineProcessor::ReplaceMetadata(String& line, const KarData& data, bool replaceDash) {
     auto copyright{data.owner.IsEmpty() ? String(""):
-                                        Format("Copyright \u00A9 %s%s",
+                                        Format("℗ %s%s",
                                                 data.year > 0 ? IntStr(data.year) + " ":"",
                                                 data.owner)};
     if (replaceDash && line == "-") line = "\u00A0";
