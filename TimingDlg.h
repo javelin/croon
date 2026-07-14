@@ -10,11 +10,7 @@ class TimingDlg : public WithCroonTimingDlgLayout<TopWindow> {
 public:
     TimingDlg();
     void Close() override;
-    int Run(KarData& karData) {
-        data = &karData;
-        Populate();
-        return TopWindow::Run();
-    }
+    int Run(KarData& karData);
     bool IsDirty() const { return dirty; }
     
 public:
