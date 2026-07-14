@@ -32,7 +32,7 @@ public:
     ProjectItemCtrl(const ProjectItem& item);
     void Paint(Draw& w) override { w.DrawRect(0, 0, GetSize().cx, GetSize().cy, White()); }
     const ProjectItem& GetProjectItem() const { return item; }
-    static Size GetImageSize() { return Size(UiScaler::X(ImageWidth), UiScaler::Y(ImageWidth)); }
+    static Size GetImageSize() { return Size(UiScaler::X(ImageWidth), UiScaler::Y(UiScaler::InverseY(UiScaler::X(ImageWidth)))); }
     
 private:
     static const int ImageWidth{48};

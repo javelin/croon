@@ -89,7 +89,7 @@ ListCtrl::ListCtrl() : margin(DefaultMargin) {
     scrollBar.Vert().AutoHide();
     AddFrame(scrollBar);
     scrollBar.WhenScroll = [=] { Scroll(); };
-    SetOrientation(Vertical, 0, UiScaler::Y(DefaultDim));
+    SetOrientation(Vertical, 0, UiScaler::InverseY(DefaultDim));
     WantFocus().SetFocus();
     focusItem = 0;
     Highlight(focusItem, true);
@@ -168,17 +168,17 @@ bool ListCtrl::Key(dword key, int count) {
 
 void ListCtrl::SetSizeHint(int hintW, int hintH) {
     if (IsGrid()) {
-        hintW = hintW == 0 ? UiScaler::X(DefaultDim):hintW;
-        hintH = hintH == 0 ? UiScaler::Y(DefaultDim):hintH;
+        hintW = hintW == 0 ? UiScaler::InverseX(DefaultDim):hintW;
+        hintH = hintH == 0 ? UiScaler::InverseY(DefaultDim):hintH;
     }
     else {
         hintW = max(hintW, 0);
         hintH = max(hintH, 0);
         if (IsVertical() && hintH < 1) {
-            hintH = UiScaler::Y(DefaultDim);
+            hintH = UiScaler::InverseY(DefaultDim);
         }
         else if (!IsVertical() && hintW < 1) {
-            hintW = UiScaler::X(DefaultDim);
+            hintW = UiScaler::InverseX(DefaultDim);
         }
     }
     sizeHint.cx = hintW;
@@ -359,11 +359,11 @@ bool ListCtrl::IsGrid() const {
 }
 
 int ListCtrl::ItemWidth() const {
-    return UiScaler::X(sizeHint.cx == 0 ? UiScaler::X(DefaultDim):sizeHint.cx) + margin*2;
+    return UiScaler::X(sizeHint.cx == 0 ? UiScaler::InverseX(DefaultDim):sizeHint.cx) + margin*2;
 }
 
 int ListCtrl::ItemHeight() const {
-    return UiScaler::Y(sizeHint.cy == 0 ? UiScaler::Y(DefaultDim):sizeHint.cy) + margin*2;
+    return UiScaler::Y(sizeHint.cy == 0 ? UiScaler::InverseY(DefaultDim):sizeHint.cy) + margin*2;
 }
 
 int ListCtrl::ItemsPerLine() const {

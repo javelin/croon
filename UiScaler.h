@@ -9,6 +9,8 @@
 struct UiScaler {
     static int X(int value);
     static int Y(int value);
+    static int InverseX(int value);
+    static int InverseY(int value);
 };
 
 #endif

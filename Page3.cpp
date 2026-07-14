@@ -41,7 +41,7 @@ Page3::Page3(KarData& data, GatherDlg& gatherDlg, String gatherKey) :
     pageName = "Background Video";
     CtrlLayout(*this);
     nextBtn.SetLabel("Save");
-    videoLst.SetOrientation(ListCtrl::VerticalGrid, UiScaler::X(200), UiScaler::Y(200));
+    videoLst.SetOrientation(ListCtrl::VerticalGrid, UiScaler::InverseX(200), UiScaler::InverseY(200));
     tab.Add(videoLst.HSizePosZ(5, 5).VSizePosZ(5, 5), "Videos");
     String videoDir = Config::Get(VIDEO_DIR, GetHomeDirectory());
     Vector<VideoCatalogItem> cachedVideos = VideoCatalog::FindCachedThumbnails(videoDir);
@@ -52,7 +52,7 @@ Page3::Page3(KarData& data, GatherDlg& gatherDlg, String gatherKey) :
     }
     videoLst.Highlight(0);
     
-    vizLst.SetOrientation(ListCtrl::VerticalGrid, UiScaler::X(200), UiScaler::Y(200));
+    vizLst.SetOrientation(ListCtrl::VerticalGrid, UiScaler::InverseX(200), UiScaler::InverseY(200));
     tab.Add(vizLst.HSizePosZ(5, 5).VSizePosZ(5, 5), "Vizualizations");
     AddVideoItem(&vizLst, "@@freqs", "", Visualization::Thumbnail("@@freqs"), &videoLst);
     AddVideoItem(&vizLst, "@@spectrum", "", Visualization::Thumbnail("@@spectrum"), &videoLst);
@@ -100,8 +100,8 @@ void Page3::Layout() {
     Page::Layout();
     if (!rehint) return;
     auto hw = (videoLst.GetSize().cx - 40)/4;
-    videoLst.SetSizeHint(UiScaler::X(hw), UiScaler::Y(hw));
-    vizLst.SetSizeHint(UiScaler::X(hw), UiScaler::Y(hw));
+    videoLst.SetSizeHint(UiScaler::InverseX(hw), UiScaler::InverseY(hw));
+    vizLst.SetSizeHint(UiScaler::InverseX(hw), UiScaler::InverseY(hw));
 }
 
 void Page3::HideButtons() {
@@ -140,7 +140,7 @@ void Page3::GatherVideos() {
 }
 
 void Page3::AddVideoItem(ListCtrl* list, String path, String tnPath, Image img, ListCtrl* other) {
-    //auto& item = list->AddChild(*(new VidThumbnail(path, Rescale(img, Size(UiScaler::X(200), UiScaler::Y(200))))));
+    //auto& item = list->AddChild(*(new VidThumbnail(path, Rescale(img, Size(UiScaler::InverseX(200), UiScaler::InverseY(200))))));
     auto& item = list->AddChild(*(new VidThumbnail(path, img)), false);
     auto* vt = dynamic_cast<VidThumbnail*>(item.GetCtrl());
     vt->WhenSelected << [=] (String path) {

@@ -689,6 +689,8 @@ def main() -> None:
     ui_scaler_h = (root / "UiScaler.h").read_text()
     require(ui_scaler_h, "X(int value)", "UiScaler horizontal scale contract")
     require(ui_scaler_h, "Y(int value)", "UiScaler vertical scale contract")
+    require(ui_scaler_h, "InverseX(int value)", "UiScaler inverse horizontal scale contract")
+    require(ui_scaler_h, "InverseY(int value)", "UiScaler inverse vertical scale contract")
 
     ui_scaler_cpp = (root / "UiScaler.cpp").read_text()
     reject(ui_scaler_cpp, '#include "Croon.h"', "UiScaler app shell dependency")
@@ -696,9 +698,8 @@ def main() -> None:
     require(ui_scaler_cpp, '#include "UiScaler.h"', "UiScaler direct self dependency")
     require(ui_scaler_cpp, "return Zx(value)", "UiScaler horizontal U++ layout zoom delegation")
     require(ui_scaler_cpp, "return Zy(value)", "UiScaler vertical U++ layout zoom delegation")
-    reject(ui_scaler_cpp, "Ctrl::GetZoomRatio", "UiScaler inverse zoom-ratio calculation")
-    reject(ui_scaler_cpp, "value*dx/mx", "UiScaler inverse horizontal calculation")
-    reject(ui_scaler_cpp, "value*dy/my", "UiScaler inverse vertical calculation")
+    require(ui_scaler_cpp, "Ctrl::GetZoomRatio", "UiScaler inverse zoom-ratio calculation")
+    require(ui_scaler_cpp, "return value * multiplier / divisor", "UiScaler inverse scaling calculation")
 
     vid_thumbnail_cpp = (root / "VidThumbnail.cpp").read_text()
     reject(vid_thumbnail_cpp, '#include "Croon.h"', "VidThumbnail app shell dependency")
@@ -960,6 +961,9 @@ def main() -> None:
         require(text, "UiScaler::", f"{rel} direct UI scaler dependency")
         reject(text, "_Zx(", f"{rel} UI scaler utility wrapper dependency")
         reject(text, "_Zy(", f"{rel} UI scaler utility wrapper dependency")
+    for rel in ["ListCtrl.cpp", "Page3.cpp", "ProjectList.h"]:
+        text = (root / rel).read_text()
+        require(text, "UiScaler::Inverse", f"{rel} inverse UI scaler dependency")
     for rel in ["ListCtrl.cpp", "ListCtrl.h", "LyricsPartsDlg.cpp", "MainWindow.cpp", "OpenProjectDlg.cpp", "ProjectList.h", "SaveProjectDlg.cpp", "TimingDlg.cpp", "TimingCtrl.cpp", "VideoDlg.cpp"]:
         text = (root / rel).read_text()
         reject(text, "Zx(", f"{rel} raw horizontal scaler dependency")
