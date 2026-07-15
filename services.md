@@ -24,6 +24,7 @@ This file records service boundaries expected during migration. Some services be
 - `RichTextBuilder`: QTF/RichText construction helper for shared list and subtitle previews.
 - `SubtitleLineProcessor`: subtitle metadata expansion, count-in insertion, and vocal style resolution.
 - `SubtitleGenerator`: ASS subtitle generation from timed lyrics and vocal parts.
+- `LrcGenerator`: LRC lyric export after metadata/count-in processing, with Croon vocal-part annotations.
 - `TextTools`: shared text spacing, filtering, and display-shortening helpers.
 - `TimeFormatter`: timestamp and count-in duration formatting helpers.
 - `UiScaler`: U++ zoom-ratio scaling helpers for layout dimensions.
@@ -32,7 +33,7 @@ This file records service boundaries expected during migration. Some services be
 
 ## Planned Services
 
-- `VideoLibraryCache`: deferred service for loading/reusing thumbnails, background scanning, and sharing video candidates between `WizardDlg` and `VideoDlg`. This should grow from `VideoCatalog` when the migration reaches video-library performance work.
+- `VideoLibraryCache`: optional future service for shared video-library state, thumbnail reuse policy, and cross-session cache behavior. `Page3` already streams video picker thumbnails incrementally, so this is no longer needed merely to keep the picker responsive.
 
 ## UI Boundary
 
@@ -41,3 +42,4 @@ UI classes should bind controls to services and models. Static control placement
 ## Retired Compatibility Facades
 
 - `Util`: removed legacy facade. Production code and tests use extracted services directly.
+- `GatherDlg`: removed modal video gathering dialog. Video picker loading is owned by `Page3` and streams items into the picker as thumbnails become available.

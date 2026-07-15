@@ -12,6 +12,7 @@ Croon is an Ultimate++ desktop application for karaoke authoring. It is being mi
 - `RunCroon` owns the normal application `KarData` instance and passes it into `MainWindow`.
 - `MainWindow` is the normal composition root for shared project UI state. It owns the runtime `Project`, `ProjectList`, `VideoDlg`, and `WizardDlg` instances and wires them to the shared `KarData` model and dialog dependencies.
 - Runtime UI code uses explicit `KarData` and dialog ownership; legacy global data and dialog accessors have been retired from the application surface.
+- Long-running list population should keep the UI usable. The project list installs interactions before background loading completes, and the video picker streams discovered thumbnails directly into the picker instead of showing a modal gather dialog.
 
 ## Primary Flows
 

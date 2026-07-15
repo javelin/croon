@@ -298,7 +298,6 @@ def main() -> None:
         "#define LAYOUTFILE <Croon/CroonTimingDlg.lay>",
         '#include "AppAudioPlayer.h"',
         '#include "TimingDlg.h"',
-        '#include "GatherDlg.h"',
         '#include "VidThumbnail.h"',
         '#include "Page1.h"',
         '#include "Page2.h"',
@@ -356,10 +355,11 @@ def main() -> None:
     require(decisions_md, "legacy global `KarData` accessor has been removed", "removed global data decision")
     require(decisions_md, "### VideoCatalog Owns Video Discovery", "VideoCatalog discovery decision")
     require(decisions_md, "Configured video directory enumeration, cached video listing, thumbnail file path construction, and cached thumbnail image loading belong behind `VideoCatalog`", "VideoCatalog enumeration ownership decision")
-    require(decisions_md, "legacy product artifacts outside the `.croon` metadata compatibility policy", "legacy product artifact deferred decision")
+    require(decisions_md, "### No Legacy Product Artifact Import", "legacy product artifact import decision")
+    require(decisions_md, "will not add import support for older legacy product metadata", "legacy product metadata import decision")
     reject(decisions_md, "Whether to remove global project state after the first functional migration.", "resolved global project state deferred decision")
     require(decisions_md, "expand `VideoCatalog` into a `VideoLibraryCache`", "video library cache deferred decision")
-    require(decisions_md, "preferred future answer to expensive video directory scans", "video library cache performance decision")
+    require(decisions_md, "Incremental video picker loading handles the current responsiveness problem", "video library cache performance decision")
 
     architecture_md = (root / "architecture.md").read_text()
     require(architecture_md, "`MainWindow` is the normal composition root", "MainWindow composition root documentation")
@@ -532,8 +532,10 @@ def main() -> None:
     require(services_md, "download status reporting", "LyricsDownloadService status documentation")
     require(services_md, "AZLyrics-specific naming stays inside `AzLyricsProvider`", "LyricsDownloadService provider-specific naming documentation")
     require(services_md, "`VideoCatalog`: video file discovery, cached video listing, thumbnail path, and cached thumbnail loading boundary for configured video directories", "VideoCatalog service documentation")
-    require(services_md, "`VideoLibraryCache`: deferred service", "VideoLibraryCache planned service documentation")
-    require(services_md, "sharing video candidates between `WizardDlg` and `VideoDlg`", "VideoCatalog dialog sharing documentation")
+    require(services_md, "`VideoLibraryCache`: optional future service", "VideoLibraryCache planned service documentation")
+    require(services_md, "streams video picker thumbnails incrementally", "VideoCatalog picker responsiveness documentation")
+    require(services_md, "`GatherDlg`: removed modal video gathering dialog", "GatherDlg retirement documentation")
+    require(services_md, "`LrcGenerator`: LRC lyric export after metadata/count-in processing", "LrcGenerator service documentation")
 
     constants_h = (root / "Constants.h").read_text()
     reject(constants_h, "AZ_URL", "Constants provider URL extraction")
@@ -961,7 +963,6 @@ def main() -> None:
 
     direct_path_catalog_dependencies = {
         "ConfigService.cpp": ["AppPaths::DataDirectory"],
-        "GatherDlg.cpp": ["VideoCatalog::FindVideoFiles", "VideoCatalog::ThumbnailPath", "VideoCatalog::HasThumbnail", "VideoCatalog::LoadThumbnail", "VideoCatalog::DeleteThumbnail", "VideoCatalog::BuildThumbnailCommand", "VideoCatalog::DisplayName"],
         "Page1.cpp": ["GenreCatalog::List"],
         "Page3.cpp": ["VideoCatalog::FindCachedThumbnails"],
         "Project.cpp": ["GenreCatalog::List"],
@@ -1176,23 +1177,9 @@ def main() -> None:
     require(video_catalog_cpp, "String VideoCatalog::DisplayName(String videoPath, int maxLength)", "VideoCatalog display name implementation")
     require(video_catalog_cpp, "TextTools::ShortenMiddle(videoPath, maxLength)", "VideoCatalog display name formatting")
 
-    gather_dlg_cpp = (root / "GatherDlg.cpp").read_text()
-    require(gather_dlg_cpp, '#include "VideoCatalog.h"', "GatherDlg direct VideoCatalog dependency")
-    require(gather_dlg_cpp, "VideoCatalog::FindVideoFiles(videoDir)", "GatherDlg video discovery service")
-    require(gather_dlg_cpp, "VideoCatalog::ThumbnailPath(paths[curPath])", "GatherDlg thumbnail path service")
-    require(gather_dlg_cpp, "VideoCatalog::HasThumbnail(paths[curPath])", "GatherDlg thumbnail existence service")
-    require(gather_dlg_cpp, "VideoCatalog::LoadThumbnail(paths[curPath])", "GatherDlg thumbnail loading service")
-    require(gather_dlg_cpp, "VideoCatalog::DeleteThumbnail(paths[curPath])", "GatherDlg thumbnail deletion service")
-    require(gather_dlg_cpp, "VideoCatalog::BuildThumbnailCommand(paths[curPath])", "GatherDlg thumbnail command service")
-    require(gather_dlg_cpp, "VideoCatalog::DisplayName(paths[curPath], 60)", "GatherDlg video display name service")
-    reject(gather_dlg_cpp, "AppPaths::DataDirectory()", "GatherDlg raw thumbnail directory dependency")
-    reject(gather_dlg_cpp, 'AppPaths::FindFiles(videoDir, "*.mp4")', "GatherDlg raw mp4 discovery dependency")
-    reject(gather_dlg_cpp, "FfmpegCommandBuilder::GenerateThumbnail", "GatherDlg raw thumbnail command dependency")
-    reject(gather_dlg_cpp, "ThumbnailDim", "GatherDlg raw thumbnail dimension dependency")
-    reject(gather_dlg_cpp, "FileExists(tnPath)", "GatherDlg raw thumbnail existence dependency")
-    reject(gather_dlg_cpp, "FileDelete(tnPath)", "GatherDlg raw thumbnail deletion dependency")
-    reject(gather_dlg_cpp, "StreamRaster::LoadFileAny(tnPath)", "GatherDlg raw thumbnail loading dependency")
-    reject(gather_dlg_cpp, "TextTools::ShortenMiddle(paths[curPath], 60)", "GatherDlg raw display formatting dependency")
+    for retired in ["GatherDlg.cpp", "GatherDlg.h"]:
+        if (root / retired).exists():
+            fail(f"{retired} should remain retired")
 
     wizard_cpp = (root / "WizardDlg.cpp").read_text()
     reject(wizard_cpp, "WizardDlg::WizardDlg() : WizardDlg(KarData::GetGlobal())", "WizardDlg default global data wiring")

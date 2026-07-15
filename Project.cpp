@@ -52,7 +52,6 @@ using namespace Upp;
 
 #include "AppAudioPlayer.h"
 #include "TimingDlg.h"
-#include "GatherDlg.h"
 #include "VidThumbnail.h"
 #include "Page3.h"
 

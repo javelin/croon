@@ -101,7 +101,6 @@ def main() -> None:
     process_text = "".join((root / rel).read_text() for rel in [
         "ConvertDlg.cpp",
         "ExportDlg.cpp",
-        "GatherDlg.cpp",
         "OpenProjectDlg.cpp",
         "SaveProjectDlg.cpp",
     ])
@@ -267,45 +266,9 @@ def main() -> None:
     if "runCode" in export_header or "runCode" in export_impl:
         fail("ExportDlg still tracks obsolete nested run state")
 
-    gather_impl = (root / "GatherDlg.cpp").read_text()
-    if '#include "Croon.h"' in gather_impl:
-        fail("GatherDlg.cpp still depends on Croon.h")
-    for needle in [
-        "#include <CtrlLib/CtrlLib.h>",
-        "#define IMAGECLASS CroonImg",
-        "#define IMAGEFILE <Croon/Croon.iml>",
-        "#include <Draw/iml_header.h>",
-        '#include "ConfigService.h"\n#include "Config.h"',
-        '#include "UiScaler.h"',
-        '#include "LyricsPartsCtrl.h"',
-        '#include "ListCtrl.h"',
-        '#include "AppIdentity.h"',
-        '#include "KarData.h"\n#include "Visualization.h"',
-        '#include "LyricsTransformer.h"',
-        '#include "MediaProcessRunner.h"',
-        '#include "RecentProjectService.h"',
-        '#include "ProjectLoader.h"',
-        "#define LAYOUTFILE <Croon/Croon.lay>",
-        "#include <CtrlCore/lay.h>",
-        '#include "ProgressDlg.h"',
-        '#include "VideoCatalog.h"',
-        '#include "GatherDlg.h"',
-    ]:
-        if needle not in gather_impl:
-            fail(f"GatherDlg.cpp missing direct dependency {needle}")
-    for needle in [
-        "Config::Get(FFMPEG_LOCATION)",
-        "VideoCatalog::FindVideoFiles(videoDir)",
-        "VideoCatalog::ThumbnailPath(paths[curPath])",
-        "VideoCatalog::HasThumbnail(paths[curPath])",
-        "VideoCatalog::LoadThumbnail(paths[curPath])",
-        "VideoCatalog::DeleteThumbnail(paths[curPath])",
-        "VideoCatalog::BuildThumbnailCommand(paths[curPath])",
-        "VideoCatalog::DisplayName(paths[curPath], 60)",
-        "process.Start(ffmpeg",
-    ]:
-        if needle not in gather_impl:
-            fail(f"GatherDlg.cpp missing thumbnail discovery workflow {needle}")
+    for retired in ["GatherDlg.cpp", "GatherDlg.h"]:
+        if (root / retired).exists():
+            fail(f"{retired} should remain retired")
 
     open_impl = (root / "OpenProjectDlg.cpp").read_text()
     open_header = (root / "OpenProjectDlg.h").read_text()
