@@ -1217,6 +1217,8 @@ def main() -> None:
     require(project_list_cpp, "ProjectList::ProjectList(KarData& data, WizardDlg& wizardDlg) : data(data), wizardDlg(wizardDlg)", "ProjectList injected wizard constructor")
     require(project_list_cpp, "InstallListHandlers();", "ProjectList installs handlers before background load completes")
     require(project_list_cpp, "AddLoadedProject(path, title, artist, lyrics, thumbnail)", "ProjectList incremental project insertion")
+    require(project_list_cpp, "projectLst.AddChild(*(new ProjectItemCtrl(projects.back())))", "ProjectList streamed items consume mouse events immediately")
+    reject(project_list_cpp, "projectLst.AddChild(*(new ProjectItemCtrl(projects.back())), false)", "ProjectList streamed items waiting for loader completion")
     require(project_list_cpp, "loader.StopLoading();", "ProjectList can stop background loading")
     require(project_list_cpp, "loader.ProjectPaths()", "ProjectList preserves unloaded recent paths")
     require(project_list_cpp, "ContainsProject(path)", "ProjectList avoids duplicate background items")

@@ -146,7 +146,7 @@ void ProjectList::AddLoadedProject(String path, String title, String artist, Str
                                     artist,
                                     lyrics,
                                     Rescale(thumbnail, ProjectItemCtrl::GetImageSize()))));
-    projectLst.AddChild(*(new ProjectItemCtrl(projects.back())), false);
+    projectLst.AddChild(*(new ProjectItemCtrl(projects.back())));
     clearBtn.Enable(true);
     projectLst.Scroll();
 }

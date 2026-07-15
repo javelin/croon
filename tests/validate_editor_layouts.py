@@ -277,6 +277,7 @@ def main() -> None:
         "InstallListHandlers();",
         "loader.WhenProjectLoaded",
         "AddLoadedProject(path, title, artist, lyrics, thumbnail)",
+        "projectLst.AddChild(*(new ProjectItemCtrl(projects.back())))",
         "OpenProjectDlg opDlg",
         "AppAudioPlayer::Open(data.audioFilePath)",
         "RecentProjectService::SavePaths(vs)",
