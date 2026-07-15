@@ -17,7 +17,6 @@ public:
     String GetThumbnailPath() const;
     
 private:
-    GatherDlg gatherDlg;
     Page3 page3;
     Image image;
     String value;

@@ -31,7 +31,6 @@ using namespace Upp;
 #include <CtrlCore/lay.h>
 
 #include "ProgressDlg.h"
-#include "GatherDlg.h"
 #include "SaveProjectDlg.h"
 #include "VidThumbnail.h"
 #include "Page3.h"
@@ -41,7 +40,7 @@ using namespace Upp;
 
 #include "VideoDlg.h"
 
-VideoDlg::VideoDlg(KarData& data) : gatherDlg(), page3(data, gatherDlg) {
+VideoDlg::VideoDlg(KarData& data) : page3(data) {
     CtrlLayout(*this);
     Add(page3.HSizePosZ().VSizePosZ(0, 40));
     Title("Background Video").NoZoomable().Sizeable().SetRect(0, 0, UiScaler::X(450), UiScaler::Y(550));
@@ -68,7 +67,9 @@ VideoDlg::VideoDlg(KarData& data) : gatherDlg(), page3(data, gatherDlg) {
 int VideoDlg::Run() {
     page3.Reset();
     SetTimeCallback(500, [=] { page3.Rehint(false); });
-    return Execute();
+    int code = Execute();
+    page3.StopGathering();
+    return code;
 }
 
 void VideoDlg::SetData(const Value& data) {
