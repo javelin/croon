@@ -8,6 +8,8 @@ This file records service boundaries expected during migration. Some services be
 - `AppIdentity`: product name, version, project extension, app data name, temp prefixes, and metadata attachment names.
 - `AppPaths`: runtime data directory creation and simple file discovery helpers.
 - `AzLyricsProvider`: AZLyrics provider name, URL construction, and page extraction rules.
+- `GeniusLyricsProvider`: Genius fallback URL construction and lyric container extraction.
+- `SongLyricsProvider`: SongLyrics fallback URL construction and lyric block extraction.
 - `ConfigService`: persisted Croon settings and default values.
 - `DownloadDefaults`: shared HTTP download defaults such as the browser user agent.
 - `ProjectSerializer`: versioned JSON serialization and deserialization for Croon project metadata.
@@ -19,7 +21,8 @@ This file records service boundaries expected during migration. Some services be
 - `FfmpegThumbnailCommandBuilder`: deterministic thumbnail generation command argument construction.
 - `GenreCatalog`: shared application genre reference list.
 - `KarData`: project data model passed explicitly through the runtime UI composition graph.
-- `LyricsDownloadService`: internal active lyrics provider naming, provider-neutral URL and extraction delegation for future provider work, download status reporting, and opaque download workflow. AZLyrics-specific naming stays inside `AzLyricsProvider`.
+- `LyricsDownloadService`: internal lyrics provider chain, provider-neutral URL and extraction delegation, download status reporting, and opaque download workflow. Provider-specific naming stays inside individual provider classes.
+- `LyricsProviderTools`: shared lyrics-provider slug normalization and HTML lyric cleanup helpers.
 - `RecentProjectService`: recent project list persistence and normalization.
 - `RichTextBuilder`: QTF/RichText construction helper for shared list and subtitle previews.
 - `SubtitleLineProcessor`: subtitle metadata expansion, count-in insertion, and vocal style resolution.

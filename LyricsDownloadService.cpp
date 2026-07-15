@@ -32,10 +32,28 @@ using namespace Upp;
 #include "DownloadDefaults.h"
 #include "DownloadDlg.h"
 #include "AzLyricsProvider.h"
+#include "GeniusLyricsProvider.h"
+#include "SongLyricsProvider.h"
 #include "LyricsDownloadService.h"
 
+namespace {
+struct LyricsProvider {
+    const char* name;
+    String (*buildUrl)(String title, String artist);
+    bool (*extractLyrics)(String content, String& lyrics);
+};
+
+Vector<LyricsProvider> GetProviders() {
+    Vector<LyricsProvider> providers;
+    providers.Add({ AzLyricsProvider::Name(), AzLyricsProvider::BuildUrl, AzLyricsProvider::ExtractLyrics });
+    providers.Add({ GeniusLyricsProvider::Name(), GeniusLyricsProvider::BuildUrl, GeniusLyricsProvider::ExtractLyrics });
+    providers.Add({ SongLyricsProvider::Name(), SongLyricsProvider::BuildUrl, SongLyricsProvider::ExtractLyrics });
+    return providers;
+}
+}
+
 const char* LyricsDownloadService::ProviderName() {
-    return AzLyricsProvider::Name();
+    return GetProviders()[0].name;
 }
 
 const char* LyricsDownloadService::DownloadStatusLabel(DownloadStatus status) {
@@ -51,23 +69,32 @@ const char* LyricsDownloadService::DownloadStatusLabel(DownloadStatus status) {
 }
 
 String LyricsDownloadService::BuildProviderUrl(String title, String artist) {
-    return AzLyricsProvider::BuildUrl(title, artist);
+    return GetProviders()[0].buildUrl(title, artist);
 }
 
 bool LyricsDownloadService::ExtractProviderLyrics(String content, String& lyrics) {
-    return AzLyricsProvider::ExtractLyrics(content, lyrics);
+    return GetProviders()[0].extractLyrics(content, lyrics);
 }
 
 LyricsDownloadService::DownloadStatus LyricsDownloadService::DownloadWithStatus(String title, String artist, String& lyrics) {
-    DownloadDlg dlg;
-    String* output = &lyrics;
-    bool extracted = false;
-    dlg.WhenDownloadSuccess << [output, &extracted](String content) {
-        extracted = LyricsDownloadService::ExtractProviderLyrics(content, *output);
-    };
-    if (dlg.Run(BuildProviderUrl(title, artist), "Downloading lyrics") != IDOK)
-        return DownloadCancelled;
-    return extracted ? DownloadOk : ExtractionFailed;
+    for (const auto& provider : GetProviders()) {
+        DownloadDlg dlg;
+        String* output = &lyrics;
+        bool extracted = false;
+        auto extractLyrics = provider.extractLyrics;
+        dlg.WhenDownloadSuccess << [output, &extracted, extractLyrics](String content) {
+            extracted = extractLyrics(content, *output);
+        };
+
+        int result = dlg.Run(provider.buildUrl(title, artist), "Downloading lyrics");
+        if (result == IDABORT)
+            return DownloadCancelled;
+        if (result == IDOK && extracted)
+            return DownloadOk;
+    }
+
+    lyrics = "";
+    return ExtractionFailed;
 }
 
 bool LyricsDownloadService::Download(String title, String artist, String& lyrics) {

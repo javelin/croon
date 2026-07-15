@@ -24,6 +24,8 @@ def main() -> None:
         "AppAudioPlayer.h",
         "AzLyricsProvider.cpp",
         "AzLyricsProvider.h",
+        "GeniusLyricsProvider.cpp",
+        "GeniusLyricsProvider.h",
         "ConfigService.cpp",
         "ConfigService.h",
         "DownloadDefaults.h",
@@ -39,8 +41,12 @@ def main() -> None:
         "GenreCatalog.h",
         "LyricsDownloadService.cpp",
         "LyricsDownloadService.h",
+        "LyricsProviderTools.cpp",
+        "LyricsProviderTools.h",
         "LyricsTransformer.cpp",
         "LyricsTransformer.h",
+        "SongLyricsProvider.cpp",
+        "SongLyricsProvider.h",
         "RecentProjectService.cpp",
         "RecentProjectService.h",
         "RichTextBuilder.h",
@@ -81,6 +87,8 @@ def main() -> None:
         "AppAudioPlayer.h" not in upp or
         "AzLyricsProvider.cpp" not in upp or
         "AzLyricsProvider.h" not in upp or
+        "GeniusLyricsProvider.cpp" not in upp or
+        "GeniusLyricsProvider.h" not in upp or
         "ConfigService.cpp" not in upp or
         "ConfigService.h" not in upp or
         "DownloadDefaults.cpp" not in upp or
@@ -101,10 +109,14 @@ def main() -> None:
         "GenreCatalog.h" not in upp or
         "LyricsDownloadService.cpp" not in upp or
         "LyricsDownloadService.h" not in upp or
+        "LyricsProviderTools.cpp" not in upp or
+        "LyricsProviderTools.h" not in upp or
         "LrcGenerator.cpp" not in upp or
         "LrcGenerator.h" not in upp or
         "LyricsTransformer.cpp" not in upp or
         "LyricsTransformer.h" not in upp or
+        "SongLyricsProvider.cpp" not in upp or
+        "SongLyricsProvider.h" not in upp or
         "RecentProjectService.cpp" not in upp or
         "RecentProjectService.h" not in upp or
         "RichTextBuilder.h" not in upp or
