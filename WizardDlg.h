@@ -18,7 +18,6 @@ public:
     static const int maxPages = 3;
     Page1 page1;
     Page2 page2;
-    GatherDlg gatherDlg;
     Page3 page3;
     
 private:

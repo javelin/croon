@@ -34,7 +34,6 @@ using namespace Upp;
 #include <CtrlCore/lay.h>
 
 #include "ProgressDlg.h"
-#include "GatherDlg.h"
 #include "SaveProjectDlg.h"
 #include "VidThumbnail.h"
 #include "Page1.h"
@@ -46,7 +45,7 @@ using namespace Upp;
 
 #include "WizardDlg.h"
 
-WizardDlg::WizardDlg(KarData& data) : data(data), page1(data), page2(data), gatherDlg(), page3(data, gatherDlg), pages{&page1, &page2, &page3}, currPage(0) {
+WizardDlg::WizardDlg(KarData& data) : data(data), page1(data), page2(data), page3(data), pages{&page1, &page2, &page3}, currPage(0) {
     CtrlLayout(*this, "Create Project");
     NoZoomable().Sizeable();
     CenterScreen();
@@ -114,6 +113,7 @@ int WizardDlg::Run(String tempAudioPath, double duration, String origAudioFilePa
     page1.ShowPage();
     SetTimeCallback(500, [=] { page3.Rehint(false); });
     int code = TopWindow::Run();
+    page3.StopGathering();
     TopWindow::Close();
     return code;
 }

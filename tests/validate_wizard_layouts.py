@@ -156,7 +156,6 @@ def main() -> None:
         "#define LAYOUTFILE <Croon/Croon.lay>",
         "#include <CtrlCore/lay.h>",
         '#include "ProgressDlg.h"',
-        '#include "GatherDlg.h"',
         '#include "SaveProjectDlg.h"',
         '#include "VidThumbnail.h"',
         '#include "Page3.h"',
@@ -169,9 +168,9 @@ def main() -> None:
         fail("Page3 still has compatibility gather helper")
     if "Page3::Page3(KarData& data, String gatherKey) : Page3(data, CompatibilityGatherDlg(), gatherKey)" in page3_impl:
         fail("Page3 still has compatibility gather wiring")
-    if "Page3::Page3(KarData& data, GatherDlg& gatherDlg, String gatherKey)" not in page3_impl:
-        fail("Page3 injected gather constructor was unexpectedly removed")
-    constructor_body = page3_impl.split("Page3::Page3(KarData& data, GatherDlg& gatherDlg, String gatherKey)", 1)[-1].split("\n}\n", 1)[0]
+    if "Page3::Page3(KarData& data, String gatherKey)" not in page3_impl:
+        fail("Page3 injected data constructor was unexpectedly removed")
+    constructor_body = page3_impl.split("Page3::Page3(KarData& data, String gatherKey)", 1)[-1].split("\n}\n", 1)[0]
     if "*this <<" in constructor_body:
         fail("Page3 still hardcodes top-level child placement")
 
@@ -184,8 +183,12 @@ def main() -> None:
         "cachedVideos[i].thumbnailPath",
         "cachedVideos[i].thumbnail",
         "Visualization::Thumbnail(\"@@freqs\")",
-        "gatherDlg.WhenVideoAdded",
-        "gatherDlg.Run(~fsel)",
+        "StartGather(~fsel)",
+        "VideoCatalog::FindVideoFiles(videoDir)",
+        "VideoCatalog::BuildThumbnailCommand(path)",
+        "gatherProcess.Start(ffmpeg, args, nullptr, nullptr)",
+        "AddGatheredVideo(gatherPaths[gatherIndex])",
+        "void Page3::StopGathering()",
         "LyricsTransformer::RawToUntimed(this->data)",
         "AppIdentity::TempFileName(\".json\")",
         "SaveProjectDlg saveDlg",
@@ -204,7 +207,6 @@ def main() -> None:
         "KarData& data",
         "Page1 page1;",
         "Page2 page2;",
-        "GatherDlg gatherDlg;",
         "Page3 page3;",
     ]:
         if needle not in wizard_header:
@@ -237,7 +239,6 @@ def main() -> None:
         "#define LAYOUTFILE <Croon/Croon.lay>",
         "#include <CtrlCore/lay.h>",
         '#include "ProgressDlg.h"',
-        '#include "GatherDlg.h"',
         '#include "SaveProjectDlg.h"',
         '#include "VidThumbnail.h"',
         '#include "Page1.h"',
@@ -253,7 +254,7 @@ def main() -> None:
         if "*this <<" in line and "GetPrevButton" not in line and "GetNextButton" not in line and "GatherButton" not in line:
             fail("WizardDlg still hardcodes non-navigation child placement")
     for needle in [
-        "WizardDlg::WizardDlg(KarData& data) : data(data), page1(data), page2(data), gatherDlg(), page3(data, gatherDlg), pages{&page1, &page2, &page3}",
+        "WizardDlg::WizardDlg(KarData& data) : data(data), page1(data), page2(data), page3(data), pages{&page1, &page2, &page3}",
         "Add(page->HSizePosZ(5, 5).VSizePosZ(32, 45))",
         "page->WhenPreviousPage",
         "page->WhenNextPage",
@@ -261,6 +262,7 @@ def main() -> None:
         "data.Reset()",
         "page1.ShowPage()",
         "page3.Rehint(false)",
+        "page3.StopGathering()",
     ]:
         if needle not in wizard_impl:
             fail(f"WizardDlg.cpp missing wizard workflow {needle}")

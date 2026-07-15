@@ -372,7 +372,7 @@ def main() -> None:
     ]:
         if inline_body in video_header:
             fail(f"VideoDlg.h still owns inline method body {inline_body}")
-    for runtime_member in ["GatherDlg gatherDlg;", "Page3 page3;"]:
+    for runtime_member in ["Page3 page3;"]:
         if runtime_member not in video_header:
             fail(f"VideoDlg.h missing runtime member {runtime_member}")
     for layout_member in ["Button okBtn;", "Button cancelBtn;"]:
@@ -403,7 +403,6 @@ def main() -> None:
         "#define LAYOUTFILE <Croon/Croon.lay>",
         "#include <CtrlCore/lay.h>",
         '#include "ProgressDlg.h"',
-        '#include "GatherDlg.h"',
         '#include "SaveProjectDlg.h"',
         '#include "VidThumbnail.h"',
         '#include "Page3.h"',
@@ -419,7 +418,7 @@ def main() -> None:
         if "*this <<" in line and "GatherButton" not in line:
             fail("VideoDlg still hardcodes non-gather child placement")
     for needle in [
-        "VideoDlg::VideoDlg(KarData& data) : gatherDlg(), page3(data, gatherDlg)",
+        "VideoDlg::VideoDlg(KarData& data) : page3(data)",
         "Add(page3.HSizePosZ().VSizePosZ(0, 40))",
         'page3.GatherButton(true, true, "Find Videos")',
         "page3.WhenSelected",
@@ -429,7 +428,9 @@ def main() -> None:
         "int VideoDlg::Run()",
         "page3.Reset()",
         "SetTimeCallback(500, [=] { page3.Rehint(false); })",
-        "return Execute()",
+        "int code = Execute()",
+        "page3.StopGathering()",
+        "return code",
         "void VideoDlg::SetData(const Value& data)",
         "Value VideoDlg::GetData() const",
         "void VideoDlg::SetPath(String path)",

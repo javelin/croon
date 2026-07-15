@@ -31,13 +31,12 @@ using namespace Upp;
 #include <CtrlCore/lay.h>
 
 #include "ProgressDlg.h"
-#include "GatherDlg.h"
 #include "SaveProjectDlg.h"
 #include "VidThumbnail.h"
 #include "Page3.h"
 
-Page3::Page3(KarData& data, GatherDlg& gatherDlg, String gatherKey) :
-        vidCount(0), gatherKey(gatherKey), data(data), gatherDlg(gatherDlg) {
+Page3::Page3(KarData& data, String gatherKey) :
+        vidCount(0), gatherKey(gatherKey), ffmpeg(Config::Get(FFMPEG_LOCATION)), data(data) {
     pageName = "Background Video";
     CtrlLayout(*this);
     nextBtn.SetLabel("Save");
@@ -45,13 +44,13 @@ Page3::Page3(KarData& data, GatherDlg& gatherDlg, String gatherKey) :
     tab.Add(videoLst.HSizePosZ(5, 5).VSizePosZ(5, 5), "Videos");
     String videoDir = Config::Get(VIDEO_DIR, GetHomeDirectory());
     Vector<VideoCatalogItem> cachedVideos = VideoCatalog::FindCachedThumbnails(videoDir);
-    
+
     for (int i = 0; i < cachedVideos.GetCount(); ++i) {
         ++vidCount;
         AddVideoItem(&videoLst, cachedVideos[i].videoPath, cachedVideos[i].thumbnailPath, cachedVideos[i].thumbnail, &vizLst);
     }
     videoLst.Highlight(0);
-    
+
     vizLst.SetOrientation(ListCtrl::VerticalGrid, UiScaler::InverseX(200), UiScaler::InverseY(200));
     tab.Add(vizLst.HSizePosZ(5, 5).VSizePosZ(5, 5), "Vizualizations");
     AddVideoItem(&vizLst, "@@freqs", "", Visualization::Thumbnail("@@freqs"), &videoLst);
@@ -63,19 +62,11 @@ Page3::Page3(KarData& data, GatherDlg& gatherDlg, String gatherKey) :
     gatherBtn << [=] { GatherVideos(); };
     gatherBtn.Disable();
     gatherBtn.Hide();
-    gatherDlg.WhenVideoAdded << [this](int i, String path, String tnPath, Image img) {
-        if (i == 0) {
-            videoLst.ClearChildren();
-            vidCount = 0;
-        }
-        ++vidCount;
-        AddVideoItem(&videoLst, path, tnPath, img, &vizLst);
-    };
-    
+
     nextBtn << [=] {
         this->data.timedLyrics = LyricsTransformer::RawToUntimed(this->data);
         this->data.infoFilePath = AppIdentity::TempFileName(".json");
-        
+
         FileSel fsel;
         String projectDir{Config::Get(PROJECT_DIR, GetHomeDirectory())};
         if (projectDir.IsEmpty()) projectDir = Config::Get(MUSIC_DIR);
@@ -94,6 +85,10 @@ Page3::Page3(KarData& data, GatherDlg& gatherDlg, String gatherKey) :
             }
         }
     };
+}
+
+Page3::~Page3() {
+    StopGather(true);
 }
 
 void Page3::Layout() {
@@ -134,8 +129,110 @@ void Page3::GatherVideos() {
     fsel.Type("MP4 Videos", "*.mp4");
     fsel <<= Config::Get(VIDEO_DIR, GetHomeDirectory());
     if(fsel.ExecuteSelectDir()) {
-        gatherDlg.Run(~fsel);
-        if (vidCount) Config::Set(VIDEO_DIR, ~fsel);
+        StartGather(~fsel);
+    }
+}
+
+void Page3::StartGather(String videoDir) {
+    StopGather(true);
+    gatherPaths = VideoCatalog::FindVideoFiles(videoDir);
+    if (gatherPaths.IsEmpty()) {
+        PromptOK("No videos found.");
+        return;
+    }
+
+    auto res = PromptYesNoCancel(Format("Found %d videos. Would you like to "
+                                    "keep all existing thumbnails?", gatherPaths.GetCount()));
+    overwriteTN = res != 1;
+    if (res == -1) {
+        PromptOK("Operation cancelled.");
+        return;
+    }
+
+    Config::Set(VIDEO_DIR, videoDir);
+    videoLst.ClearChildren();
+    videoLst.ClearHighlights();
+    vidCount = 0;
+    gatherIndex = 0;
+    gathering = true;
+    gatherBtn.SetLabel("Gathering...");
+    gatherBtn.Disable();
+    SetTimeCallback(1, [=] { GatherNextVideo(); }, gatherTimerId);
+}
+
+void Page3::StopGather(bool killProcess) {
+    KillTimeCallback(gatherTimerId);
+    if (killProcess && gatherProcess.IsRunning()) {
+        gatherProcess.Kill();
+    }
+    gathering = false;
+}
+
+void Page3::StopGathering() {
+    StopGather(true);
+    gatherBtn.SetLabel("Find Videos");
+    gatherBtn.Enable();
+}
+
+void Page3::GatherNextVideo() {
+    if (!gathering) return;
+    while (gatherIndex < gatherPaths.GetCount()) {
+        String path = gatherPaths[gatherIndex];
+        if (VideoCatalog::HasThumbnail(path)) {
+            if (!overwriteTN && AddGatheredVideo(path)) {
+                ++gatherIndex;
+                SetTimeCallback(1, [=] { GatherNextVideo(); }, gatherTimerId);
+                return;
+            }
+            VideoCatalog::DeleteThumbnail(path);
+        }
+
+        Vector<String> args = VideoCatalog::BuildThumbnailCommand(path);
+        if (gatherProcess.Start(ffmpeg, args, nullptr, nullptr)) {
+            PollGatherProcess();
+            return;
+        }
+
+        ++gatherIndex;
+    }
+    FinishGather();
+}
+
+void Page3::PollGatherProcess() {
+    SetTimeCallback(100, [=] {
+        String output;
+        if (gatherProcess.Read(output) || gatherProcess.IsRunning()) {
+            PollGatherProcess();
+            return;
+        }
+
+        if (gatherProcess.GetExitCode() == 0) {
+            AddGatheredVideo(gatherPaths[gatherIndex]);
+        }
+        ++gatherIndex;
+        GatherNextVideo();
+    }, gatherTimerId);
+}
+
+bool Page3::AddGatheredVideo(String path) {
+    String tnPath = VideoCatalog::ThumbnailPath(path);
+    Image img = VideoCatalog::LoadThumbnail(path);
+    if (!img) return false;
+    ++vidCount;
+    AddVideoItem(&videoLst, path, tnPath, img, &vizLst);
+    if (vidCount == 1) {
+        videoLst.Highlight(0);
+        tab.Set(0);
+    }
+    return true;
+}
+
+void Page3::FinishGather() {
+    StopGather(false);
+    gatherBtn.SetLabel("Find Videos");
+    gatherBtn.Enable();
+    if (!vidCount) {
+        PromptOK("No usable videos found.");
     }
 }
 
@@ -200,6 +297,7 @@ void Page3::Reset() {
 }
 
 void Page3::SaveData() {
+    StopGather(true);
     gatherBtn.Disable();
     gatherBtn.Hide();
 }
