@@ -40,5 +40,5 @@ Croon will not add import support for older legacy product metadata or other leg
 
 ## Deferred Decisions
 
-- Whether to replace AZLyrics scraping with a different lyrics provider. Until a reliable provider API is chosen, AZLyrics remains an internal implementation detail behind `LyricsDownloadService`, provider-neutral URL/extraction infrastructure is preserved for future work, and the user-facing download workflow stays opaque.
+- Whether to replace scraping with a reliable lyrics provider API. Until a reliable API is chosen, scraped providers remain internal implementation details behind `LyricsDownloadService`; AZLyrics is tried first, Genius and SongLyrics are fallback candidates, and the user-facing download workflow stays opaque.
 - Whether to expand `VideoCatalog` into a `VideoLibraryCache` service for shared video-library state, thumbnail reuse policy, and cross-session cache behavior. Incremental video picker loading handles the current responsiveness problem, so this is no longer required just to avoid picker startup blocking.

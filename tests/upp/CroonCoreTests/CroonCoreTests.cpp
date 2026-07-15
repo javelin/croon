@@ -9,10 +9,13 @@ using namespace Upp;
 #include <Croon/Constants.h>
 #include <Croon/AppIdentity.h>
 #include <Croon/AzLyricsProvider.h>
+#include <Croon/GeniusLyricsProvider.h>
 #include <Croon/KarData.h>
+#include <Croon/LyricsProviderTools.h>
 #include <Croon/LyricsTransformer.h>
 #include <Croon/LrcGenerator.h>
 #include <Croon/ProjectSerializer.h>
+#include <Croon/SongLyricsProvider.h>
 #include <Croon/SubtitleGenerator.h>
 #include <Croon/SubtitleLineProcessor.h>
 #include <Croon/VocalPart.h>
@@ -141,6 +144,20 @@ CONSOLE_APP_MAIN
 	Check(!AzLyricsProvider::ExtractLyrics("<html>No lyrics here</html>", extractedLyrics),
 		"AzLyricsProvider rejects pages without a lyric block");
 	Check(extractedLyrics.IsEmpty(), "AzLyricsProvider clears output on extraction failure");
+	Check(LyricsProviderTools::HyphenSlug("After All (Live Remastered)") == "after-all",
+		"LyricsProviderTools removes common version suffixes");
+	Check(GeniusLyricsProvider::BuildUrl("Just The Way You Are", "Billy Joel") == "https://genius.com/billy-joel-just-the-way-you-are-lyrics",
+		"GeniusLyricsProvider builds hyphenated URL");
+	Check(GeniusLyricsProvider::BuildUrl("September", "Earth, Wind & Fire") == "https://genius.com/earth-wind-fire-september-lyrics",
+		"GeniusLyricsProvider handles ampersand artist punctuation");
+	Check(GeniusLyricsProvider::ExtractLyrics("<div data-lyrics-container=\"true\">First<br/>Second</div>", extractedLyrics),
+		"GeniusLyricsProvider extracts lyric containers");
+	Check(extractedLyrics == "First\nSecond", "GeniusLyricsProvider cleans extracted lyric lines");
+	Check(SongLyricsProvider::BuildUrl("If", "Bread") == "https://www.songlyrics.com/bread/if-lyrics/",
+		"SongLyricsProvider builds provider URL");
+	Check(SongLyricsProvider::ExtractLyrics("<p id=\"songLyricsDiv\">First<br />Second</p>", extractedLyrics),
+		"SongLyricsProvider extracts song lyric block");
+	Check(extractedLyrics == "First\nSecond", "SongLyricsProvider cleans extracted lyric lines");
 
 	String freqFilter = Visualization::Filter("@@freqs", "subtitles.ass", true);
 	Check(freqFilter.Find("showfreqs") >= 0, "freq visualization uses showfreqs");
