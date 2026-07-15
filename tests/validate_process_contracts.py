@@ -409,6 +409,8 @@ def main() -> None:
     loader_h = (root / "ProjectLoader.h").read_text()
     if "MediaProcessRunner process;" not in loader_h:
         fail("ProjectLoader does not use MediaProcessRunner")
+    if "void StopLoading();" not in loader_h:
+        fail("ProjectLoader does not expose background loading stop")
     if "Config::Get(FFMPEG_LOCATION)" in loader_h:
         fail("ProjectLoader.h performs inline configuration lookup")
 

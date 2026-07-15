@@ -274,10 +274,13 @@ def main() -> None:
     for needle in [
         "RTHelper rth",
         "ProjectList::ProjectList(KarData& data, WizardDlg& wizardDlg) : data(data), wizardDlg(wizardDlg)",
+        "InstallListHandlers();",
         "loader.WhenProjectLoaded",
+        "AddLoadedProject(path, title, artist, lyrics, thumbnail)",
         "OpenProjectDlg opDlg",
         "AppAudioPlayer::Open(data.audioFilePath)",
         "RecentProjectService::SavePaths(vs)",
+        "loader.ProjectPaths()",
         "ConvertDlg conDlg",
         "wizardDlg.Run(conDlg.GetConvertedFile()",
         "AppIdentity::ProjectTypeName()",

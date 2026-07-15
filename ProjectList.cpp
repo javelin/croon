@@ -9,6 +9,18 @@
 
 using namespace Upp;
 
+namespace {
+
+void AddUniquePath(Vector<String>& paths, const String& path) {
+    if (path.IsEmpty()) return;
+    for (const auto& existing : paths) {
+        if (existing == path) return;
+    }
+    paths.Add(path);
+}
+
+}
+
 #define IMAGECLASS CroonImg
 #define IMAGEFILE <Croon/Croon.iml>
 #include <Draw/iml_header.h>
@@ -84,103 +96,111 @@ ProjectList::ProjectList(KarData& data, WizardDlg& wizardDlg) : data(data), wiza
             projects.Clear();
             projectLst.ClearChildren();
             clearBtn.Enable(!projects.IsEmpty());
+            recentProjectsCleared = true;
+            removedProjectPaths.Clear();
+            loader.StopLoading();
         }
     };
     projectLst.SetOrientation(ListCtrl::VerticalGrid, 250, 70);
+    InstallListHandlers();
     loader.WhenProjectLoaded << [this] (
         String path, String title, String artist, String lyrics, Image thumbnail) {
-        projects.Add(*(new ProjectItem(path,
-                                        time(0),
-                                        title,
-                                        artist,
-                                        lyrics,
-                                        Rescale(thumbnail, ProjectItemCtrl::GetImageSize()))));
-        projectLst.AddChild(*(new ProjectItemCtrl(projects.back())), false);
-        projectLst.Scroll();
+        AddLoadedProject(path, title, artist, lyrics, thumbnail);
     };
     loader.WhenDoneLoading << [this] {
         loader.Hide();
         clearBtn.Enable(!projects.IsEmpty());
-        projectLst.ConsumeMouseEvents().WhenLeftDouble = [this] (int index, Ctrl* ctrl) {
-            if (index < 0 || index >= projects.GetCount()) return;
-            const auto& item = projects[index];
-            KarData tdata;
-            OpenProjectDlg opDlg;
-            if (opDlg.Run(item.path, tdata) == IDOK) {
-                WhenLoadingProject();
-                this->data = pick(tdata);
-                UpdateList();
-                if (!AppAudioPlayer::Open(this->data.audioFilePath)) {
-                    Exclamation("Player is unable to load audio file. You will not be able to set timing!");
-                }
-                WhenProjectLoaded();
-            }
-        };
-        projectLst.WhenRightUp = [this] (int index, Ctrl* ctrl) {
-            if (index < 0 || index >= projects.GetCount()) return;
-            MenuBar::Execute([this, index](Bar& bar) {
-                bar.Add(TextTools::ShortenMiddle(projects[index].path, 255), CroonImg::Icon16(), [this, index] {
-                    const auto& item = projects[index];
-                    auto msg = Format("{{1:9 Project:: %s:: Title:: %s:: Artist:: %s}}",
-                                        DeQtf(item.path),
-                                        DeQtf(item.title),
-                                        DeQtf(item.artist));
-                    if (Prompt(item.title.IsEmpty() ? "Untitled":item.title,
-                            item.img, msg, "Open", "Cancel") == 1) {
-                        KarData tdata;
-                        OpenProjectDlg opDlg;
-                        if (opDlg.Run(item.path, tdata) == IDOK) {
-                            WhenLoadingProject();
-                            this->data = pick(tdata);
-                            UpdateList();
-                            if (!AppAudioPlayer::Open(this->data.audioFilePath)) {
-                                Exclamation("Player is unable to load audio file. You will not be able to set timing!");
-                            }
-                            WhenProjectLoaded();
-                        }
-                    }
-                });
-                bar.Add("Open Project", CtrlImg::open(), [this, index] {
-                    const auto& item = projects[index];
-                    KarData tdata;
-                    OpenProjectDlg opDlg;
-                    if (opDlg.Run(item.path, tdata) == IDOK) {
-                        WhenLoadingProject();
-                        this->data = pick(tdata);
-                        UpdateList();
-                        if (!AppAudioPlayer::Open(this->data.audioFilePath)) {
-                            Exclamation("Player is unable to load audio file. You will not be able to set timing!");
-                        }
-                        WhenProjectLoaded();
-                    }
-                });
-                bar.Separator();
-                bar.Add("Delete Project", CroonImg::Trash(), [this, index] {
-                    if (PromptYesNoCancel("Are you sure you want to [* permanently] delete this project?") == 1) {
-                        const auto& item = projects[index];
-                        if (!FileDelete(item.path)) {
-                            ErrorOK("Unable to delete project.");
-                        }
-                        else {
-                            projects.Remove(index);
-                            PromptOK("Project deleted.");
-                            UpdateListView();
-                        }
-                    }
-                });
-            });
-        };
         projectLst.FocusItem(0);
     };
     loader.LoadProjects();
 }
 
 ProjectList::~ProjectList() {
+    loader.StopLoading();
     Vector<String> vs;
     for (const auto& project : projects) {
-        vs.Add(project.path);
+        AddUniquePath(vs, project.path);
+    }
+    if (!recentProjectsCleared) {
+        for (const auto& path : loader.ProjectPaths()) {
+            if (!IsRemovedProject(path)) AddUniquePath(vs, path);
+        }
     }
     RecentProjectService::SavePaths(vs);
+}
+
+void ProjectList::InstallListHandlers() {
+    projectLst.ConsumeMouseEvents().WhenLeftDouble = [this] (int index, Ctrl* ctrl) {
+        OpenProjectItem(index);
+    };
+    projectLst.WhenRightUp = [this] (int index, Ctrl* ctrl) {
+        ShowProjectMenu(index);
+    };
+}
+
+void ProjectList::AddLoadedProject(String path, String title, String artist, String lyrics, Image thumbnail) {
+    if (ContainsProject(path)) return;
+    projects.Add(*(new ProjectItem(path,
+                                    time(0),
+                                    title,
+                                    artist,
+                                    lyrics,
+                                    Rescale(thumbnail, ProjectItemCtrl::GetImageSize()))));
+    projectLst.AddChild(*(new ProjectItemCtrl(projects.back())), false);
+    clearBtn.Enable(true);
+    projectLst.Scroll();
+}
+
+void ProjectList::OpenProjectItem(int index) {
+    if (index < 0 || index >= projects.GetCount()) return;
+    const auto& item = projects[index];
+    KarData tdata;
+    OpenProjectDlg opDlg;
+    if (opDlg.Run(item.path, tdata) == IDOK) {
+        WhenLoadingProject();
+        data = pick(tdata);
+        UpdateList();
+        if (!AppAudioPlayer::Open(data.audioFilePath)) {
+            Exclamation("Player is unable to load audio file. You will not be able to set timing!");
+        }
+        WhenProjectLoaded();
+    }
+}
+
+void ProjectList::ShowProjectMenu(int index) {
+    if (index < 0 || index >= projects.GetCount()) return;
+    MenuBar::Execute([this, index](Bar& bar) {
+        bar.Add(TextTools::ShortenMiddle(projects[index].path, 255), CroonImg::Icon16(), [this, index] {
+            const auto& item = projects[index];
+            auto msg = Format("{{1:9 Project:: %s:: Title:: %s:: Artist:: %s}}",
+                                DeQtf(item.path),
+                                DeQtf(item.title),
+                                DeQtf(item.artist));
+            if (Prompt(item.title.IsEmpty() ? "Untitled":item.title,
+                    item.img, msg, "Open", "Cancel") == 1) {
+                OpenProjectItem(index);
+            }
+        });
+        bar.Add("Open Project", CtrlImg::open(), [this, index] {
+            OpenProjectItem(index);
+        });
+        bar.Separator();
+        bar.Add("Delete Project", CroonImg::Trash(), [this, index] {
+            if (PromptYesNoCancel("Are you sure you want to [* permanently] delete this project?") == 1) {
+                const auto& item = projects[index];
+                if (!FileDelete(item.path)) {
+                    ErrorOK("Unable to delete project.");
+                }
+                else {
+                    String removedPath = item.path;
+                    projects.Remove(index);
+                    AddUniquePath(removedProjectPaths, removedPath);
+                    PromptOK("Project deleted.");
+                    UpdateListView();
+                }
+            }
+        });
+    });
 }
 
 void ProjectList::NewProject() {
@@ -258,6 +278,20 @@ ProjectItem* ProjectList::FindProject(String path, int& index) {
     }
     index = -1;
     return nullptr;
+}
+
+bool ProjectList::ContainsProject(String path) const {
+    for (const auto& project : projects) {
+        if (project.path == path) return true;
+    }
+    return false;
+}
+
+bool ProjectList::IsRemovedProject(String path) const {
+    for (const auto& removed : removedProjectPaths) {
+        if (removed == path) return true;
+    }
+    return false;
 }
 
 void ProjectList::ProjectsToListCtrl() {
