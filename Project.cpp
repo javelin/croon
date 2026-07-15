@@ -190,9 +190,10 @@ void Project::Populate() {
 
 void Project::SaveProject() {
     if (open && dirty) {
-        SaveProjectDlg().Run(data);
-        SetDirty(false);
-        WhenProjectSaved();
+        if (SaveProjectDlg().Run(data) == IDOK) {
+            SetDirty(false);
+            WhenProjectSaved();
+        }
     }
 }
 
@@ -220,9 +221,10 @@ void Project::SaveProjectAs() {
 }
 
 void Project::UpdateLyricsData() {
+    bool changed = false;
     auto rawLyrics = TrimBoth((String)~lyricsEd);
     if (data.rawLyrics != rawLyrics) {
-        dirty = true;
+        changed = true;
         data.rawLyrics = TrimBoth((String)~lyricsEd);
     }
     auto& vtl0 = data.timedLyrics;
@@ -235,7 +237,7 @@ void Project::UpdateLyricsData() {
             if (tl0.lyrics != tl1.lyrics) break;
             ++data.timed;
         }
-        dirty = true;
+        changed = true;
     }
     vtl1[0].time = vtl0[0].time;
     for (int i = 1; i <= data.timed; ++i) {
@@ -243,7 +245,7 @@ void Project::UpdateLyricsData() {
     }
     data.timedLyrics = pick(vtl1);
     previewRT.SetQTF(Format("[2 %s]", SubtitleGenerator::ToRichAss(data)));
-    saveBtn.Enable(dirty);
+    if (changed) SetDirty();
 }
 
 bool Project::CloseProject(bool quitting) {
@@ -287,7 +289,7 @@ void Project::Timing() {
     UpdateLyricsData();
     TimingDlg tDlg;
     tDlg.Run(data);
-    SetDirty(tDlg.IsDirty());
+    SetDirty(dirty || tDlg.IsDirty());
     previewRT.SetQTF(Format("[2 %s]", SubtitleGenerator::ToRichAss(data)));
     lyricsEd.SetData(data.rawLyrics);
     exportBtn.Enable(!data.title.IsEmpty() &&
@@ -327,6 +329,7 @@ void Project::ReplaceAudio() {
             data.audioFilePath = conDlg.GetConvertedFile();
             data.origAudioFilePath = ~fsel;
             data.duration = conDlg.GetDurationn();
+            SetDirty();
             PromptOK("Audio replaced successfully. You may want to review the timing before exporting HD video.");
         }
     }

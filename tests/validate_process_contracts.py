@@ -401,6 +401,7 @@ def main() -> None:
         "FfmpegProjectCommandBuilder::SaveWithVisualization(*data, tempFilename)",
         "FfmpegProjectCommandBuilder::SaveWithBackgroundVideo(*data, tempFilename)",
         "process.Start(ffmpeg",
+        "Exclamation(\"Unable to save project!\");\n        Break(IDCANCEL);",
     ]:
         if needle not in save_impl:
             fail(f"SaveProjectDlg.cpp missing save workflow {needle}")

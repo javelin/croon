@@ -103,7 +103,7 @@ void SaveProjectDlg::StartSave() {
                             FfmpegProjectCommandBuilder::SaveWithBackgroundVideo(*data, tempFilename));
     if (!res) {
         Exclamation("Unable to save project!");
-        Break(IDOK);
+        Break(IDCANCEL);
     }
     else {
         PollProgress();
