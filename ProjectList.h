@@ -54,12 +54,20 @@ public:
     Event<> WhenProjectLoaded;
     
 private:
+    void InstallListHandlers();
+    void AddLoadedProject(String path, String title, String artist, String lyrics, Image thumbnail);
+    void OpenProjectItem(int index);
+    void ShowProjectMenu(int index);
     ProjectItem* FindProject(String path, int& index);
+    bool ContainsProject(String path) const;
+    bool IsRemovedProject(String path) const;
     void ProjectsToListCtrl();
     void UpdateList();
         
 private:
     Vector<ProjectItem> projects;
+    Vector<String> removedProjectPaths;
+    bool recentProjectsCleared{false};
     KarData& data;
     WizardDlg& wizardDlg;
 };

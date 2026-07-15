@@ -5,6 +5,8 @@ class ProjectLoader : public ProgressIndicator {
 public:
     ProjectLoader();
     void LoadProjects();
+    void StopLoading();
+    const Vector<String>& ProjectPaths() const { return projects; }
     Event<String /*path*/,
             String /*title*/,
             String /*artist*/,

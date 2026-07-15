@@ -23,6 +23,7 @@ ProjectLoader::ProjectLoader() {
 }
 
 void ProjectLoader::LoadProjects() {
+    StopLoading();
     projects = RecentProjectService::LoadPaths();
     curPath = 0;
     infoFilePath = AppIdentity::TempFileName(".json");
@@ -34,6 +35,13 @@ void ProjectLoader::LoadProjects() {
     }
     else {
         WhenDoneLoading();
+    }
+}
+
+void ProjectLoader::StopLoading() {
+    KillTimeCallback(timerId);
+    if (process.IsRunning()) {
+        process.Kill();
     }
 }
 
