@@ -52,7 +52,6 @@ void AddUniquePath(Vector<String>& paths, const String& path) {
 #include "ConvertDlg.h"
 #include "OpenProjectDlg.h"
 #include "AppAudioPlayer.h"
-#include "GatherDlg.h"
 #include "SaveProjectDlg.h"
 #include "VidThumbnail.h"
 #include "Page1.h"

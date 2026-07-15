@@ -32,10 +32,13 @@ Croon runtime UI code owns and passes `KarData` explicitly from `RunCroon` throu
 
 ### VideoCatalog Owns Video Discovery
 
-Configured video directory enumeration, cached video listing, thumbnail file path construction, and cached thumbnail image loading belong behind `VideoCatalog`. `Page3` may still bind controls directly until a later cache service moves expensive thumbnail reuse and background scanning out of constructors.
+Configured video directory enumeration, cached video listing, thumbnail file path construction, and cached thumbnail image loading belong behind `VideoCatalog`. `Page3` owns the current incremental picker flow and streams discovered video thumbnails into the picker without the retired modal gather dialog. A later cache service may still move thumbnail reuse and shared candidate state out of the UI layer.
+
+### No Legacy Product Artifact Import
+
+Croon will not add import support for older legacy product metadata or other legacy product artifacts outside the `.croon` compatibility policy. Legacy product names remain migrated when Croon creates or owns artifacts, and `.croon` metadata compatibility remains the supported backward-compatibility surface.
 
 ## Deferred Decisions
 
-- Whether Croon needs backward-compatible import of legacy product artifacts outside the `.croon` metadata compatibility policy.
 - Whether to replace AZLyrics scraping with a different lyrics provider. Until a reliable provider API is chosen, AZLyrics remains an internal implementation detail behind `LyricsDownloadService`, provider-neutral URL/extraction infrastructure is preserved for future work, and the user-facing download workflow stays opaque.
-- Whether to expand `VideoCatalog` into a `VideoLibraryCache` service for startup-time or background video discovery, thumbnail reuse, and shared video candidates across `WizardDlg` and `VideoDlg`. This remains the preferred future answer to expensive video directory scans; eager dialog construction may continue to hide that cost until the cache service exists.
+- Whether to expand `VideoCatalog` into a `VideoLibraryCache` service for shared video-library state, thumbnail reuse policy, and cross-session cache behavior. Incremental video picker loading handles the current responsiveness problem, so this is no longer required just to avoid picker startup blocking.

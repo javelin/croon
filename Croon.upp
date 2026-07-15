@@ -50,8 +50,6 @@ file
 	FfmpegProjectCommandBuilder.h,
 	FfmpegThumbnailCommandBuilder.cpp,
 	FfmpegThumbnailCommandBuilder.h,
-	GatherDlg.cpp,
-	GatherDlg.h,
 	GenreCatalog.cpp,
 	GenreCatalog.h,
 	KarData.cpp,
