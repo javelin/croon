@@ -52,6 +52,16 @@ def main() -> None:
     if "FfmpegCommandBuilder::" in export_cpp:
         fail("ExportDlg.cpp still calls broad ffmpeg command builder")
 
+    project_cpp = (root / "Project.cpp").read_text()
+    for needle in [
+        "void Project::ExportLrc()",
+        "LrcGenerator::ToLrc(data)",
+        'sub.Add("LRC File..."',
+        'fsel.Type("LRC Lyrics (*.lrc)", "*.lrc")',
+    ]:
+        if needle not in project_cpp:
+            fail(f"Project.cpp missing LRC export token {needle}")
+
     if (root / "Util.cpp").exists() or (root / "Util.h").exists():
         fail("Util compatibility facade should not exist")
 

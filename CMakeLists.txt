@@ -131,6 +131,7 @@ if(CROON_UMK_EXECUTABLE)
             "${CMAKE_CURRENT_SOURCE_DIR}/FfmpegThumbnailCommandBuilder.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/KarData.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/LyricsTransformer.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/LrcGenerator.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/ProjectSerializer.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/RecentProjectService.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/SubtitleGenerator.cpp"

@@ -60,6 +60,8 @@ file
 	ListCtrl.h,
 	LyricsDownloadService.cpp,
 	LyricsDownloadService.h,
+	LrcGenerator.cpp,
+	LrcGenerator.h,
 	LyricsTransformer.cpp,
 	LyricsTransformer.h,
 	LyricsEditor.cpp,

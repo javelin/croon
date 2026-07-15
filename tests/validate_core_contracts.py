@@ -562,6 +562,9 @@ def main() -> None:
     require(subtitle_generator_h, "ToAss", "SubtitleGenerator ASS contract")
     require(subtitle_generator_h, "ToRichAss", "SubtitleGenerator rich ASS contract")
 
+    lrc_generator_h = (root / "LrcGenerator.h").read_text()
+    require(lrc_generator_h, "ToLrc", "LrcGenerator LRC contract")
+
     media_process_runner_h = (root / "MediaProcessRunner.h").read_text()
     for method in [
         "Start",
@@ -609,6 +612,18 @@ def main() -> None:
     reject(subtitle_generator_cpp, "String hilite = ResolveStyle", "SubtitleGenerator utility style wrapper dependency")
     reject(subtitle_generator_cpp, "FormatTimeASS", "SubtitleGenerator utility time wrapper dependency")
 
+    lrc_generator_cpp = (root / "LrcGenerator.cpp").read_text()
+    reject(lrc_generator_cpp, '#include "Croon.h"', "LrcGenerator app shell dependency")
+    require(lrc_generator_cpp, "#include <Draw/Draw.h>", "LrcGenerator direct image type dependency")
+    require(lrc_generator_cpp, '#include "LrcGenerator.h"', "LrcGenerator direct self dependency")
+    require(lrc_generator_cpp, '#include "SubtitleLineProcessor.h"', "LrcGenerator metadata processing dependency")
+    require(lrc_generator_cpp, '#include "VocalPart.h"', "LrcGenerator vocal part dependency")
+    require(lrc_generator_cpp, "SubtitleLineProcessor::ProcessMetadata", "LrcGenerator processed metadata export")
+    require(lrc_generator_cpp, "std::round(seconds * 100.0)", "LrcGenerator centisecond timestamp rounding")
+    require(lrc_generator_cpp, "************", "LrcGenerator count-in stars")
+    require(lrc_generator_cpp, "VocalPartPrefix", "LrcGenerator vocal part prefix helper")
+    require(lrc_generator_cpp, "AssignedVocalPart", "LrcGenerator explicit assignment helper")
+
     rich_text_builder_h = (root / "RichTextBuilder.h").read_text()
     require(rich_text_builder_h, "struct RTHelper", "RichTextBuilder compatibility type")
     require(rich_text_builder_h, "Fmt(String s)", "RichTextBuilder QTF format contract")
@@ -654,6 +669,7 @@ def main() -> None:
     require(core_tests_cpp, "SubtitleLineProcessor::ProcessMetadata", "core tests direct metadata processing dependency")
     require(core_tests_cpp, "SubtitleGenerator::ToAss", "core tests direct ASS generator dependency")
     require(core_tests_cpp, "SubtitleGenerator::ToRichAss", "core tests direct rich ASS generator dependency")
+    require(core_tests_cpp, "LrcGenerator::ToLrc", "core tests direct LRC generator dependency")
     require(core_tests_cpp, "VocalPartStyle::Next", "core tests direct vocal part helper dependency")
     require(core_tests_cpp, "VocalPartStyle::ToParts", "core tests vocal part tuple contract")
     require(core_tests_cpp, 'richAss.Find("@4")', "core tests rich ASS formatting assertion")
@@ -661,7 +677,12 @@ def main() -> None:
             "core tests 4-line subtitle page limit")
     require(core_tests_cpp, 'CountOccurrences(SubtitleGenerator::ToAss(exportData, 3), "Dialogue: 0,0:00:05.00") == 3',
             "core tests 3-line subtitle page limit")
+    require(core_tests_cpp, '"[00:23.15][1]: Lately all my thoughts have gone to you"',
+            "core tests LRC vocal prefix assertion")
+    require(core_tests_cpp, '"[00:32.00](Young love)"',
+            "core tests LRC backup vocal assertion")
     require(core_tests_upp, "LyricsTransformer.cpp", "core tests lyrics transformer implementation")
+    require(core_tests_upp, "LrcGenerator.cpp", "core tests LRC generator implementation")
     require(core_tests_upp, "SubtitleGenerator.cpp", "core tests subtitle generator implementation")
     require(core_tests_upp, "SubtitleLineProcessor.cpp", "core tests subtitle line processor implementation")
     require(core_tests_upp, "VocalPart.cpp", "core tests vocal part implementation")
@@ -891,7 +912,7 @@ def main() -> None:
         "OpenProjectDlg.cpp": ["LyricsTransformer::TimedToRaw"],
         "Page2.cpp": ["LyricsDownloadService::Download", "TextTools::CleanSpacing"],
         "Page3.cpp": ["LyricsTransformer::RawToUntimed"],
-        "Project.cpp": ["LyricsTransformer::RawToUntimed", "SubtitleGenerator::ToRichAss"],
+        "Project.cpp": ["LyricsTransformer::RawToUntimed", "SubtitleGenerator::ToRichAss", "LrcGenerator::ToLrc"],
         "ProjectList.cpp": ["LyricsTransformer::TimedToRaw", "TextTools::ShortenMiddle"],
         "ProjectLoader.cpp": ["LyricsTransformer::TimedToRaw"],
         "TimingDlg.cpp": ["LyricsTransformer::TimedToRaw"],
@@ -988,6 +1009,10 @@ def main() -> None:
     require(project_cpp, "saveDlg.Run(savePath, data)", "Project injected data save-as")
     require(project_cpp, "LyricsTransformer::RawToUntimed(data)", "Project injected data lyrics update")
     require(project_cpp, "expDlg.Run(data, outputPath, length)", "Project injected data export")
+    require(project_cpp, "void Project::ExportLrc()", "Project LRC export implementation")
+    require(project_cpp, "fsel.Type(\"LRC Lyrics (*.lrc)\", \"*.lrc\")", "Project LRC save type")
+    require(project_cpp, "SaveFile(outputPath, LrcGenerator::ToLrc(data))", "Project LRC file write")
+    require(project_cpp, "sub.Add(\"LRC File...\"", "Project LRC menu entry")
     require(project_cpp, "SetDirty(dirty || tDlg.IsDirty())", "Project timing preserves existing dirty state")
     require(project_cpp, "data.origAudioFilePath = ~fsel;\n            data.duration = conDlg.GetDurationn();\n            SetDirty();",
             "Project replacement audio marks project dirty")
@@ -1002,6 +1027,7 @@ def main() -> None:
     reject(project_h, "    Project(KarData& data);", "Project compatibility video declaration")
     reject(project_h, "~Project() { CleanUp(); }", "Project inline cleanup destructor")
     require(project_h, "Project(KarData& data, VideoDlg& videoDlg)", "Project injected video declaration")
+    require(project_h, "void ExportLrc();", "Project LRC export declaration")
     require(project_h, "virtual ~Project();", "Project destructor declaration")
     require(project_h, "KarData& data", "Project injected data member")
     require(project_h, "VideoDlg& videoDlg", "Project injected video member")

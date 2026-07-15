@@ -101,6 +101,8 @@ def main() -> None:
         "GenreCatalog.h" not in upp or
         "LyricsDownloadService.cpp" not in upp or
         "LyricsDownloadService.h" not in upp or
+        "LrcGenerator.cpp" not in upp or
+        "LrcGenerator.h" not in upp or
         "LyricsTransformer.cpp" not in upp or
         "LyricsTransformer.h" not in upp or
         "RecentProjectService.cpp" not in upp or

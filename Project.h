@@ -24,6 +24,7 @@ public:
     void VocalParts();
     void ReplaceAudio();
     void ExportVideo(int length=1);
+    void ExportLrc();
     Event<bool> WhenDirty;
     Event<> WhenProjectSaved;
     Event<Bar&> MainMenu();

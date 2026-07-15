@@ -11,6 +11,7 @@ using namespace Upp;
 #include <Croon/AzLyricsProvider.h>
 #include <Croon/KarData.h>
 #include <Croon/LyricsTransformer.h>
+#include <Croon/LrcGenerator.h>
 #include <Croon/ProjectSerializer.h>
 #include <Croon/SubtitleGenerator.h>
 #include <Croon/SubtitleLineProcessor.h>
@@ -447,6 +448,41 @@ CONSOLE_APP_MAIN
 	bucData.timedLyrics.Add({1.0, "~echo"});
 	Check(SubtitleGenerator::ToAss(bucData, 2).Find(",BUC,") >= 0,
 		"SubtitleGenerator uses BUC style for backup vocals");
+
+	KarData lrcData;
+	lrcData.duration = 80.0;
+	lrcData.title = "Young Love";
+	lrcData.artist = "Air Supply";
+	lrcData.owner = "Arista Records";
+	lrcData.year = 2026;
+	lrcData.timedLyrics.Add({lrcData.duration, ""});
+	lrcData.timedLyrics.Add({0.0, "@Title"});
+	lrcData.timedLyrics.Add({10.05, "@Artist"});
+	lrcData.timedLyrics.Add({23.15, ">>{}Lately all my thoughts have gone to you"});
+	lrcData.timedLyrics.Add({27.23, "You know that's true"});
+	lrcData.timedLyrics.Add({32.00, "~Young love"});
+	lrcData.timedLyrics.Add({40.00, "Both voices"});
+	lrcData.timedLyrics.Add({45.00, "Unassigned line"});
+	lrcData.timedLyrics.Add({50.00, "@Copyright"});
+	lrcData.parts.Add(MakeTuple(3, true, false, true));
+	lrcData.parts.Add(MakeTuple(4, false, true, true));
+	lrcData.parts.Add(MakeTuple(6, true, true, true));
+	String lrc = LrcGenerator::ToLrc(lrcData);
+	Check(lrc.Find("[00:00.00]Young Love") >= 0, "LrcGenerator exports processed title metadata");
+	Check(lrc.Find("[00:10.05]Air Supply") >= 0, "LrcGenerator exports processed artist metadata");
+	Check(lrc.Find("************") >= 0, "LrcGenerator converts count-in to stars");
+	Check(lrc.Find("[00:23.15][1]: Lately all my thoughts have gone to you") >= 0,
+		"LrcGenerator prefixes V1 assignments");
+	Check(lrc.Find("[00:27.23][2]: You know that's true") >= 0,
+		"LrcGenerator prefixes V2 assignments");
+	Check(lrc.Find("[00:32.00](Young love)") >= 0,
+		"LrcGenerator wraps backup vocals in parentheses");
+	Check(lrc.Find("[00:40.00][B]: Both voices") >= 0,
+		"LrcGenerator prefixes both-singer assignments");
+	Check(lrc.Find("[00:45.00]Unassigned line") >= 0,
+		"LrcGenerator leaves unassigned lines without vocal prefix");
+	Check(lrc.Find("[00:50.00]℗ 2026 Arista Records") >= 0,
+		"LrcGenerator exports processed copyright metadata");
 
 	if(failures)
 		SetExitCode(1);

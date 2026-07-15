@@ -159,6 +159,7 @@ def main() -> None:
         '#include "ConfigService.h"\n#include "Config.h"',
         '#include "KarData.h"',
         '#include "LyricsTransformer.h"',
+        '#include "LrcGenerator.h"',
         '#include "SubtitleGenerator.h"',
         '#include "TimeFormatter.h"',
         '#include "UiScaler.h"',
@@ -215,6 +216,9 @@ def main() -> None:
         "SetDirty();\n            PromptOK(\"Audio replaced successfully.",
         "std::filesystem::path savePath",
         "ExportDlg expDlg",
+        "void Project::ExportLrc()",
+        "SaveFile(outputPath, LrcGenerator::ToLrc(data))",
+        "sub.Add(\"LRC File...\"",
         "menu.Sub(\"Project\"",
     ]:
         if needle not in project_impl:
