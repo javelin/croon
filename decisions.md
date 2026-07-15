@@ -38,6 +38,10 @@ Configured video directory enumeration, cached video listing, thumbnail file pat
 
 Croon will not add import support for older legacy product metadata or other legacy product artifacts outside the `.croon` compatibility policy. Legacy product names remain migrated when Croon creates or owns artifacts, and `.croon` metadata compatibility remains the supported backward-compatibility surface.
 
+### Disable Live RichText ASS Preview
+
+The editor no longer shows or refreshes the RichText ASS preview tab. Maintaining an eager QTF approximation of ASS is expensive on lyrics/timing changes and less faithful than libass/ffmpeg rendering; a future lightweight preview can reuse the tab area for LRC-formatted lyrics.
+
 ## Deferred Decisions
 
 - Whether to replace scraping with a reliable lyrics provider API. Until a reliable API is chosen, scraped providers remain internal implementation details behind `LyricsDownloadService`; AZLyrics is tried first, Genius and SongLyrics are fallback candidates, and the user-facing download workflow stays opaque.

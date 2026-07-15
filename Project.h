@@ -41,7 +41,6 @@ private:
     
 private:
     DocEdit lyricsEd;
-    RichTextCtrl previewRT;
     String videoPath;
     bool open{false};
     bool dirty{false};

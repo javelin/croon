@@ -77,7 +77,6 @@ def main() -> None:
         '#include "ConfigService.h"\n#include "Config.h"',
         '#include "KarData.h"',
         '#include "LyricsTransformer.h"',
-        '#include "SubtitleGenerator.h"',
         '#include "TimeFormatter.h"',
         '#include "UiScaler.h"',
         '#include "GenreCatalog.h"',
@@ -142,9 +141,11 @@ def main() -> None:
             fail(f"MainWindow.cpp missing main-window workflow {needle}")
 
     project_h = (root / "Project.h").read_text()
-    for runtime_member in ["DocEdit lyricsEd;", "RichTextCtrl previewRT;"]:
+    for runtime_member in ["DocEdit lyricsEd;"]:
         if runtime_member not in project_h:
             fail(f"Project.h missing runtime tab member {runtime_member}")
+    if "RichTextCtrl previewRT;" in project_h:
+        fail("Project.h still declares live ASS preview control")
 
     project_impl = (root / "Project.cpp").read_text()
     if '#include "Croon.h"' in project_impl:
@@ -159,7 +160,6 @@ def main() -> None:
         '#include "KarData.h"',
         '#include "LyricsTransformer.h"',
         '#include "LrcGenerator.h"',
-        '#include "SubtitleGenerator.h"',
         '#include "TimeFormatter.h"',
         '#include "UiScaler.h"',
         '#include "GenreCatalog.h"',
@@ -199,7 +199,7 @@ def main() -> None:
     for needle in [
         "GenreCatalog::List()",
         "Project::Project(KarData& projectData, VideoDlg& videoDialog) : videoPath(\"\"), data(projectData), videoDlg(videoDialog)",
-        "SubtitleGenerator::ToRichAss(data)",
+        "tab.Add(lyricsEd.HSizePosZ(5, 5).VSizePosZ(5, 5), \"Lyrics\")",
         "subtitleLinesDrop.Add(3",
         "data.SetSubtitleLines",
         "subtitleLinesDrop.SetData(data.subtitleLines)",

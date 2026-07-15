@@ -965,7 +965,7 @@ def main() -> None:
         "OpenProjectDlg.cpp": ["LyricsTransformer::TimedToRaw"],
         "Page2.cpp": ["LyricsDownloadService::Download", "TextTools::CleanSpacing"],
         "Page3.cpp": ["LyricsTransformer::RawToUntimed"],
-        "Project.cpp": ["LyricsTransformer::RawToUntimed", "SubtitleGenerator::ToRichAss", "LrcGenerator::ToLrc"],
+        "Project.cpp": ["LyricsTransformer::RawToUntimed", "LrcGenerator::ToLrc"],
         "ProjectList.cpp": ["LyricsTransformer::TimedToRaw", "TextTools::ShortenMiddle"],
         "ProjectLoader.cpp": ["LyricsTransformer::TimedToRaw"],
         "TimingDlg.cpp": ["LyricsTransformer::TimedToRaw"],
@@ -1056,7 +1056,8 @@ def main() -> None:
     reject(project_cpp, "Project::Project(KarData& projectData) : Project(projectData, CompatibilityVideoDlg())", "Project compatibility video wiring")
     require(project_cpp, "Project::Project(KarData& projectData, VideoDlg& videoDialog) : videoPath(\"\"), data(projectData), videoDlg(videoDialog)", "Project injected video constructor")
     require(project_cpp, "videoDlg.Run()", "Project injected video dialog workflow")
-    require(project_cpp, "SubtitleGenerator::ToRichAss(data)", "Project injected data preview")
+    reject(project_cpp, "SubtitleGenerator::ToRichAss(data)", "Project live ASS preview refresh")
+    reject(project_cpp, "previewRT", "Project live ASS preview control")
     require(project_cpp, "SaveProjectDlg().Run(data) == IDOK", "Project save clears dirty only after successful save")
     require(project_cpp, "saveDlg.Run(savePath, data)", "Project injected data save-as")
     require(project_cpp, "LyricsTransformer::RawToUntimed(data)", "Project injected data lyrics update")
@@ -1077,12 +1078,16 @@ def main() -> None:
     reject(project_cpp, "SaveProjectDlg().Run(KarData::GetGlobal()", "Project direct global save access")
     reject(project_cpp, "SubtitleGenerator::ToRichAss(KarData::GetGlobal()", "Project direct global preview access")
     project_h = (root / "Project.h").read_text()
+    reject(project_h, "RichTextCtrl previewRT;", "Project live ASS preview member")
     reject(project_h, "    Project();", "Project default global data declaration")
     reject(project_h, "    Project(KarData& data);", "Project compatibility video declaration")
     reject(project_h, "~Project() { CleanUp(); }", "Project inline cleanup destructor")
     require(project_h, "Project(KarData& data, VideoDlg& videoDlg)", "Project injected video declaration")
     require(project_h, "void ExportLrc();", "Project LRC export declaration")
     require(project_h, "virtual ~Project();", "Project destructor declaration")
+    decisions_md = (root / "decisions.md").read_text()
+    require(decisions_md, "### Disable Live RichText ASS Preview", "disabled live ASS preview decision")
+    require(decisions_md, "future lightweight preview can reuse the tab area for LRC-formatted lyrics", "future LRC preview decision")
     require(project_h, "KarData& data", "Project injected data member")
     require(project_h, "VideoDlg& videoDlg", "Project injected video member")
 

@@ -21,7 +21,6 @@ using namespace Upp;
 #include "KarData.h"
 #include "LyricsTransformer.h"
 #include "LrcGenerator.h"
-#include "SubtitleGenerator.h"
 #include "TimeFormatter.h"
 #include "UiScaler.h"
 #include "GenreCatalog.h"
@@ -77,10 +76,6 @@ Project::Project(KarData& projectData, VideoDlg& videoDialog) : videoPath(""), d
     
     auto updateData = [this] {
         SetDirty();
-        KillTimeCallback(timerId);
-        SetTimeCallback(1000, [this]{
-            previewRT.SetQTF(Format("[2 %s]", SubtitleGenerator::ToRichAss(data)));
-        }, timerId);
     };
     
     titleEd.WhenAction = [this, updateData] {
@@ -157,7 +152,6 @@ Project::Project(KarData& projectData, VideoDlg& videoDialog) : videoPath(""), d
         }, timerId);
     };
     
-    tab.Add(previewRT.HSizePosZ(5, 5).VSizePosZ(5, 5), "ASS Preview");
 }
 
 Project::~Project() {
@@ -175,8 +169,6 @@ void Project::Populate() {
     writerEd.SetData(data.writer);
     videoImg.SetImage(data.videoThumbnail);
     videoImg.Tip(data.origVideoFile);
-    previewRT.SetQTF(Format("[2 %s]", SubtitleGenerator::ToRichAss(data)));
-    
     lyricsEd.SetData(data.rawLyrics);
     exportBtn.Enable(!data.title.IsEmpty() &&
                         !data.artist.IsEmpty() &&
@@ -244,7 +236,6 @@ void Project::UpdateLyricsData() {
         vtl1[i].time = vtl0[i].time;
     }
     data.timedLyrics = pick(vtl1);
-    previewRT.SetQTF(Format("[2 %s]", SubtitleGenerator::ToRichAss(data)));
     if (changed) SetDirty();
 }
 
@@ -290,7 +281,6 @@ void Project::Timing() {
     TimingDlg tDlg;
     tDlg.Run(data);
     SetDirty(dirty || tDlg.IsDirty());
-    previewRT.SetQTF(Format("[2 %s]", SubtitleGenerator::ToRichAss(data)));
     lyricsEd.SetData(data.rawLyrics);
     exportBtn.Enable(!data.title.IsEmpty() &&
                         !data.artist.IsEmpty() &&

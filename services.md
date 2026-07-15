@@ -24,7 +24,7 @@ This file records service boundaries expected during migration. Some services be
 - `LyricsDownloadService`: internal lyrics provider chain, provider-neutral URL and extraction delegation, download status reporting, and opaque download workflow. Provider-specific naming stays inside individual provider classes.
 - `LyricsProviderTools`: shared lyrics-provider slug normalization and HTML lyric cleanup helpers.
 - `RecentProjectService`: recent project list persistence and normalization.
-- `RichTextBuilder`: QTF/RichText construction helper for shared list and subtitle previews.
+- `RichTextBuilder`: QTF/RichText construction helper retained for generated rich text formatting. The live ASS preview tab is disabled; a future lightweight preview may show LRC-formatted lyrics instead.
 - `SubtitleLineProcessor`: subtitle metadata expansion, count-in insertion, and vocal style resolution.
 - `SubtitleGenerator`: ASS subtitle generation from timed lyrics and vocal parts.
 - `LrcGenerator`: LRC lyric export after metadata/count-in processing, with Croon vocal-part annotations.
