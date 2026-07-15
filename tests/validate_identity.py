@@ -177,7 +177,7 @@ def main() -> None:
             fail(f"contracts.md missing {expected}")
 
     identity = (root / "AppIdentity.cpp").read_text()
-    for expected in [".croon", "croon.info", "Croon_", "Croon", "1.0"]:
+    for expected in [".croon", "croon.info", "Croon_", "Croon", "1.1"]:
         if expected not in identity:
             fail(f"AppIdentity.cpp missing {expected}")
 

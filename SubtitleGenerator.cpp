@@ -136,7 +136,6 @@ String SubtitleGenerator::ToAss(const KarData& data, int linesToDisplay, int res
         "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text"
     };
     
-    String olderLine{""};
     String lastLine{""};
     for (int i = 1; i < vtl.GetCount(); ++i) {
         const auto& tl = vtl[i];
@@ -148,7 +147,6 @@ String SubtitleGenerator::ToAss(const KarData& data, int linesToDisplay, int res
         bool hasCountIn = line.StartsWith("@CountIn");
         line.Replace("@CountIn", "");
         if (hasCountIn) {
-            olderLine.Clear();
             lastLine.Clear();
         }
         if (i + 1 < vtl.GetCount()) endTS = vtl[i + 1].time;
@@ -158,14 +156,6 @@ String SubtitleGenerator::ToAss(const KarData& data, int linesToDisplay, int res
             ? SubtitleLineProcessor::LookaheadVocalPart(vtl, i + 1, data.parts, incomingLyrics)
             : SubtitleLineProcessor::ResolveVocalPart(tl.partIndex, data.parts);
         
-        if (!olderLine.IsEmpty()) {
-            vs.AddPick(Format("Dialogue: 0,%s,%s,Grayed,,0,0,0,,%s%s",
-                                TimeFormatter::Ass(startTS),
-                                TimeFormatter::Ass(endTS),
-                                SubtitleMoveTag(data, resX, resY, startTS, endTS, 0, -1),
-                                SubtitleGrayText(olderLine)));
-        }
-
         int futureLines = min(2, max(1, linesToDisplay - (lastLine.IsEmpty() ? 1:2)));
         for (int j = futureLines; j > 0; --j) {
             if (i + j < vtl.GetCount()) {
@@ -204,7 +194,6 @@ String SubtitleGenerator::ToAss(const KarData& data, int linesToDisplay, int res
                                 SubtitleMoveTag(data, resX, resY, startTS, endTS, 1, 0),
                                 SubtitleGrayText(lastLine)));
         }
-        olderLine = lastLine;
         lastLine = hasCountIn ? "\u00A03... 2... 1...":line;
     }
     return Join(vs, "\n");
@@ -259,7 +248,6 @@ String SubtitleGenerator::ToRichAss(const KarData& data, int linesToDisplay, int
     rth.Fmt("@4").Text("[Events]").EFmt().NL();
     rth.Fmt("@3").Text("Format: ").EFmt("@c").Text("Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text").EFmt().NL();
     
-    String olderLine{""};
     String lastLine{""};
     for (int i = 1; i < vtl.GetCount(); ++i) {
         const auto& tl = vtl[i];
@@ -270,7 +258,6 @@ String SubtitleGenerator::ToRichAss(const KarData& data, int linesToDisplay, int
         if (line == "\u00A0" && lastLine == "\u00A0") continue;
         bool hasCountIn = line.StartsWith("@CountIn");
         if (hasCountIn) {
-            olderLine.Clear();
             lastLine.Clear();
         }
         line.Replace("@CountIn", "");
@@ -281,15 +268,6 @@ String SubtitleGenerator::ToRichAss(const KarData& data, int linesToDisplay, int
             ? SubtitleLineProcessor::LookaheadVocalPart(vtl, i + 1, data.parts, incomingLyrics)
             : SubtitleLineProcessor::ResolveVocalPart(tl.partIndex, data.parts);
         
-        if (!olderLine.IsEmpty()) {
-            rth.Fmt("@3").Text("Dialogue: ")
-                .EFmt("@c").Text("0,")
-                .EFmt("@6").Text(Format("%s,%s,", TimeFormatter::Ass(startTS), TimeFormatter::Ass(endTS)))
-                .EFmt("@c").Text("Grayed,,0,0,0,,")
-                .EFmt("@m").Text(SubtitleMoveTag(data, resX, resY, startTS, endTS, 0, -1))
-                .EFmt("@0").Text(SubtitleGrayText(olderLine)).EFmt().NL();
-        }
-
         int futureLines = min(2, max(1, linesToDisplay - (lastLine.IsEmpty() ? 1:2)));
         for (int j = futureLines; j > 0; --j) {
             if (i + j < vtl.GetCount()) {
@@ -329,7 +307,6 @@ String SubtitleGenerator::ToRichAss(const KarData& data, int linesToDisplay, int
                 .EFmt("@m").Text(SubtitleMoveTag(data, resX, resY, startTS, endTS, 1, 0))
                 .EFmt("@0").Text(SubtitleGrayText(lastLine)).EFmt().NL();
         }
-        olderLine = lastLine;
         lastLine = hasCountIn ? "\u00A03... 2... 1...":line;
     }
     return rth.ToString();

@@ -253,7 +253,7 @@ def main() -> None:
         "return RunDlg(\"Export Video\")",
         "FfmpegProgressParser::ParseTimestamp",
         "AppIdentity::TempFileName(\".ass\")",
-        "SubtitleGenerator::ToAss(*data, 4)",
+        "SubtitleGenerator::ToAss(*data, data->subtitleLines)",
         "FfmpegAudioCommandBuilder::Dehiss",
         "FfmpegExportCommandBuilder::WithVisualization",
         "FfmpegExportCommandBuilder::WithBackgroundVideo",

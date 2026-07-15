@@ -4,9 +4,9 @@
 
 - Primary project extension: `.croon`.
 - Project metadata attachment name: `croon.info`.
-- Current project metadata format version: `1.0`.
+- Current project metadata format version: `1.1`.
 - Project metadata must include a `version` field. Format changes must be represented by explicit version handling in `ProjectSerializer`.
-- Project metadata readers must tolerate legacy unversioned metadata by treating it as the current readable format.
+- Project metadata readers must tolerate legacy unversioned metadata and explicit `1.0` metadata by treating them as the current readable format.
 - Legacy unversioned metadata must still be object-shaped JSON metadata.
 - Unsupported explicit metadata versions must remain visible on read so future migrations can make compatibility decisions.
 - `ProjectSerializer` must classify metadata compatibility as current, legacy unversioned, unsupported, or invalid before callers decide whether to load.

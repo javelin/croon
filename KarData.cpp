@@ -11,6 +11,7 @@
 using namespace Upp;
 
 #include "AppIdentity.h"
+#include "Constants.h"
 #include "ConfigService.h"
 #include "Config.h"
 #include "KarData.h"
@@ -40,6 +41,7 @@ void KarData::Reset() {
     timed = 0;
     fontSize = Config::GetInt(FONT_SIZE, Config::DefaultFontSize);
     fontSize = std::min(Config::MaxFontSize, std::max(Config::MinFontSize, fontSize));
+    subtitleLines = DefaultASSDisplayLines;
     dehiss = false;
     version = AppIdentity::Version();
 }
@@ -90,4 +92,8 @@ void KarData::SetFontSize(int size) {
         Config::GetInt(FONT_SIZE, Config::DefaultFontSize)));
     if (Config::MinFontSize > size || Config::MaxFontSize < size) fontSize = globalSize;
     else fontSize = size;
+}
+
+void KarData::SetSubtitleLines(int lines) {
+    subtitleLines = lines == 4 ? 4:DefaultASSDisplayLines;
 }

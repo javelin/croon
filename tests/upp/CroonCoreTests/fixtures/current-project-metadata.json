@@ -1,5 +1,5 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "title": "Fixture Current Song",
   "artist": "Fixture Artist",
   "genre": "Pop",
@@ -10,6 +10,7 @@
   "duration": 120.5,
   "timed": 1,
   "fontSize": 72,
+  "subtitleLines": 4,
   "dehiss": false,
   "timedLyrics": [
     {

@@ -24,7 +24,7 @@ Static TopWindow and form-like Ctrl layouts should move to U++ `.lay` files. Dyn
 
 ### Croon Metadata Compatibility
 
-Croon must keep `.croon` as the supported project artifact format. Project metadata compatibility is versioned through `ProjectSerializer`: current `1.0` metadata is supported, legacy unversioned `.croon` metadata is treated as the current readable format when it is object-shaped JSON, unsupported explicit metadata versions are rejected by load gates while preserving their version for future migration decisions, and invalid metadata is rejected before hydration.
+Croon must keep `.croon` as the supported project artifact format. Project metadata compatibility is versioned through `ProjectSerializer`: current `1.1` metadata is supported, legacy `1.0` and unversioned `.croon` metadata are treated as the current readable format when object-shaped JSON, unsupported explicit metadata versions are rejected by load gates while preserving their version for future migration decisions, and invalid metadata is rejected before hydration.
 
 ### Explicit Runtime Project State
 

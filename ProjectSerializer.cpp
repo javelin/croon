@@ -30,7 +30,8 @@ String ProjectSerializer::FormatVersion() {
 }
 
 String ProjectSerializer::NormalizeReadVersion(const String& version) {
-    return version.IsEmpty() ? FormatVersion() : version;
+    if (version.IsEmpty() || version == "1.0") return FormatVersion();
+    return version;
 }
 
 bool ProjectSerializer::SupportsVersion(const String& version) {
@@ -91,6 +92,7 @@ String ProjectSerializer::ToJson(const KarData& data) {
         ("duration", data.duration)
         ("timed", data.timed)
         ("fontSize", data.fontSize)
+        ("subtitleLines", data.subtitleLines)
         ("dehiss", data.dehiss)
         ("timedLyrics", tlJsa)
         ("parts", partsJsa);
@@ -116,6 +118,7 @@ KarData ProjectSerializer::FromJson(const String& json) {
     data.duration = js.GetAdd("duration");
     data.timed = js.GetAdd("timed");
     data.SetFontSize(js.GetAdd("fontSize"));
+    data.SetSubtitleLines(js.GetAdd("subtitleLines"));
     data.dehiss = js.GetAdd("dehiss");
     data.timedLyrics.Add({data.duration, ""});
     for (auto tl : js.GetAdd("timedLyrics")) {

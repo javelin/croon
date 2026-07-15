@@ -14,7 +14,7 @@ String AppIdentity::ProductName() {
 }
 
 String AppIdentity::Version() {
-    return "1.0";
+    return "1.1";
 }
 
 String AppIdentity::ProjectExtension() {

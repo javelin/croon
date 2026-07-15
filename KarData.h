@@ -46,10 +46,12 @@ struct KarData : Moveable<KarData> {
     Image videoThumbnail;
     int timed;
     int fontSize;
+    int subtitleLines;
     bool dehiss;
     String version;
     
     void SetFontSize(int size);
+    void SetSubtitleLines(int lines);
 };
 
 #endif

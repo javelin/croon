@@ -119,6 +119,14 @@ Project::Project(KarData& projectData, VideoDlg& videoDialog) : videoPath(""), d
         data.SetFontSize(val.IsNull() ? 0:(int)val);
         updateData();
     };
+    subtitleLinesDrop.Add(3, "3")
+                     .Add(4, "4")
+                     .SetData(DefaultASSDisplayLines);
+    subtitleLinesDrop.WhenAction = [this, updateData] {
+        Value val = subtitleLinesDrop.GetData();
+        data.SetSubtitleLines(val.IsNull() ? DefaultASSDisplayLines:(int)val);
+        updateData();
+    };
     dehissOpt.WhenAction = [this, updateData] {
         data.dehiss = dehissOpt.GetData();
         updateData();
@@ -174,6 +182,7 @@ void Project::Populate() {
                         !data.artist.IsEmpty() &&
                         data.timed == data.timedLyrics.GetCount() - 1);
     fontSizeEd.SetData(data.fontSize);
+    subtitleLinesDrop.SetData(data.subtitleLines);
     dehissOpt.SetData(data.dehiss);
     open = true;
     WhenDirty(dirty);

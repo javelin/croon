@@ -41,7 +41,7 @@ def main() -> None:
     export_cpp = (root / "ExportDlg.cpp").read_text()
     for needle in [
         'AppIdentity::TempFileName(".ass")',
-        "SubtitleGenerator::ToAss(*data, 4)",
+        "SubtitleGenerator::ToAss(*data, data->subtitleLines)",
         "FfmpegAudioCommandBuilder::Dehiss",
         "FfmpegExportCommandBuilder::WithVisualization",
         "FfmpegExportCommandBuilder::WithBackgroundVideo",

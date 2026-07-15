@@ -127,8 +127,7 @@ int ExportDlg::Run(const KarData& karData, String outputPath, int len, double th
 void ExportDlg::ExportASS() {
     UpdateProgress();
     assFilePath = AppIdentity::TempFileName(".ass");
-    //SaveFile(assFilePath, SubtitleGenerator::ToAss(*data, Config::GetFontSize(), 4));
-    SaveFile(assFilePath, SubtitleGenerator::ToAss(*data, 4));
+    SaveFile(assFilePath, SubtitleGenerator::ToAss(*data, data->subtitleLines));
     SetTimeCallback(500, [=] {
         phase = Dehiss;
         StartNextProcess();

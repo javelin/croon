@@ -58,6 +58,18 @@ String LoadFixture(const char *name) {
 	return content;
 }
 
+int CountOccurrences(const String& text, const String& needle) {
+	int count = 0;
+	int pos = 0;
+	for(;;) {
+		pos = text.Find(needle, pos);
+		if(pos < 0)
+			return count;
+		++count;
+		pos += needle.GetCount();
+	}
+}
+
 }
 
 CONSOLE_APP_MAIN
@@ -159,6 +171,7 @@ CONSOLE_APP_MAIN
 	song.duration = 3661.5;
 	song.timed = 2;
 	song.fontSize = 84;
+	song.subtitleLines = 4;
 	song.dehiss = true;
 	song.timedLyrics.Add({song.duration, ""});
 	song.timedLyrics.Add({1.25, "First line"});
@@ -166,11 +179,14 @@ CONSOLE_APP_MAIN
 	song.parts.Add(MakeTuple(1, true, false, true));
 
 	Check(ProjectSerializer::FormatVersion() == AppIdentity::Version(), "ProjectSerializer format follows app identity version");
-	Check(ProjectSerializer::SupportsVersion("1.0"), "ProjectSerializer supports current .croon format");
+	Check(ProjectSerializer::SupportsVersion("1.1"), "ProjectSerializer supports current .croon format");
+	Check(ProjectSerializer::SupportsVersion("1.0"), "ProjectSerializer supports legacy 1.0 .croon format");
 	Check(ProjectSerializer::SupportsVersion(""), "ProjectSerializer supports legacy unversioned .croon metadata");
 	Check(!ProjectSerializer::SupportsVersion("0.9"), "ProjectSerializer rejects unknown .croon format version");
-	Check(ProjectSerializer::ReadVersion("{\"version\":\"1.0\",\"timedLyrics\":[],\"parts\":[]}") == ProjectSerializer::FormatVersion(),
+	Check(ProjectSerializer::ReadVersion("{\"version\":\"1.1\",\"timedLyrics\":[],\"parts\":[]}") == ProjectSerializer::FormatVersion(),
 		"ProjectSerializer reads current metadata version directly");
+	Check(ProjectSerializer::ReadVersion("{\"version\":\"1.0\",\"timedLyrics\":[],\"parts\":[]}") == ProjectSerializer::FormatVersion(),
+		"ProjectSerializer reads 1.0 metadata as current-compatible");
 	Check(ProjectSerializer::ReadVersion("{\"timedLyrics\":[],\"parts\":[]}") == ProjectSerializer::FormatVersion(),
 		"ProjectSerializer reads legacy unversioned metadata as current");
 	Check(ProjectSerializer::ReadVersion("{\"version\":\"9.9\",\"timedLyrics\":[],\"parts\":[]}") == "9.9",
@@ -232,7 +248,7 @@ CONSOLE_APP_MAIN
 	String serialized = ProjectSerializer::ToJson(song);
 	const char *projectKeys[] = {
 		"\"version\"", "\"title\"", "\"artist\"", "\"genre\"", "\"year\"", "\"writer\"",
-		"\"owner\"", "\"origVideoFile\"", "\"duration\"", "\"timed\"", "\"fontSize\"",
+		"\"owner\"", "\"origVideoFile\"", "\"duration\"", "\"timed\"", "\"fontSize\"", "\"subtitleLines\"",
 		"\"dehiss\"", "\"timedLyrics\"", "\"parts\""
 	};
 	for(const char *key : projectKeys) {
@@ -254,6 +270,7 @@ CONSOLE_APP_MAIN
 	Check(restored.duration == 3661.5, "KarData JSON preserves duration");
 	Check(restored.timed == 2, "KarData JSON preserves timed count");
 	Check(restored.fontSize == 84, "KarData JSON preserves font size");
+	Check(restored.subtitleLines == 4, "KarData JSON preserves subtitle line count");
 	Check(restored.dehiss, "KarData JSON preserves dehiss");
 	Check(restored.timedLyrics.GetCount() == 3, "KarData JSON restores sentinel lyric");
 	Check(restored.timedLyrics[0].time == restored.duration, "KarData JSON sentinel uses duration");
@@ -269,6 +286,10 @@ CONSOLE_APP_MAIN
 
 	KarData loadedLegacy = ProjectSerializer::FromJson("{\"timedLyrics\":[],\"parts\":[]}");
 	Check(loadedLegacy.version == ProjectSerializer::FormatVersion(), "ProjectSerializer normalizes unversioned metadata to current format");
+	Check(loadedLegacy.subtitleLines == DefaultASSDisplayLines, "ProjectSerializer defaults legacy metadata to 3 subtitle lines");
+	KarData loaded10 = ProjectSerializer::FromJson("{\"version\":\"1.0\",\"timedLyrics\":[],\"parts\":[]}");
+	Check(loaded10.version == ProjectSerializer::FormatVersion(), "ProjectSerializer normalizes 1.0 metadata to current format");
+	Check(loaded10.subtitleLines == DefaultASSDisplayLines, "ProjectSerializer defaults 1.0 metadata to 3 subtitle lines");
 	KarData loadedUnsupported = ProjectSerializer::FromJson("{\"version\":\"9.9\",\"timedLyrics\":[],\"parts\":[]}");
 	Check(loadedUnsupported.version == "9.9", "ProjectSerializer preserves unsupported source version on read");
 	KarData invalidMetadata = ProjectSerializer::FromJson(invalidMetadataFixture);
@@ -279,6 +300,7 @@ CONSOLE_APP_MAIN
 	KarData normalized = ProjectSerializer::FromJson("{\"version\":\"1.0\",\"year\":-7,\"fontSize\":999,\"timedLyrics\":[],\"parts\":[]}");
 	Check(normalized.year == 0, "ProjectSerializer normalizes negative years");
 	Check(normalized.fontSize == Config::DefaultFontSize, "ProjectSerializer keeps font-size clamping behavior");
+	Check(normalized.subtitleLines == DefaultASSDisplayLines, "ProjectSerializer keeps subtitle line-count clamping behavior");
 	Check(normalized.timedLyrics.GetCount() == 1, "ProjectSerializer restores sentinel for empty timed lyrics");
 
 	String decorated = ">>{120}  Sing this line  ";
@@ -382,6 +404,8 @@ CONSOLE_APP_MAIN
 	exportData.timedLyrics.Add({1.0, "Sing along"});
 	exportData.timedLyrics.Add({3.0, "Next line"});
 	exportData.timedLyrics.Add({5.0, "Second next"});
+	exportData.timedLyrics.Add({7.0, "Third next"});
+	exportData.timedLyrics.Add({9.0, "Fourth next"});
 	exportData.parts.Add(MakeTuple(1, true, false, true));
 	String ass = SubtitleGenerator::ToAss(exportData, 4);
 	Check(ass.Find("[Script Info]") >= 0, "SubtitleGenerator emits script info section");
@@ -393,6 +417,12 @@ CONSOLE_APP_MAIN
 	Check(ass.Find("\\move(") >= 0, "SubtitleGenerator emits scrolling ASS movement tags");
 	Check(ass.Find("\\move(960,860,960,716,0,450)") >= 0,
 		"SubtitleGenerator reserves a blank row between highlighted and grayed slots");
+	Check(ass.Find("\\move(960,572,960,428") < 0,
+		"SubtitleGenerator does not emit an extra outgoing grayed row");
+	Check(CountOccurrences(ass, "Dialogue: 0,0:00:05.00") == 4,
+		"SubtitleGenerator limits 4-line pages to four active dialogue rows");
+	Check(CountOccurrences(SubtitleGenerator::ToAss(exportData, 3), "Dialogue: 0,0:00:05.00") == 3,
+		"SubtitleGenerator limits 3-line pages to three active dialogue rows");
 	String richAss = SubtitleGenerator::ToRichAss(exportData, 4);
 	Check(richAss.Find("@4") >= 0, "SubtitleGenerator emits rich ASS formatting");
 	Check(richAss.Find("Script Info") >= 0, "SubtitleGenerator emits rich ASS script info");
