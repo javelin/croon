@@ -708,6 +708,7 @@ def main() -> None:
     require(subtitle_wrap_probe_runner_cpp, "FfmpegSubtitleProbeCommandBuilder::RenderRgba", "SubtitleWrapProbeRunner ffmpeg command")
     require(subtitle_wrap_probe_runner_cpp, "GetEnv(\"CROON_WRAP_PROBE_DIR\")", "SubtitleWrapProbeRunner debug directory environment hook")
     require(subtitle_wrap_probe_runner_cpp, "FfmpegSubtitleProbeCommandBuilder::RenderPngFrames", "SubtitleWrapProbeRunner debug PNG command")
+    require(subtitle_wrap_probe_runner_cpp, "wrap_probe_%dx%d_%d_%s", "SubtitleWrapProbeRunner debug canvas label")
     require(subtitle_wrap_probe_runner_cpp, "RunProcess(ffmpegPath", "SubtitleWrapProbeRunner process start")
     require(subtitle_wrap_probe_runner_cpp, "LoadFile(rgbaPath)", "SubtitleWrapProbeRunner raw RGBA load")
     require(subtitle_wrap_probe_runner_cpp, "SubtitleWrapProbe::AnalyzeRgbaFrames", "SubtitleWrapProbeRunner analysis delegation")

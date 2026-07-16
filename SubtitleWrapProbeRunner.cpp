@@ -44,7 +44,9 @@ void SaveDebugProbeFiles(String debugDir,
     if (!DirectoryExists(debugDir) && !DirectoryCreate(debugDir))
         return;
 
-    String label = Format("wrap_probe_%d_%s",
+    String label = Format("wrap_probe_%dx%d_%d_%s",
+                          resX,
+                          resY,
                           effectiveFontSize,
                           probeBold ? "bold":"regular");
     String debugAssPath = AppendFileName(debugDir, label + ".ass");

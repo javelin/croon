@@ -55,7 +55,7 @@ int ReadDigitsForward(const String& text, int pos) {
 bool ParseVideoSize(const String& output, Size& size) {
     Vector<String> lines = Split(output, '\n');
     for (const auto& line : lines) {
-        if (line.Find("Video:") < 0)
+        if (line.Find("Video:") < 0 && line.Find('x') < 0)
             continue;
         for (int i = 1; i + 1 < line.GetCount(); i++) {
             if (line[i] != 'x' || !IsDigit(line[i - 1]) || !IsDigit(line[i + 1]))
@@ -71,13 +71,27 @@ bool ParseVideoSize(const String& output, Size& size) {
     return false;
 }
 
-Size ProbeCanvasForExport(const KarData& data, const String& ffmpegPath) {
-    if (data.videoFilePath.StartsWith("@@"))
-        return Size(1920, 1080);
+String FfprobePath(const String& ffmpegPath) {
+    String name = GetFileName(ffmpegPath);
+    if (name.IsEmpty())
+        return "ffprobe";
+    name.Replace("ffmpeg", "ffprobe");
+    name.Replace("FFMPEG", "FFPROBE");
+    String dir = GetFileDirectory(ffmpegPath);
+    return dir.IsEmpty() ? name:AppendFileName(dir, name);
+}
 
+bool ReadVideoSizeWithFfprobe(const String& ffmpegPath, const String& videoPath, Size& size) {
     MediaProcessRunner process;
-    if (!process.Start(ffmpegPath, Vector<String>{"-i", data.videoFilePath}))
-        return Size(1920, 1080);
+    Vector<String> args{
+        "-v", "error",
+        "-select_streams", "v:0",
+        "-show_entries", "stream=width,height",
+        "-of", "csv=s=x:p=0",
+        videoPath
+    };
+    if (!process.Start(FfprobePath(ffmpegPath), args))
+        return false;
 
     String chunk;
     String output;
@@ -85,9 +99,33 @@ Size ProbeCanvasForExport(const KarData& data, const String& ffmpegPath) {
         output.Cat(chunk);
         Sleep(10);
     }
+    return process.GetExitCode() == 0 && ParseVideoSize(output, size);
+}
+
+bool ReadVideoSizeWithFfmpeg(const String& ffmpegPath, const String& videoPath, Size& size) {
+    MediaProcessRunner process;
+    if (!process.Start(ffmpegPath, Vector<String>{"-i", videoPath}))
+        return false;
+
+    String chunk;
+    String output;
+    while (process.Read(chunk) || process.IsRunning()) {
+        output.Cat(chunk);
+        Sleep(10);
+    }
+    return ParseVideoSize(output, size);
+}
+
+Size ProbeCanvasForExport(const KarData& data, const String& ffmpegPath) {
+    if (data.videoFilePath.StartsWith("@@"))
+        return Size(1920, 1080);
 
     Size videoSize;
-    return ParseVideoSize(output, videoSize) ? videoSize:Size(1920, 1080);
+    if (ReadVideoSizeWithFfprobe(ffmpegPath, data.videoFilePath, videoSize))
+        return videoSize;
+    if (ReadVideoSizeWithFfmpeg(ffmpegPath, data.videoFilePath, videoSize))
+        return videoSize;
+    return Size(1920, 1080);
 }
 
 int ProbeCropHeight(int resY) {

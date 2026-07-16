@@ -252,6 +252,8 @@ def main() -> None:
         "PostCallback([=] { StartNextProcess(); })",
         "return RunDlg(\"Export Video\")",
         "FfmpegProgressParser::ParseTimestamp",
+        "ReadVideoSizeWithFfprobe(ffmpegPath, data.videoFilePath, videoSize)",
+        "ReadVideoSizeWithFfmpeg(ffmpegPath, data.videoFilePath, videoSize)",
         "AppIdentity::TempFileName(\".ass\")",
         "SubtitleGenerator::HighlightProbeLyrics(*data, data->subtitleLines)",
         "Size probeCanvas = ProbeCanvasForExport(*data, ffmpeg)",
