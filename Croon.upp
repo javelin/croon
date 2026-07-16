@@ -115,6 +115,8 @@ file
 	SubtitleGenerator.h,
 	SubtitleWrapProbe.cpp,
 	SubtitleWrapProbe.h,
+	SubtitleWrapProbeRunner.cpp,
+	SubtitleWrapProbeRunner.h,
 	TimingCtrl.cpp,
 	TimingCtrl.h,
 	TimingDlg.cpp,

@@ -58,6 +58,8 @@ def main() -> None:
         "SubtitleGenerator.h",
         "SubtitleWrapProbe.cpp",
         "SubtitleWrapProbe.h",
+        "SubtitleWrapProbeRunner.cpp",
+        "SubtitleWrapProbeRunner.h",
         "TextTools.cpp",
         "TextTools.h",
         "TimeFormatter.cpp",
@@ -132,6 +134,8 @@ def main() -> None:
         "SubtitleGenerator.h" not in upp or
         "SubtitleWrapProbe.cpp" not in upp or
         "SubtitleWrapProbe.h" not in upp or
+        "SubtitleWrapProbeRunner.cpp" not in upp or
+        "SubtitleWrapProbeRunner.h" not in upp or
         "TextTools.cpp" not in upp or
         "TextTools.h" not in upp or
         "TimeFormatter.cpp" not in upp or

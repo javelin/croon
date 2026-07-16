@@ -19,6 +19,7 @@ using namespace Upp;
 #include <Croon/SubtitleGenerator.h>
 #include <Croon/SubtitleLineProcessor.h>
 #include <Croon/SubtitleWrapProbe.h>
+#include <Croon/SubtitleWrapProbeRunner.h>
 #include <Croon/VocalPart.h>
 #include <Croon/TextTools.h>
 #include <Croon/TimeFormatter.h>
@@ -495,6 +496,11 @@ CONSOLE_APP_MAIN
 	Check(probeFrames[0].bands[0].width == 3, "SubtitleWrapProbe reports first band width");
 	Check(probeFrames[0].bands[1].width == 2, "SubtitleWrapProbe reports second band width");
 	Check(probeFrames[1].bands.GetCount() == 1, "SubtitleWrapProbe analyzes second frame independently");
+	Vector<String> noProbeLyrics;
+	Vector<SubtitleWrapProbeFrame> noProbeFrames;
+	Check(SubtitleWrapProbeRunner::Run(exportData, noProbeLyrics, noProbeFrames, "unused-ffmpeg"),
+		"SubtitleWrapProbeRunner accepts empty probe input without ffmpeg");
+	Check(noProbeFrames.IsEmpty(), "SubtitleWrapProbeRunner leaves empty probe result for empty input");
 
 	KarData v2Data;
 	v2Data.duration = 10.0;
