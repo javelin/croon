@@ -52,11 +52,9 @@ String SubtitleMoveTag(int resX, double startTS, double endTS, int fromY, int to
                   SubtitleScrollDuration(startTS, endTS));
 }
 
-int LegacySubtitleSlotY(const KarData& data, int resY, int slot) {
-    int normalLineHeight = max(1, data.fontSize);
-    int smallLineHeight = max(1, (int)(data.fontSize * 0.7));
-    int normalStep = normalLineHeight * 2;
-    int smallStep = smallLineHeight * 2;
+int SubtitleSlotY(const KarData& data, int resY, int slot) {
+    int normalStep = max(1, data.fontSize);
+    int smallStep = max(1, (int)(data.fontSize * 0.7));
     int bottom = resY - SubtitleBottomMargin;
 
     switch (slot) {
@@ -72,8 +70,8 @@ int LegacySubtitleSlotY(const KarData& data, int resY, int slot) {
 String SubtitleMoveTag(const KarData& data, int resX, int resY, double startTS, double endTS,
                        int fromSlot, int toSlot) {
     return SubtitleMoveTag(resX, startTS, endTS,
-                           LegacySubtitleSlotY(data, resY, fromSlot),
-                           LegacySubtitleSlotY(data, resY, toSlot));
+                           SubtitleSlotY(data, resY, fromSlot),
+                           SubtitleSlotY(data, resY, toSlot));
 }
 
 String SubtitleGrayText(String line) {
@@ -202,22 +200,24 @@ String SubtitleGenerator::ToAss(const KarData& data, const Vector<bool>& wrapped
         incomingRow.SetCount(futureLines + 1, -1);
         Vector<int> rowSteps;
         Vector<int> rowWrapSteps;
+        Vector<int> rowSlots;
         Vector<bool> rowWrapped;
-        auto addRow = [&](bool normalSize, bool wrapped) {
+        auto addRow = [&](bool normalSize, bool wrapped, int slot) {
             int lineHeight = normalSize ? max(1, data.fontSize):max(1, (int)(data.fontSize * 0.7));
             int rowIndex = rowSteps.GetCount();
             rowSteps.Add(lineHeight);
             rowWrapSteps.Add(lineHeight * 5 / 4);
+            rowSlots.Add(slot);
             rowWrapped.Add(wrapped);
             return rowIndex;
         };
 
-        int grayedRow = lastLine.IsEmpty() ? -1:addRow(true, lastLineWrapped);
-        int highlightedRow = addRow(true, wrappedHighlight);
+        int grayedRow = lastLine.IsEmpty() ? -1:addRow(true, lastLineWrapped, 0);
+        int highlightedRow = addRow(true, wrappedHighlight, 1);
         for (int j = 1; j <= futureLines; ++j) {
             if (i + j < vtl.GetCount()) {
                 bool nextWrapped = IsWrappedHighlight(wrappedIncoming, i + j - 1);
-                incomingRow[j] = addRow(false, nextWrapped);
+                incomingRow[j] = addRow(false, nextWrapped, j + 1);
             }
         }
 
@@ -225,12 +225,10 @@ String SubtitleGenerator::ToAss(const KarData& data, const Vector<bool>& wrapped
         Vector<int> rowFromY;
         rowY.SetCount(rowSteps.GetCount(), 0);
         rowFromY.SetCount(rowSteps.GetCount(), 0);
-        int currentY = resY - SubtitleBottomMargin;
         int wrappedOffset = 0;
         for (int row = rowSteps.GetCount() - 1; row >= 0; row--) {
-            rowY[row] = currentY - wrappedOffset;
-            rowFromY[row] = rowY[row] + rowSteps[row];
-            currentY -= rowSteps[row];
+            rowY[row] = SubtitleSlotY(data, resY, rowSlots[row]) - wrappedOffset;
+            rowFromY[row] = SubtitleSlotY(data, resY, rowSlots[row] + 1) - wrappedOffset;
             if (rowWrapped[row])
                 wrappedOffset += rowWrapSteps[row];
         }

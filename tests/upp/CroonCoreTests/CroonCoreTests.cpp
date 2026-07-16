@@ -559,7 +559,7 @@ CONSOLE_APP_MAIN
 	Check(ass.Find(",V1,,0,0,0,,{\\an2\\move(") >= 0, "SubtitleGenerator positions highlighted lines with motion");
 	Check(ass.Find("Sing along") >= 0, "SubtitleGenerator preserves highlighted lyric text");
 	Check(ass.Find("\\move(") >= 0, "SubtitleGenerator emits scrolling ASS movement tags");
-	Check(ass.Find("\\move(960,932,960,860,0,450)") >= 0,
+	Check(ass.Find("\\move(960,910,960,838,0,450)") >= 0,
 		"SubtitleGenerator keeps unwrapped rows compact");
 	Check(ass.Find("\\move(960,572,960,428") < 0,
 		"SubtitleGenerator does not emit an extra outgoing grayed row");
@@ -577,9 +577,9 @@ CONSOLE_APP_MAIN
 	Vector<bool> noWrappedHighlights;
 	noWrappedHighlights.SetCount(highlightProbeLyrics.GetCount(), false);
 	String compactAss = SubtitleGenerator::ToAss(exportData, noWrappedHighlights, 4);
-	Check(compactAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,Grayed,,0,0,0,,{\\an2\\move(960,860,960,788") >= 0,
+	Check(compactAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,Grayed,,0,0,0,,{\\an2\\move(960,838,960,766") >= 0,
 		"SubtitleGenerator keeps unwrapped grayed rows compact");
-	Check(compactAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,V1,,0,0,0,,{\\an2\\move(960,932,960,860") >= 0,
+	Check(compactAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,V1,,0,0,0,,{\\an2\\move(960,910,960,838") >= 0,
 		"SubtitleGenerator keeps unwrapped highlighted rows compact");
 	Check(compactAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,V1Normal,,0,0,0,,{\\an2\\move(960,960,960,910") >= 0,
 		"SubtitleGenerator keeps unwrapped incoming rows compact");
@@ -593,18 +593,18 @@ CONSOLE_APP_MAIN
 	Vector<bool> wrappedHighlights = clone(noWrappedHighlights);
 	wrappedHighlights[nextLineIdx] = true;
 	String wrappedHighlightAss = SubtitleGenerator::ToAss(exportData, wrappedHighlights, 4);
-	Check(wrappedHighlightAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,V1,,0,0,0,,{\\an2\\move(960,932,960,860") >= 0,
+	Check(wrappedHighlightAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,V1,,0,0,0,,{\\an2\\move(960,910,960,838") >= 0,
 		"SubtitleGenerator keeps wrapped highlighted rows in their natural slot");
-	Check(wrappedHighlightAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,Grayed,,0,0,0,,{\\an2\\move(960,770,960,698") >= 0,
+	Check(wrappedHighlightAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,Grayed,,0,0,0,,{\\an2\\move(960,748,960,676") >= 0,
 		"SubtitleGenerator applies wrapped highlighted clearance to the row above");
 	Check(wrappedHighlightAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,V1Normal,,0,0,0,,{\\an2\\move(960,960,960,910") >= 0,
 		"SubtitleGenerator keeps lower incoming rows fixed below a wrapped highlighted row");
 	Vector<bool> wrappedPrevious = clone(noWrappedHighlights);
 	wrappedPrevious[singAlongIdx] = true;
 	String wrappedPreviousAss = SubtitleGenerator::ToAss(exportData, wrappedPrevious, 4);
-	Check(wrappedPreviousAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,Grayed,,0,0,0,,{\\an2\\move(960,860,960,788") >= 0,
+	Check(wrappedPreviousAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,Grayed,,0,0,0,,{\\an2\\move(960,838,960,766") >= 0,
 		"SubtitleGenerator keeps wrapped grayed rows in their natural slot");
-	Check(wrappedPreviousAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,V1,,0,0,0,,{\\an2\\move(960,932,960,860") >= 0,
+	Check(wrappedPreviousAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,V1,,0,0,0,,{\\an2\\move(960,910,960,838") >= 0,
 		"SubtitleGenerator keeps lower highlighted rows fixed below wrapped grayed rows");
 	Vector<bool> wrappedIncoming = clone(noWrappedHighlights);
 	wrappedIncoming[secondNextIdx] = true;
@@ -616,7 +616,7 @@ CONSOLE_APP_MAIN
 	String splitWrapAss = SubtitleGenerator::ToAss(exportData, normalWrappedSmallUnwrapped, noWrappedHighlights, 4);
 	Check(splitWrapAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,V1Normal,,0,0,0,,{\\an2\\move(960,960,960,910") >= 0,
 		"SubtitleGenerator keeps a normal-wrapped lyric compact while it is small incoming");
-	Check(splitWrapAss.Find("Dialogue: 0,0:00:05.00,0:00:07.00,V1,,0,0,0,,{\\an2\\move(960,932,960,860") >= 0,
+	Check(splitWrapAss.Find("Dialogue: 0,0:00:05.00,0:00:07.00,V1,,0,0,0,,{\\an2\\move(960,910,960,838") >= 0,
 		"SubtitleGenerator keeps the same lyric in its natural slot when it becomes highlighted");
 
 	Vector<String> probeLyrics;
