@@ -43,7 +43,7 @@ def main() -> None:
         'AppIdentity::TempFileName(".ass")',
         "SubtitleGenerator::HighlightProbeLyrics(*data, data->subtitleLines)",
         "SubtitleWrapProbeRunner::Run(*data, probeLyrics, probeFrames, ffmpeg)",
-        "wrappedHighlights.Add(frame.bands.GetCount() > 1)",
+        "SubtitleWrapProbe::IsWrappedFrame(frame, data->fontSize)",
         "SubtitleGenerator::ToAss(*data, wrappedHighlights, data->subtitleLines)",
         "FfmpegAudioCommandBuilder::Dehiss",
         "FfmpegExportCommandBuilder::WithVisualization",

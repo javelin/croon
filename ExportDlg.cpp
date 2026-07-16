@@ -133,7 +133,7 @@ void ExportDlg::ExportASS() {
     Vector<SubtitleWrapProbeFrame> probeFrames;
     if (SubtitleWrapProbeRunner::Run(*data, probeLyrics, probeFrames, ffmpeg)) {
         for (const auto& frame : probeFrames)
-            wrappedHighlights.Add(frame.bands.GetCount() > 1);
+            wrappedHighlights.Add(SubtitleWrapProbe::IsWrappedFrame(frame, data->fontSize));
     }
     SaveFile(assFilePath, SubtitleGenerator::ToAss(*data, wrappedHighlights, data->subtitleLines));
     SetTimeCallback(500, [=] {

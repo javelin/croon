@@ -126,6 +126,52 @@ String OpaqueBackgroundProbeRgbaFixture() {
 	return String(rgba);
 }
 
+String FragmentedSingleLineProbeRgbaFixture() {
+	const int width = 8;
+	const int height = 12;
+	const int frames = 1;
+	StringBuffer rgba;
+	rgba.SetCount(width * height * frames * 4);
+	for(int i = 0; i < rgba.GetCount(); i++)
+		rgba[i] = 0;
+
+	auto setRow = [&](int y) {
+		for(int x = 2; x <= 5; x++) {
+			int offset = (y * width + x) * 4;
+			rgba[offset] = 255;
+			rgba[offset + 3] = 255;
+		}
+	};
+	setRow(1);
+	setRow(2);
+	setRow(5);
+	setRow(6);
+	return String(rgba);
+}
+
+String WrappedTwoLineProbeRgbaFixture() {
+	const int width = 8;
+	const int height = 20;
+	const int frames = 1;
+	StringBuffer rgba;
+	rgba.SetCount(width * height * frames * 4);
+	for(int i = 0; i < rgba.GetCount(); i++)
+		rgba[i] = 0;
+
+	auto setRow = [&](int y) {
+		for(int x = 2; x <= 5; x++) {
+			int offset = (y * width + x) * 4;
+			rgba[offset] = 255;
+			rgba[offset + 3] = 255;
+		}
+	};
+	setRow(1);
+	setRow(2);
+	setRow(12);
+	setRow(13);
+	return String(rgba);
+}
+
 }
 
 CONSOLE_APP_MAIN
@@ -558,6 +604,14 @@ CONSOLE_APP_MAIN
 	Check(opaqueProbeFrames.GetCount() == 1, "SubtitleWrapProbe analyzes opaque-background RGBA frames");
 	Check(opaqueProbeFrames[0].bands.GetCount() == 1,
 		"SubtitleWrapProbe ignores opaque black background rows");
+	Vector<SubtitleWrapProbeFrame> fragmentedProbeFrames = SubtitleWrapProbe::AnalyzeRgbaFrames(FragmentedSingleLineProbeRgbaFixture(), 8, 12, 1);
+	Check(fragmentedProbeFrames.GetCount() == 1, "SubtitleWrapProbe analyzes fragmented single-line frames");
+	Check(!SubtitleWrapProbe::IsWrappedFrame(fragmentedProbeFrames[0], exportData.fontSize),
+		"SubtitleWrapProbe merges tiny single-line fragments before deciding wrap");
+	Vector<SubtitleWrapProbeFrame> wrappedProbeFrames = SubtitleWrapProbe::AnalyzeRgbaFrames(WrappedTwoLineProbeRgbaFixture(), 8, 20, 1);
+	Check(wrappedProbeFrames.GetCount() == 1, "SubtitleWrapProbe analyzes two-line frames");
+	Check(SubtitleWrapProbe::IsWrappedFrame(wrappedProbeFrames[0], exportData.fontSize),
+		"SubtitleWrapProbe detects distinct rendered line groups as wrapped");
 	Vector<String> noProbeLyrics;
 	Vector<SubtitleWrapProbeFrame> noProbeFrames;
 	Check(SubtitleWrapProbeRunner::Run(exportData, noProbeLyrics, noProbeFrames, "unused-ffmpeg"),

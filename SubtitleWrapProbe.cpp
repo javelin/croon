@@ -100,6 +100,22 @@ SubtitleWrapProbeFrame AnalyzeOneFrame(const String& rgba,
     return frame;
 }
 
+int CountTextLineGroups(const SubtitleWrapProbeFrame& frame, int fontSize) {
+    if (frame.bands.IsEmpty())
+        return 0;
+
+    int maxFragmentGap = max(3, fontSize / 12);
+    int groups = 1;
+    int groupEnd = frame.bands[0].y1;
+    for (int i = 1; i < frame.bands.GetCount(); i++) {
+        const auto& band = frame.bands[i];
+        if (band.y0 - groupEnd > maxFragmentGap)
+            groups++;
+        groupEnd = max(groupEnd, band.y1);
+    }
+    return groups;
+}
+
 }
 
 String SubtitleWrapProbe::BuildAss(const KarData& data,
@@ -151,4 +167,8 @@ Vector<SubtitleWrapProbeFrame> SubtitleWrapProbe::AnalyzeRgbaFrames(const String
     for (int i = 0; i < count; i++)
         frames.Add(AnalyzeOneFrame(rgba, width, height, i * frameBytes, alphaThreshold));
     return frames;
+}
+
+bool SubtitleWrapProbe::IsWrappedFrame(const SubtitleWrapProbeFrame& frame, int fontSize) {
+    return CountTextLineGroups(frame, fontSize) > 1;
 }

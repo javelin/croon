@@ -26,6 +26,7 @@ struct SubtitleWrapProbe {
                                                             int height,
                                                             int frameCount,
                                                             int alphaThreshold=10);
+    static bool IsWrappedFrame(const SubtitleWrapProbeFrame& frame, int fontSize);
 };
 
 #endif
