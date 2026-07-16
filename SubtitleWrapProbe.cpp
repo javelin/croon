@@ -41,13 +41,21 @@ SubtitleWrapProbeFrame AnalyzeOneFrame(const String& rgba,
     if (width <= 0 || height <= 0)
         return frame;
 
+    auto isTextPixel = [&](int pixelOffset) {
+        byte red = (byte)rgba[pixelOffset];
+        byte green = (byte)rgba[pixelOffset + 1];
+        byte blue = (byte)rgba[pixelOffset + 2];
+        byte alpha = (byte)rgba[pixelOffset + 3];
+        return alpha > alphaThreshold &&
+               max((int)red, max((int)green, (int)blue)) > alphaThreshold;
+    };
+
     Vector<bool> rowHasText;
     rowHasText.SetCount(height, false);
     for (int y = 0; y < height; y++) {
         int rowOffset = frameOffset + y * width * 4;
         for (int x = 0; x < width; x++) {
-            int alphaOffset = rowOffset + x * 4 + 3;
-            if ((byte)rgba[alphaOffset] > alphaThreshold) {
+            if (isTextPixel(rowOffset + x * 4)) {
                 rowHasText[y] = true;
                 break;
             }
@@ -80,8 +88,7 @@ SubtitleWrapProbeFrame AnalyzeOneFrame(const String& rgba,
         for (int y = band.y0; y < band.y1; y++) {
             int rowOffset = frameOffset + y * width * 4;
             for (int x = 0; x < width; x++) {
-                int alphaOffset = rowOffset + x * 4 + 3;
-                if ((byte)rgba[alphaOffset] > alphaThreshold) {
+                if (isTextPixel(rowOffset + x * 4)) {
                     minX = min(minX, x);
                     maxX = max(maxX, x);
                 }

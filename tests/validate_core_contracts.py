@@ -678,7 +678,8 @@ def main() -> None:
     reject(subtitle_wrap_probe_cpp, '#include "Croon.h"', "SubtitleWrapProbe app shell dependency")
     require(subtitle_wrap_probe_cpp, "Style: V1,Arial", "SubtitleWrapProbe highlighted style contract")
     require(subtitle_wrap_probe_cpp, "TimeFormatter::Ass((double)i)", "SubtitleWrapProbe one-frame timestamp contract")
-    require(subtitle_wrap_probe_cpp, "rgba[alphaOffset]", "SubtitleWrapProbe alpha scan contract")
+    require(subtitle_wrap_probe_cpp, "isTextPixel", "SubtitleWrapProbe text pixel scan contract")
+    require(subtitle_wrap_probe_cpp, "max((int)red, max((int)green, (int)blue))", "SubtitleWrapProbe ignores opaque black background")
     require(subtitle_wrap_probe_cpp, "rowHasText", "SubtitleWrapProbe row band grouping")
 
     subtitle_wrap_probe_runner_h = (root / "SubtitleWrapProbeRunner.h").read_text()
@@ -763,6 +764,7 @@ def main() -> None:
     require(core_tests_cpp, "SubtitleGenerator raises incoming slot when that incoming line wraps", "core tests adaptive incoming spacing")
     require(core_tests_cpp, "SubtitleWrapProbe::BuildAss", "core tests subtitle wrap probe generation")
     require(core_tests_cpp, "SubtitleWrapProbe::AnalyzeRgbaFrames", "core tests subtitle wrap probe analysis")
+    require(core_tests_cpp, "OpaqueBackgroundProbeRgbaFixture", "core tests opaque background probe fixture")
     require(core_tests_cpp, "SubtitleWrapProbeRunner::Run", "core tests subtitle wrap probe runner")
     require(core_tests_cpp, "FfmpegSubtitleProbeCommandBuilder::RenderRgba", "core tests subtitle probe command builder")
     require(core_tests_cpp, "LrcGenerator::ToLrc", "core tests direct LRC generator dependency")

@@ -86,17 +86,42 @@ String ProbeRgbaFixture() {
 	for(int i = 0; i < rgba.GetCount(); i++)
 		rgba[i] = 0;
 
-	auto setAlpha = [&](int frame, int x, int y, byte alpha) {
-		rgba[(frame * width * height + y * width + x) * 4 + 3] = alpha;
+	auto setPixel = [&](int frame, int x, int y, byte red, byte green, byte blue, byte alpha) {
+		int offset = (frame * width * height + y * width + x) * 4;
+		rgba[offset] = red;
+		rgba[offset + 1] = green;
+		rgba[offset + 2] = blue;
+		rgba[offset + 3] = alpha;
 	};
 
 	for(int y = 1; y <= 2; y++)
 		for(int x = 2; x <= 5; x++)
-			setAlpha(0, x, y, 255);
+			setPixel(0, x, y, 255, 0, 0, 255);
 	for(int x = 1; x <= 3; x++)
-		setAlpha(0, x, 4, 255);
+		setPixel(0, x, 4, 255, 0, 0, 255);
 	for(int x = 4; x <= 6; x++)
-		setAlpha(1, x, 3, 255);
+		setPixel(1, x, 3, 255, 0, 0, 255);
+
+	return String(rgba);
+}
+
+String OpaqueBackgroundProbeRgbaFixture() {
+	const int width = 8;
+	const int height = 6;
+	const int frames = 1;
+	StringBuffer rgba;
+	rgba.SetCount(width * height * frames * 4);
+	for(int i = 0; i < rgba.GetCount(); i += 4) {
+		rgba[i] = 0;
+		rgba[i + 1] = 0;
+		rgba[i + 2] = 0;
+		rgba[i + 3] = 255;
+	}
+
+	for(int x = 2; x <= 5; x++) {
+		int offset = (3 * width + x) * 4;
+		rgba[offset] = 255;
+	}
 
 	return String(rgba);
 }
@@ -529,6 +554,10 @@ CONSOLE_APP_MAIN
 	Check(probeFrames[0].bands[0].width == 3, "SubtitleWrapProbe reports first band width");
 	Check(probeFrames[0].bands[1].width == 2, "SubtitleWrapProbe reports second band width");
 	Check(probeFrames[1].bands.GetCount() == 1, "SubtitleWrapProbe analyzes second frame independently");
+	Vector<SubtitleWrapProbeFrame> opaqueProbeFrames = SubtitleWrapProbe::AnalyzeRgbaFrames(OpaqueBackgroundProbeRgbaFixture(), 8, 6, 1);
+	Check(opaqueProbeFrames.GetCount() == 1, "SubtitleWrapProbe analyzes opaque-background RGBA frames");
+	Check(opaqueProbeFrames[0].bands.GetCount() == 1,
+		"SubtitleWrapProbe ignores opaque black background rows");
 	Vector<String> noProbeLyrics;
 	Vector<SubtitleWrapProbeFrame> noProbeFrames;
 	Check(SubtitleWrapProbeRunner::Run(exportData, noProbeLyrics, noProbeFrames, "unused-ffmpeg"),
