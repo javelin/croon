@@ -86,18 +86,108 @@ String ProbeRgbaFixture() {
 	for(int i = 0; i < rgba.GetCount(); i++)
 		rgba[i] = 0;
 
-	auto setAlpha = [&](int frame, int x, int y, byte alpha) {
-		rgba[(frame * width * height + y * width + x) * 4 + 3] = alpha;
+	auto setPixel = [&](int frame, int x, int y, byte red, byte green, byte blue, byte alpha) {
+		int offset = (frame * width * height + y * width + x) * 4;
+		rgba[offset] = red;
+		rgba[offset + 1] = green;
+		rgba[offset + 2] = blue;
+		rgba[offset + 3] = alpha;
 	};
 
 	for(int y = 1; y <= 2; y++)
 		for(int x = 2; x <= 5; x++)
-			setAlpha(0, x, y, 255);
+			setPixel(0, x, y, 255, 0, 0, 255);
 	for(int x = 1; x <= 3; x++)
-		setAlpha(0, x, 4, 255);
+		setPixel(0, x, 4, 255, 0, 0, 255);
 	for(int x = 4; x <= 6; x++)
-		setAlpha(1, x, 3, 255);
+		setPixel(1, x, 3, 255, 0, 0, 255);
 
+	return String(rgba);
+}
+
+String OpaqueBackgroundProbeRgbaFixture() {
+	const int width = 8;
+	const int height = 6;
+	const int frames = 1;
+	StringBuffer rgba;
+	rgba.SetCount(width * height * frames * 4);
+	for(int i = 0; i < rgba.GetCount(); i += 4) {
+		rgba[i] = 0;
+		rgba[i + 1] = 0;
+		rgba[i + 2] = 0;
+		rgba[i + 3] = 255;
+	}
+
+	for(int x = 2; x <= 5; x++) {
+		int offset = (3 * width + x) * 4;
+		rgba[offset] = 255;
+	}
+
+	return String(rgba);
+}
+
+String FragmentedSingleLineProbeRgbaFixture() {
+	const int width = 8;
+	const int height = 12;
+	const int frames = 1;
+	StringBuffer rgba;
+	rgba.SetCount(width * height * frames * 4);
+	for(int i = 0; i < rgba.GetCount(); i++)
+		rgba[i] = 0;
+
+	auto setRow = [&](int y) {
+		for(int x = 2; x <= 5; x++) {
+			int offset = (y * width + x) * 4;
+			rgba[offset] = 255;
+			rgba[offset + 3] = 255;
+		}
+	};
+	setRow(1);
+	setRow(2);
+	setRow(5);
+	setRow(6);
+	return String(rgba);
+}
+
+String WrappedTwoLineProbeRgbaFixture() {
+	const int width = 8;
+	const int height = 20;
+	const int frames = 1;
+	StringBuffer rgba;
+	rgba.SetCount(width * height * frames * 4);
+	for(int i = 0; i < rgba.GetCount(); i++)
+		rgba[i] = 0;
+
+	auto setRow = [&](int y) {
+		for(int x = 2; x <= 5; x++) {
+			int offset = (y * width + x) * 4;
+			rgba[offset] = 255;
+			rgba[offset + 3] = 255;
+		}
+	};
+	setRow(1);
+	setRow(2);
+	setRow(12);
+	setRow(13);
+	return String(rgba);
+}
+
+String ConnectedWrappedProbeRgbaFixture() {
+	const int width = 8;
+	const int height = 16;
+	const int frames = 1;
+	StringBuffer rgba;
+	rgba.SetCount(width * height * frames * 4);
+	for(int i = 0; i < rgba.GetCount(); i++)
+		rgba[i] = 0;
+
+	for(int y = 1; y <= 10; y++) {
+		for(int x = 2; x <= 5; x++) {
+			int offset = (y * width + x) * 4;
+			rgba[offset] = 255;
+			rgba[offset + 3] = 255;
+		}
+	}
 	return String(rgba);
 }
 
@@ -125,6 +215,10 @@ CONSOLE_APP_MAIN
 		"-t", "3", "-vf", "subtitles=probe.ass,crop=1920:300:0:700",
 		"-pix_fmt", "rgba", "-f", "rawvideo", "probe.rgba"
 	}, "Render subtitle probe RGBA");
+	CheckEq(FfmpegSubtitleProbeCommandBuilder::RenderPngFrames("probe.ass", "probe_%04d.png", 3, 1920, 1080, 700, 300), {
+		"-y", "-f", "lavfi", "-i", "color=c=black@0.0:s=1920x1080:r=1",
+		"-t", "3", "-vf", "subtitles=probe.ass,crop=1920:300:0:700", "probe_%04d.png"
+	}, "Render subtitle probe PNG frames");
 
 	CheckEq(FfmpegProjectCommandBuilder::ExtractAudioAndInfo("song.croon", "song.ogg", "song.json"), {
 		"-dump_attachment:t:0", "song.json", "-i", "song.croon", "-map", "0:a:0",
@@ -465,8 +559,8 @@ CONSOLE_APP_MAIN
 	Check(ass.Find(",V1,,0,0,0,,{\\an2\\move(") >= 0, "SubtitleGenerator positions highlighted lines with motion");
 	Check(ass.Find("Sing along") >= 0, "SubtitleGenerator preserves highlighted lyric text");
 	Check(ass.Find("\\move(") >= 0, "SubtitleGenerator emits scrolling ASS movement tags");
-	Check(ass.Find("\\move(960,860,960,716,0,450)") >= 0,
-		"SubtitleGenerator reserves a blank row between highlighted and grayed slots");
+	Check(ass.Find("\\move(960,910,960,838,0,450)") >= 0,
+		"SubtitleGenerator keeps unwrapped rows compact");
 	Check(ass.Find("\\move(960,572,960,428") < 0,
 		"SubtitleGenerator does not emit an extra outgoing grayed row");
 	Check(CountOccurrences(ass, "Dialogue: 0,0:00:05.00") == 4,
@@ -476,6 +570,54 @@ CONSOLE_APP_MAIN
 	String richAss = SubtitleGenerator::ToRichAss(exportData, 4);
 	Check(richAss.Find("@4") >= 0, "SubtitleGenerator emits rich ASS formatting");
 	Check(richAss.Find("Script Info") >= 0, "SubtitleGenerator emits rich ASS script info");
+	Vector<String> highlightProbeLyrics = SubtitleGenerator::HighlightProbeLyrics(exportData, 4);
+	Check(highlightProbeLyrics.GetCount() == exportData.timedLyrics.GetCount() - 1,
+		"SubtitleGenerator exposes highlighted probe lyrics aligned to timed lines");
+	Check(highlightProbeLyrics[0] == "Sing along", "SubtitleGenerator probe lyrics preserve highlighted text");
+	Vector<bool> noWrappedHighlights;
+	noWrappedHighlights.SetCount(highlightProbeLyrics.GetCount(), false);
+	String compactAss = SubtitleGenerator::ToAss(exportData, noWrappedHighlights, 4);
+	Check(compactAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,Grayed,,0,0,0,,{\\an2\\move(960,838,960,766") >= 0,
+		"SubtitleGenerator keeps unwrapped grayed rows compact");
+	Check(compactAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,V1,,0,0,0,,{\\an2\\move(960,910,960,838") >= 0,
+		"SubtitleGenerator keeps unwrapped highlighted rows compact");
+	Check(compactAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,V1Normal,,0,0,0,,{\\an2\\move(960,960,960,910") >= 0,
+		"SubtitleGenerator keeps unwrapped incoming rows compact");
+	int singAlongIdx = 0;
+	int nextLineIdx = 1;
+	int secondNextIdx = 2;
+	Check(highlightProbeLyrics[singAlongIdx] == "Sing along" &&
+		  highlightProbeLyrics[nextLineIdx] == "Next line" &&
+		  highlightProbeLyrics[secondNextIdx] == "Second next",
+		"SubtitleGenerator probe lyrics include expected displayed lines");
+	Vector<bool> wrappedHighlights = clone(noWrappedHighlights);
+	wrappedHighlights[nextLineIdx] = true;
+	String wrappedHighlightAss = SubtitleGenerator::ToAss(exportData, wrappedHighlights, 4);
+	Check(wrappedHighlightAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,V1,,0,0,0,,{\\an2\\move(960,910,960,838") >= 0,
+		"SubtitleGenerator keeps wrapped highlighted rows in their natural slot");
+	Check(wrappedHighlightAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,Grayed,,0,0,0,,{\\an2\\move(960,748,960,676") >= 0,
+		"SubtitleGenerator applies wrapped highlighted clearance to the row above");
+	Check(wrappedHighlightAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,V1Normal,,0,0,0,,{\\an2\\move(960,960,960,910") >= 0,
+		"SubtitleGenerator keeps lower incoming rows fixed below a wrapped highlighted row");
+	Vector<bool> wrappedPrevious = clone(noWrappedHighlights);
+	wrappedPrevious[singAlongIdx] = true;
+	String wrappedPreviousAss = SubtitleGenerator::ToAss(exportData, wrappedPrevious, 4);
+	Check(wrappedPreviousAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,Grayed,,0,0,0,,{\\an2\\move(960,838,960,766") >= 0,
+		"SubtitleGenerator keeps wrapped grayed rows in their natural slot");
+	Check(wrappedPreviousAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,V1,,0,0,0,,{\\an2\\move(960,910,960,838") >= 0,
+		"SubtitleGenerator keeps lower highlighted rows fixed below wrapped grayed rows");
+	Vector<bool> wrappedIncoming = clone(noWrappedHighlights);
+	wrappedIncoming[secondNextIdx] = true;
+	String wrappedIncomingAss = SubtitleGenerator::ToAss(exportData, wrappedIncoming, 4);
+	Check(wrappedIncomingAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,V1Normal,,0,0,0,,{\\an2\\move(960,960,960,910") >= 0,
+		"SubtitleGenerator keeps wrapped incoming rows in their natural slot");
+	Vector<bool> normalWrappedSmallUnwrapped = clone(noWrappedHighlights);
+	normalWrappedSmallUnwrapped[secondNextIdx] = true;
+	String splitWrapAss = SubtitleGenerator::ToAss(exportData, normalWrappedSmallUnwrapped, noWrappedHighlights, 4);
+	Check(splitWrapAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,V1Normal,,0,0,0,,{\\an2\\move(960,960,960,910") >= 0,
+		"SubtitleGenerator keeps a normal-wrapped lyric compact while it is small incoming");
+	Check(splitWrapAss.Find("Dialogue: 0,0:00:05.00,0:00:07.00,V1,,0,0,0,,{\\an2\\move(960,910,960,838") >= 0,
+		"SubtitleGenerator keeps the same lyric in its natural slot when it becomes highlighted");
 
 	Vector<String> probeLyrics;
 	probeLyrics.Add("Sing along");
@@ -483,6 +625,11 @@ CONSOLE_APP_MAIN
 	String probeAss = SubtitleWrapProbe::BuildAss(exportData, probeLyrics);
 	Check(probeAss.Find("[Script Info]") >= 0, "SubtitleWrapProbe emits script info");
 	Check(probeAss.Find("Style: V1,Arial,72") >= 0, "SubtitleWrapProbe uses highlighted normal-size style");
+	Check(probeAss.Find("{\\an2\\pos(960,990)}") >= 0,
+		"SubtitleWrapProbe anchors probe text near the bottom of the canvas");
+	String smallProbeAss = SubtitleWrapProbe::BuildAss(exportData, probeLyrics, 1920, 1080, 50, false);
+	Check(smallProbeAss.Find("Style: V1,Arial,50") >= 0, "SubtitleWrapProbe supports incoming small-size style");
+	Check(smallProbeAss.Find(",0,0,0,100,100") >= 0, "SubtitleWrapProbe supports non-bold incoming style");
 	Check(probeAss.Find("Dialogue: 0,0:00:00.00,0:00:00.90,V1") >= 0,
 		"SubtitleWrapProbe emits one-frame first probe event");
 	Check(probeAss.Find("Dialogue: 0,0:00:01.00,") >= 0,
@@ -496,6 +643,22 @@ CONSOLE_APP_MAIN
 	Check(probeFrames[0].bands[0].width == 3, "SubtitleWrapProbe reports first band width");
 	Check(probeFrames[0].bands[1].width == 2, "SubtitleWrapProbe reports second band width");
 	Check(probeFrames[1].bands.GetCount() == 1, "SubtitleWrapProbe analyzes second frame independently");
+	Vector<SubtitleWrapProbeFrame> opaqueProbeFrames = SubtitleWrapProbe::AnalyzeRgbaFrames(OpaqueBackgroundProbeRgbaFixture(), 8, 6, 1);
+	Check(opaqueProbeFrames.GetCount() == 1, "SubtitleWrapProbe analyzes opaque-background RGBA frames");
+	Check(opaqueProbeFrames[0].bands.GetCount() == 1,
+		"SubtitleWrapProbe ignores opaque black background rows");
+	Vector<SubtitleWrapProbeFrame> fragmentedProbeFrames = SubtitleWrapProbe::AnalyzeRgbaFrames(FragmentedSingleLineProbeRgbaFixture(), 8, 12, 1);
+	Check(fragmentedProbeFrames.GetCount() == 1, "SubtitleWrapProbe analyzes fragmented single-line frames");
+	Check(!SubtitleWrapProbe::IsWrappedFrame(fragmentedProbeFrames[0], exportData.fontSize),
+		"SubtitleWrapProbe merges tiny single-line fragments before deciding wrap");
+	Vector<SubtitleWrapProbeFrame> wrappedProbeFrames = SubtitleWrapProbe::AnalyzeRgbaFrames(WrappedTwoLineProbeRgbaFixture(), 8, 20, 1);
+	Check(wrappedProbeFrames.GetCount() == 1, "SubtitleWrapProbe analyzes two-line frames");
+	Check(SubtitleWrapProbe::IsWrappedFrame(wrappedProbeFrames[0], exportData.fontSize),
+		"SubtitleWrapProbe detects distinct rendered line groups as wrapped");
+	Vector<SubtitleWrapProbeFrame> connectedProbeFrames = SubtitleWrapProbe::AnalyzeRgbaFrames(ConnectedWrappedProbeRgbaFixture(), 8, 16, 1);
+	Check(connectedProbeFrames.GetCount() == 1, "SubtitleWrapProbe analyzes connected wrapped frames");
+	Check(SubtitleWrapProbe::IsWrappedFrame(connectedProbeFrames[0], 6),
+		"SubtitleWrapProbe detects connected tall rendered text as wrapped");
 	Vector<String> noProbeLyrics;
 	Vector<SubtitleWrapProbeFrame> noProbeFrames;
 	Check(SubtitleWrapProbeRunner::Run(exportData, noProbeLyrics, noProbeFrames, "unused-ffmpeg"),

@@ -15,6 +15,50 @@ using namespace Upp;
 #include "SubtitleWrapProbe.h"
 #include "SubtitleWrapProbeRunner.h"
 
+namespace {
+
+bool RunProcess(String exe, const Vector<String>& args) {
+    MediaProcessRunner process;
+    if (!process.Start(exe, args))
+        return false;
+
+    String output;
+    while (process.Read(output) || process.IsRunning())
+        Sleep(10);
+    return process.GetExitCode() == 0;
+}
+
+void SaveDebugProbeFiles(String debugDir,
+                         String ffmpegPath,
+                         String assPath,
+                         int frameCount,
+                         int resX,
+                         int resY,
+                         int cropY,
+                         int cropHeight,
+                         int effectiveFontSize,
+                         bool probeBold) {
+    debugDir = TrimBoth(debugDir);
+    if (debugDir.IsEmpty())
+        return;
+    if (!DirectoryExists(debugDir) && !DirectoryCreate(debugDir))
+        return;
+
+    String label = Format("wrap_probe_%dx%d_%d_%s",
+                          resX,
+                          resY,
+                          effectiveFontSize,
+                          probeBold ? "bold":"regular");
+    String debugAssPath = AppendFileName(debugDir, label + ".ass");
+    SaveFile(debugAssPath, LoadFile(assPath));
+
+    String outputPattern = AppendFileName(debugDir, label + "_%04d.png");
+    RunProcess(ffmpegPath, FfmpegSubtitleProbeCommandBuilder::RenderPngFrames(
+        assPath, outputPattern, frameCount, resX, resY, cropY, cropHeight));
+}
+
+}
+
 bool SubtitleWrapProbeRunner::Run(const KarData& data,
                                   const Vector<String>& lyrics,
                                   Vector<SubtitleWrapProbeFrame>& frames,
@@ -22,7 +66,9 @@ bool SubtitleWrapProbeRunner::Run(const KarData& data,
                                   int resX,
                                   int resY,
                                   int cropY,
-                                  int cropHeight) {
+                                  int cropHeight,
+                                  int probeFontSize,
+                                  bool probeBold) {
     frames.Clear();
     if (lyrics.IsEmpty())
         return true;
@@ -39,25 +85,27 @@ bool SubtitleWrapProbeRunner::Run(const KarData& data,
         FileDelete(rgbaPath);
     };
 
-    if (!SaveFile(assPath, SubtitleWrapProbe::BuildAss(data, lyrics, resX, resY))) {
+    if (!SaveFile(assPath, SubtitleWrapProbe::BuildAss(data, lyrics, resX, resY, probeFontSize, probeBold))) {
         cleanup();
         return false;
     }
+
+    int effectiveFontSize = probeFontSize > 0 ? probeFontSize:data.fontSize;
+    SaveDebugProbeFiles(GetEnv("CROON_WRAP_PROBE_DIR"),
+                        ffmpegPath,
+                        assPath,
+                        lyrics.GetCount(),
+                        resX,
+                        resY,
+                        cropY,
+                        cropHeight,
+                        effectiveFontSize,
+                        probeBold);
 
     Vector<String> args = FfmpegSubtitleProbeCommandBuilder::RenderRgba(
         assPath, rgbaPath, lyrics.GetCount(), resX, resY, cropY, cropHeight);
 
-    MediaProcessRunner process;
-    if (!process.Start(ffmpegPath, args)) {
-        cleanup();
-        return false;
-    }
-
-    String output;
-    while (process.Read(output) || process.IsRunning())
-        Sleep(10);
-
-    if (process.GetExitCode() != 0) {
+    if (!RunProcess(ffmpegPath, args)) {
         cleanup();
         return false;
     }

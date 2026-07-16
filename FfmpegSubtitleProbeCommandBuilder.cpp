@@ -44,3 +44,24 @@ Vector<String> FfmpegSubtitleProbeCommandBuilder::RenderRgba(String assFilePath,
         outputPath
     };
 }
+
+Vector<String> FfmpegSubtitleProbeCommandBuilder::RenderPngFrames(String assFilePath,
+                                                                  String outputPattern,
+                                                                  int frameCount,
+                                                                  int width,
+                                                                  int height,
+                                                                  int cropY,
+                                                                  int cropHeight) {
+    return {
+        "-y",
+        "-f",
+        "lavfi",
+        "-i",
+        Format("color=c=black@0.0:s=%dx%d:r=1", width, height),
+        "-t",
+        AsString(max(0, frameCount)),
+        "-vf",
+        Format("subtitles=%s,crop=%d:%d:0:%d", EscapeSubtitlePath(assFilePath), width, cropHeight, cropY),
+        outputPattern
+    };
+}

@@ -18,7 +18,9 @@ struct SubtitleWrapProbeRunner {
                     int resX=1920,
                     int resY=1080,
                     int cropY=700,
-                    int cropHeight=300);
+                    int cropHeight=300,
+                    int probeFontSize=0,
+                    bool probeBold=true);
 };
 
 #endif

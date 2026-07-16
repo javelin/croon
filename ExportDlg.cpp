@@ -33,7 +33,110 @@ using namespace Upp;
 #include "ProgressDlg.h"
 #include "FfmpegProgressParser.h"
 #include "SubtitleGenerator.h"
+#include "SubtitleWrapProbeRunner.h"
 #include "ExportDlg.h"
+
+namespace {
+
+int ReadDigitsBack(const String& text, int pos) {
+    int start = pos - 1;
+    while (start >= 0 && IsDigit(text[start]))
+        start--;
+    return start + 1 < pos ? StrInt(text.Mid(start + 1, pos - start - 1)) : 0;
+}
+
+int ReadDigitsForward(const String& text, int pos) {
+    int end = pos;
+    while (end < text.GetCount() && IsDigit(text[end]))
+        end++;
+    return end > pos ? StrInt(text.Mid(pos, end - pos)) : 0;
+}
+
+bool ParseVideoSize(const String& output, Size& size) {
+    Vector<String> lines = Split(output, '\n');
+    for (const auto& line : lines) {
+        if (line.Find("Video:") < 0 && line.Find('x') < 0)
+            continue;
+        for (int i = 1; i + 1 < line.GetCount(); i++) {
+            if (line[i] != 'x' || !IsDigit(line[i - 1]) || !IsDigit(line[i + 1]))
+                continue;
+            int cx = ReadDigitsBack(line, i);
+            int cy = ReadDigitsForward(line, i + 1);
+            if (cx >= 160 && cy >= 90) {
+                size = Size(cx, cy);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+String FfprobePath(const String& ffmpegPath) {
+    String name = GetFileName(ffmpegPath);
+    if (name.IsEmpty())
+        return "ffprobe";
+    name.Replace("ffmpeg", "ffprobe");
+    name.Replace("FFMPEG", "FFPROBE");
+    String dir = GetFileDirectory(ffmpegPath);
+    return dir.IsEmpty() ? name:AppendFileName(dir, name);
+}
+
+bool ReadVideoSizeWithFfprobe(const String& ffmpegPath, const String& videoPath, Size& size) {
+    MediaProcessRunner process;
+    Vector<String> args{
+        "-v", "error",
+        "-select_streams", "v:0",
+        "-show_entries", "stream=width,height",
+        "-of", "csv=s=x:p=0",
+        videoPath
+    };
+    if (!process.Start(FfprobePath(ffmpegPath), args))
+        return false;
+
+    String chunk;
+    String output;
+    while (process.Read(chunk) || process.IsRunning()) {
+        output.Cat(chunk);
+        Sleep(10);
+    }
+    return process.GetExitCode() == 0 && ParseVideoSize(output, size);
+}
+
+bool ReadVideoSizeWithFfmpeg(const String& ffmpegPath, const String& videoPath, Size& size) {
+    MediaProcessRunner process;
+    if (!process.Start(ffmpegPath, Vector<String>{"-i", videoPath}))
+        return false;
+
+    String chunk;
+    String output;
+    while (process.Read(chunk) || process.IsRunning()) {
+        output.Cat(chunk);
+        Sleep(10);
+    }
+    return ParseVideoSize(output, size);
+}
+
+Size ProbeCanvasForExport(const KarData& data, const String& ffmpegPath) {
+    if (data.videoFilePath.StartsWith("@@"))
+        return Size(1920, 1080);
+
+    Size videoSize;
+    if (ReadVideoSizeWithFfprobe(ffmpegPath, data.videoFilePath, videoSize))
+        return videoSize;
+    if (ReadVideoSizeWithFfmpeg(ffmpegPath, data.videoFilePath, videoSize))
+        return videoSize;
+    return Size(1920, 1080);
+}
+
+int ProbeCropHeight(int resY) {
+    return min(380, max(1, resY));
+}
+
+int ProbeCropY(int resY) {
+    return max(0, resY - ProbeCropHeight(resY));
+}
+
+}
 
 ExportDlg::ExportDlg() : ffmpeg(Config::Get(FFMPEG_LOCATION)) {
     WhenClose << [=] {
@@ -127,7 +230,27 @@ int ExportDlg::Run(const KarData& karData, String outputPath, int len, double th
 void ExportDlg::ExportASS() {
     UpdateProgress();
     assFilePath = AppIdentity::TempFileName(".ass");
-    SaveFile(assFilePath, SubtitleGenerator::ToAss(*data, data->subtitleLines));
+    Vector<bool> wrappedHighlights;
+    Vector<bool> wrappedIncoming;
+    Vector<String> probeLyrics = SubtitleGenerator::HighlightProbeLyrics(*data, data->subtitleLines);
+    Size probeCanvas = ProbeCanvasForExport(*data, ffmpeg);
+    int probeCropY = ProbeCropY(probeCanvas.cy);
+    int probeCropHeight = ProbeCropHeight(probeCanvas.cy);
+    Vector<SubtitleWrapProbeFrame> probeFrames;
+    if (SubtitleWrapProbeRunner::Run(*data, probeLyrics, probeFrames, ffmpeg,
+                                     probeCanvas.cx, probeCanvas.cy, probeCropY, probeCropHeight)) {
+        for (const auto& frame : probeFrames)
+            wrappedHighlights.Add(SubtitleWrapProbe::IsWrappedFrame(frame, data->fontSize));
+    }
+    int incomingFontSize = max(1, (int)(data->fontSize * 0.7));
+    Vector<SubtitleWrapProbeFrame> incomingProbeFrames;
+    if (SubtitleWrapProbeRunner::Run(*data, probeLyrics, incomingProbeFrames, ffmpeg,
+                                     probeCanvas.cx, probeCanvas.cy, probeCropY, probeCropHeight, incomingFontSize, false)) {
+        for (const auto& frame : incomingProbeFrames)
+            wrappedIncoming.Add(SubtitleWrapProbe::IsWrappedFrame(frame, incomingFontSize));
+    }
+    SaveFile(assFilePath, SubtitleGenerator::ToAss(*data, wrappedHighlights, wrappedIncoming,
+                                                   data->subtitleLines, probeCanvas.cx, probeCanvas.cy));
     SetTimeCallback(500, [=] {
         phase = Dehiss;
         StartNextProcess();

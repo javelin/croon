@@ -29,7 +29,7 @@ This file records service boundaries expected during migration. Some services be
 - `SubtitleLineProcessor`: subtitle metadata expansion, count-in insertion, and vocal style resolution.
 - `SubtitleGenerator`: ASS subtitle generation from timed lyrics and vocal parts.
 - `SubtitleWrapProbe`: internal highlighted-line ASS probe generation and RGBA alpha-band analysis for future libass/ffmpeg wrap detection.
-- `SubtitleWrapProbeRunner`: internal ffmpeg/libass probe execution, raw RGBA loading, analysis, and temp-file cleanup.
+- `SubtitleWrapProbeRunner`: internal ffmpeg/libass probe execution, raw RGBA loading, analysis, and temp-file cleanup used during ASS export.
 - `LrcGenerator`: LRC lyric export after metadata/count-in processing, with Croon vocal-part annotations.
 - `TextTools`: shared text spacing, filtering, and display-shortening helpers.
 - `TimeFormatter`: timestamp and count-in duration formatting helpers.
