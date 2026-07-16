@@ -341,7 +341,7 @@ void Project::ExportVideo(int length) {
 #endif
     
     FileSel fsel;
-    String saveDir = Config::Get(LRC_EXPORT_DIR);
+    String saveDir = Config::Get(EXPORT_DIR);
     if (saveDir.IsEmpty()) saveDir = Config::Get(PROJECT_DIR);
     fsel <<= saveDir;
     fsel.Set(outputPath);
@@ -371,7 +371,7 @@ void Project::ExportLrc() {
 #endif
 
     FileSel fsel;
-    String saveDir = Config::Get(EXPORT_DIR);
+    String saveDir = Config::Get(LRC_EXPORT_DIR);
     if (saveDir.IsEmpty()) saveDir = Config::Get(PROJECT_DIR);
     fsel <<= saveDir;
     fsel.Set(outputPath);
