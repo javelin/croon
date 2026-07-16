@@ -24,7 +24,7 @@ Vector<String> FfmpegExportCommandBuilder::WithBackgroundVideo(const KarData& da
         filterComplex = Format("[0:v]scale=-2:180,subtitles=%s[v]", assFn);
     }
     else {
-        filterComplex = Format("[0:v]subtitles=%s[v]", assFn);
+        filterComplex = Format("[0:v]scale=1920:1080,subtitles=%s[v]", assFn);
     }
 
     return {
