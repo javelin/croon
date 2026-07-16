@@ -172,6 +172,25 @@ String WrappedTwoLineProbeRgbaFixture() {
 	return String(rgba);
 }
 
+String ConnectedWrappedProbeRgbaFixture() {
+	const int width = 8;
+	const int height = 16;
+	const int frames = 1;
+	StringBuffer rgba;
+	rgba.SetCount(width * height * frames * 4);
+	for(int i = 0; i < rgba.GetCount(); i++)
+		rgba[i] = 0;
+
+	for(int y = 1; y <= 10; y++) {
+		for(int x = 2; x <= 5; x++) {
+			int offset = (y * width + x) * 4;
+			rgba[offset] = 255;
+			rgba[offset + 3] = 255;
+		}
+	}
+	return String(rgba);
+}
+
 }
 
 CONSOLE_APP_MAIN
@@ -630,6 +649,10 @@ CONSOLE_APP_MAIN
 	Check(wrappedProbeFrames.GetCount() == 1, "SubtitleWrapProbe analyzes two-line frames");
 	Check(SubtitleWrapProbe::IsWrappedFrame(wrappedProbeFrames[0], exportData.fontSize),
 		"SubtitleWrapProbe detects distinct rendered line groups as wrapped");
+	Vector<SubtitleWrapProbeFrame> connectedProbeFrames = SubtitleWrapProbe::AnalyzeRgbaFrames(ConnectedWrappedProbeRgbaFixture(), 8, 16, 1);
+	Check(connectedProbeFrames.GetCount() == 1, "SubtitleWrapProbe analyzes connected wrapped frames");
+	Check(SubtitleWrapProbe::IsWrappedFrame(connectedProbeFrames[0], 6),
+		"SubtitleWrapProbe detects connected tall rendered text as wrapped");
 	Vector<String> noProbeLyrics;
 	Vector<SubtitleWrapProbeFrame> noProbeFrames;
 	Check(SubtitleWrapProbeRunner::Run(exportData, noProbeLyrics, noProbeFrames, "unused-ffmpeg"),

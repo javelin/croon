@@ -117,6 +117,19 @@ int CountTextLineGroups(const SubtitleWrapProbeFrame& frame, int fontSize) {
     return groups;
 }
 
+int TextVerticalSpan(const SubtitleWrapProbeFrame& frame) {
+    if (frame.bands.IsEmpty())
+        return 0;
+
+    int y0 = frame.bands[0].y0;
+    int y1 = frame.bands[0].y1;
+    for (const auto& band : frame.bands) {
+        y0 = min(y0, band.y0);
+        y1 = max(y1, band.y1);
+    }
+    return y1 - y0;
+}
+
 }
 
 String SubtitleWrapProbe::BuildAss(const KarData& data,
@@ -173,5 +186,6 @@ Vector<SubtitleWrapProbeFrame> SubtitleWrapProbe::AnalyzeRgbaFrames(const String
 }
 
 bool SubtitleWrapProbe::IsWrappedFrame(const SubtitleWrapProbeFrame& frame, int fontSize) {
-    return CountTextLineGroups(frame, fontSize) > 1;
+    return CountTextLineGroups(frame, fontSize) > 1 ||
+           TextVerticalSpan(frame) > max(1, fontSize * 5 / 4);
 }

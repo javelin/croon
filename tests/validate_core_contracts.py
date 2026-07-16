@@ -688,6 +688,8 @@ def main() -> None:
     require(subtitle_wrap_probe_cpp, "max((int)red, max((int)green, (int)blue))", "SubtitleWrapProbe ignores opaque black background")
     require(subtitle_wrap_probe_cpp, "rowHasText", "SubtitleWrapProbe row band grouping")
     require(subtitle_wrap_probe_cpp, "CountTextLineGroups", "SubtitleWrapProbe text line grouping")
+    require(subtitle_wrap_probe_cpp, "TextVerticalSpan", "SubtitleWrapProbe connected tall text detection")
+    require(subtitle_wrap_probe_cpp, "fontSize * 5 / 4", "SubtitleWrapProbe single-band wrap threshold")
     require(subtitle_wrap_probe_cpp, "fontSize / 12", "SubtitleWrapProbe fragment gap tolerance")
 
     subtitle_wrap_probe_runner_h = (root / "SubtitleWrapProbeRunner.h").read_text()
@@ -780,6 +782,7 @@ def main() -> None:
     require(core_tests_cpp, "OpaqueBackgroundProbeRgbaFixture", "core tests opaque background probe fixture")
     require(core_tests_cpp, "FragmentedSingleLineProbeRgbaFixture", "core tests fragmented single-line probe fixture")
     require(core_tests_cpp, "WrappedTwoLineProbeRgbaFixture", "core tests wrapped two-line probe fixture")
+    require(core_tests_cpp, "ConnectedWrappedProbeRgbaFixture", "core tests connected wrapped probe fixture")
     require(core_tests_cpp, "SubtitleWrapProbe::IsWrappedFrame", "core tests wrapped frame decision")
     require(core_tests_cpp, "SubtitleWrapProbeRunner::Run", "core tests subtitle wrap probe runner")
     require(core_tests_cpp, "FfmpegSubtitleProbeCommandBuilder::RenderRgba", "core tests subtitle probe command builder")
