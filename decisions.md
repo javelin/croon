@@ -38,9 +38,9 @@ Configured video directory enumeration, cached video listing, thumbnail file pat
 
 Croon will not add import support for older legacy product metadata or other legacy product artifacts outside the `.croon` compatibility policy. Legacy product names remain migrated when Croon creates or owns artifacts, and `.croon` metadata compatibility remains the supported backward-compatibility surface.
 
-### Disable Live RichText ASS Preview
+### Lightweight LRC Lyrics Preview
 
-The editor no longer shows or refreshes the RichText ASS preview tab. Maintaining an eager QTF approximation of ASS is expensive on lyrics/timing changes and less faithful than libass/ffmpeg rendering; a future lightweight preview can reuse the tab area for LRC-formatted lyrics.
+The editor preview tab shows LRC-formatted lyrics instead of an eager RichText approximation of ASS. ASS layout remains generated only for export because matching libass/ffmpeg rendering in the editor is expensive and less faithful; the preview reuses the exported LRC text and applies the subtitle vocal colors for readability.
 
 ### Probe Wrapping With Rendered Highlight Lines
 

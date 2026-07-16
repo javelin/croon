@@ -146,6 +146,8 @@ def main() -> None:
             fail(f"Project.h missing runtime tab member {runtime_member}")
     if "RichTextCtrl previewRT;" in project_h:
         fail("Project.h still declares live ASS preview control")
+    if "RichTextCtrl lrcPreview;" not in project_h:
+        fail("Project.h missing LRC preview control")
 
     project_impl = (root / "Project.cpp").read_text()
     if '#include "Croon.h"' in project_impl:
@@ -160,6 +162,7 @@ def main() -> None:
         '#include "KarData.h"',
         '#include "LyricsTransformer.h"',
         '#include "LrcGenerator.h"',
+        '#include "LrcPreviewGenerator.h"',
         '#include "TimeFormatter.h"',
         '#include "UiScaler.h"',
         '#include "GenreCatalog.h"',
@@ -200,6 +203,8 @@ def main() -> None:
         "GenreCatalog::List()",
         "Project::Project(KarData& projectData, VideoDlg& videoDialog) : videoPath(\"\"), data(projectData), videoDlg(videoDialog)",
         "tab.Add(lyricsEd.HSizePosZ(5, 5).VSizePosZ(5, 5), \"Lyrics\")",
+        "tab.Add(lrcPreview.HSizePosZ(5, 5).VSizePosZ(5, 5), \"LRC Preview\")",
+        "lrcPreview.SetQTF(LrcPreviewGenerator::ToQtf(data))",
         "subtitleLinesDrop.Add(3",
         "data.SetSubtitleLines",
         "subtitleLinesDrop.SetData(data.subtitleLines)",

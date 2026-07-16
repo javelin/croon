@@ -576,6 +576,7 @@ def main() -> None:
     require(services_md, "streams video picker thumbnails incrementally", "VideoCatalog picker responsiveness documentation")
     require(services_md, "`GatherDlg`: removed modal video gathering dialog", "GatherDlg retirement documentation")
     require(services_md, "`LrcGenerator`: LRC lyric export after metadata/count-in processing", "LrcGenerator service documentation")
+    require(services_md, "`LrcPreviewGenerator`: lightweight LRC preview formatter", "LrcPreviewGenerator service documentation")
     require(services_md, "`FfmpegSubtitleProbeCommandBuilder`: deterministic ffmpeg arguments for raw RGBA subtitle probe rendering", "FfmpegSubtitleProbeCommandBuilder service documentation")
     require(services_md, "`SubtitleWrapProbe`: internal highlighted-line ASS probe generation", "SubtitleWrapProbe service documentation")
     require(services_md, "`SubtitleWrapProbeRunner`: internal ffmpeg/libass probe execution", "SubtitleWrapProbeRunner service documentation")
@@ -617,6 +618,9 @@ def main() -> None:
 
     lrc_generator_h = (root / "LrcGenerator.h").read_text()
     require(lrc_generator_h, "ToLrc", "LrcGenerator LRC contract")
+
+    lrc_preview_generator_h = (root / "LrcPreviewGenerator.h").read_text()
+    require(lrc_preview_generator_h, "ToQtf", "LrcPreviewGenerator QTF contract")
 
     media_process_runner_h = (root / "MediaProcessRunner.h").read_text()
     for method in [
@@ -728,6 +732,22 @@ def main() -> None:
     require(lrc_generator_cpp, "VocalPartPrefix", "LrcGenerator vocal part prefix helper")
     require(lrc_generator_cpp, "AssignedVocalPart", "LrcGenerator explicit assignment helper")
 
+    lrc_preview_generator_cpp = (root / "LrcPreviewGenerator.cpp").read_text()
+    reject(lrc_preview_generator_cpp, '#include "Croon.h"', "LrcPreviewGenerator app shell dependency")
+    require(lrc_preview_generator_cpp, "#include <CtrlLib/CtrlLib.h>", "LrcPreviewGenerator rich text dependency")
+    require(lrc_preview_generator_cpp, '#include "LrcPreviewGenerator.h"', "LrcPreviewGenerator direct self dependency")
+    require(lrc_preview_generator_cpp, '#include "LrcGenerator.h"', "LrcPreviewGenerator exported LRC dependency")
+    require(lrc_preview_generator_cpp, '#include "RichTextBuilder.h"', "LrcPreviewGenerator QTF builder dependency")
+    require(lrc_preview_generator_cpp, '#include "SubtitleLineProcessor.h"', "LrcPreviewGenerator subtitle style dependency")
+    require(lrc_preview_generator_cpp, "LrcGenerator::ToLrc(data)", "LrcPreviewGenerator reuses exported LRC text")
+    require(lrc_preview_generator_cpp, "SubtitleLineProcessor::ResolveStyle", "LrcPreviewGenerator video subtitle style resolution")
+    require(lrc_preview_generator_cpp, "\"*@(250.80.83)\"", "LrcPreviewGenerator V1 subtitle red preview")
+    require(lrc_preview_generator_cpp, "\"*@(144.213.255)\"", "LrcPreviewGenerator V2 subtitle blue preview")
+    require(lrc_preview_generator_cpp, "\"*@(237.128.233)\"", "LrcPreviewGenerator both-singer subtitle purple preview")
+    require(lrc_preview_generator_cpp, "\"/*@(11.218.81)\"", "LrcPreviewGenerator bold italic MALACHITE backup preview")
+    require(lrc_preview_generator_cpp, "\"*@(251.236.93)\"", "LrcPreviewGenerator metadata subtitle yellow preview")
+    require(lrc_preview_generator_cpp, "\"@(96.96.96)\"", "LrcPreviewGenerator normal timestamp preview")
+
     rich_text_builder_h = (root / "RichTextBuilder.h").read_text()
     require(rich_text_builder_h, "struct RTHelper", "RichTextBuilder compatibility type")
     require(rich_text_builder_h, "Fmt(String s)", "RichTextBuilder QTF format contract")
@@ -792,6 +812,7 @@ def main() -> None:
     require(core_tests_cpp, "SubtitleWrapProbeRunner::Run", "core tests subtitle wrap probe runner")
     require(core_tests_cpp, "FfmpegSubtitleProbeCommandBuilder::RenderRgba", "core tests subtitle probe command builder")
     require(core_tests_cpp, "LrcGenerator::ToLrc", "core tests direct LRC generator dependency")
+    require(core_tests_cpp, "LrcPreviewGenerator::ToQtf", "core tests direct LRC preview generator dependency")
     require(core_tests_cpp, "VocalPartStyle::Next", "core tests direct vocal part helper dependency")
     require(core_tests_cpp, "VocalPartStyle::ToParts", "core tests vocal part tuple contract")
     require(core_tests_cpp, 'richAss.Find("@4")', "core tests rich ASS formatting assertion")
@@ -803,6 +824,8 @@ def main() -> None:
             "core tests LRC vocal prefix assertion")
     require(core_tests_cpp, '"[00:32.00](Young love)"',
             "core tests LRC backup vocal assertion")
+    require(core_tests_cpp, "[/*@(11.218.81) `(Young love`)",
+            "core tests LRC backup preview style assertion")
     require(core_tests_cpp, "GeniusLyricsProvider::BuildUrl", "core tests Genius provider URL assertion")
     require(core_tests_cpp, "SongLyricsProvider::BuildUrl", "core tests SongLyrics provider URL assertion")
     require(core_tests_cpp, "LyricsProviderTools::HyphenSlug", "core tests lyrics provider slug assertion")
@@ -811,6 +834,7 @@ def main() -> None:
     require(core_tests_upp, "SongLyricsProvider.cpp", "core tests SongLyrics provider implementation")
     require(core_tests_upp, "LyricsTransformer.cpp", "core tests lyrics transformer implementation")
     require(core_tests_upp, "LrcGenerator.cpp", "core tests LRC generator implementation")
+    require(core_tests_upp, "LrcPreviewGenerator.cpp", "core tests LRC preview generator implementation")
     require(core_tests_upp, "MediaProcessRunner.cpp", "core tests media process runner implementation")
     require(core_tests_upp, "SubtitleGenerator.cpp", "core tests subtitle generator implementation")
     require(core_tests_upp, "SubtitleLineProcessor.cpp", "core tests subtitle line processor implementation")
@@ -1056,7 +1080,7 @@ def main() -> None:
         "OpenProjectDlg.cpp": ["LyricsTransformer::TimedToRaw"],
         "Page2.cpp": ["LyricsDownloadService::Download", "TextTools::CleanSpacing"],
         "Page3.cpp": ["LyricsTransformer::RawToUntimed"],
-        "Project.cpp": ["LyricsTransformer::RawToUntimed", "LrcGenerator::ToLrc"],
+        "Project.cpp": ["LyricsTransformer::RawToUntimed", "LrcGenerator::ToLrc", "LrcPreviewGenerator::ToQtf"],
         "ProjectList.cpp": ["LyricsTransformer::TimedToRaw", "TextTools::ShortenMiddle"],
         "ProjectLoader.cpp": ["LyricsTransformer::TimedToRaw"],
         "TimingDlg.cpp": ["LyricsTransformer::TimedToRaw"],
@@ -1149,6 +1173,11 @@ def main() -> None:
     require(project_cpp, "videoDlg.Run()", "Project injected video dialog workflow")
     reject(project_cpp, "SubtitleGenerator::ToRichAss(data)", "Project live ASS preview refresh")
     reject(project_cpp, "previewRT", "Project live ASS preview control")
+    require(project_cpp, "tab.Add(lrcPreview.HSizePosZ(5, 5).VSizePosZ(5, 5), \"LRC Preview\")", "Project LRC preview tab")
+    require(project_cpp, "void Project::UpdateLrcPreview()", "Project LRC preview refresh implementation")
+    require(project_cpp, "lrcPreview.SetQTF(LrcPreviewGenerator::ToQtf(data))", "Project LRC preview QTF refresh")
+    reject(project_cpp, "lrcPreview.Background(White()).TextColor", "Project LRC preview text color override")
+    reject(project_cpp, "lrcPreview.TextColor", "Project LRC preview text color override")
     require(project_cpp, "SaveProjectDlg().Run(data) == IDOK", "Project save clears dirty only after successful save")
     require(project_cpp, "saveDlg.Run(savePath, data)", "Project injected data save-as")
     require(project_cpp, "LyricsTransformer::RawToUntimed(data)", "Project injected data lyrics update")
@@ -1173,6 +1202,8 @@ def main() -> None:
     reject(project_cpp, "SubtitleGenerator::ToRichAss(KarData::GetGlobal()", "Project direct global preview access")
     project_h = (root / "Project.h").read_text()
     reject(project_h, "RichTextCtrl previewRT;", "Project live ASS preview member")
+    require(project_h, "RichTextCtrl lrcPreview;", "Project LRC preview member")
+    require(project_h, "void UpdateLrcPreview();", "Project LRC preview refresh declaration")
     reject(project_h, "    Project();", "Project default global data declaration")
     reject(project_h, "    Project(KarData& data);", "Project compatibility video declaration")
     reject(project_h, "~Project() { CleanUp(); }", "Project inline cleanup destructor")
@@ -1180,8 +1211,8 @@ def main() -> None:
     require(project_h, "void ExportLrc();", "Project LRC export declaration")
     require(project_h, "virtual ~Project();", "Project destructor declaration")
     decisions_md = (root / "decisions.md").read_text()
-    require(decisions_md, "### Disable Live RichText ASS Preview", "disabled live ASS preview decision")
-    require(decisions_md, "future lightweight preview can reuse the tab area for LRC-formatted lyrics", "future LRC preview decision")
+    require(decisions_md, "### Lightweight LRC Lyrics Preview", "lightweight LRC preview decision")
+    require(decisions_md, "The editor preview tab shows LRC-formatted lyrics instead of an eager RichText approximation of ASS", "LRC preview replaces ASS preview decision")
     require(project_h, "KarData& data", "Project injected data member")
     require(project_h, "VideoDlg& videoDlg", "Project injected video member")
 

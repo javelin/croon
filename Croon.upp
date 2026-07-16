@@ -66,6 +66,8 @@ file
 	LyricsProviderTools.h,
 	LrcGenerator.cpp,
 	LrcGenerator.h,
+	LrcPreviewGenerator.cpp,
+	LrcPreviewGenerator.h,
 	SongLyricsProvider.cpp,
 	SongLyricsProvider.h,
 	LyricsTransformer.cpp,

@@ -135,6 +135,7 @@ if(CROON_UMK_EXECUTABLE)
             "${CMAKE_CURRENT_SOURCE_DIR}/LyricsProviderTools.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/LyricsTransformer.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/LrcGenerator.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/LrcPreviewGenerator.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/MediaProcessRunner.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/ProjectSerializer.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/SongLyricsProvider.cpp"

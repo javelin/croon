@@ -51,6 +51,8 @@ def main() -> None:
         "SongLyricsProvider.h",
         "RecentProjectService.cpp",
         "RecentProjectService.h",
+        "LrcPreviewGenerator.cpp",
+        "LrcPreviewGenerator.h",
         "RichTextBuilder.h",
         "SubtitleLineProcessor.cpp",
         "SubtitleLineProcessor.h",
@@ -121,6 +123,8 @@ def main() -> None:
         "LyricsProviderTools.h" not in upp or
         "LrcGenerator.cpp" not in upp or
         "LrcGenerator.h" not in upp or
+        "LrcPreviewGenerator.cpp" not in upp or
+        "LrcPreviewGenerator.h" not in upp or
         "LyricsTransformer.cpp" not in upp or
         "LyricsTransformer.h" not in upp or
         "SongLyricsProvider.cpp" not in upp or

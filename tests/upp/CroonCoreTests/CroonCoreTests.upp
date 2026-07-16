@@ -21,6 +21,7 @@ file
 	LyricsProviderTools.cpp,
 	LyricsTransformer.cpp,
 	LrcGenerator.cpp,
+	LrcPreviewGenerator.cpp,
 	MediaProcessRunner.cpp,
 	SongLyricsProvider.cpp,
 	VocalPart.cpp,

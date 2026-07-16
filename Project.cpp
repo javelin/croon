@@ -21,6 +21,7 @@ using namespace Upp;
 #include "KarData.h"
 #include "LyricsTransformer.h"
 #include "LrcGenerator.h"
+#include "LrcPreviewGenerator.h"
 #include "TimeFormatter.h"
 #include "UiScaler.h"
 #include "GenreCatalog.h"
@@ -76,6 +77,7 @@ Project::Project(KarData& projectData, VideoDlg& videoDialog) : videoPath(""), d
     
     auto updateData = [this] {
         SetDirty();
+        UpdateLrcPreview();
     };
     
     titleEd.WhenAction = [this, updateData] {
@@ -144,6 +146,8 @@ Project::Project(KarData& projectData, VideoDlg& videoDialog) : videoPath(""), d
     saveBtn << [this] { SaveProject(); };
     
     tab.Add(lyricsEd.HSizePosZ(5, 5).VSizePosZ(5, 5), "Lyrics");
+    tab.Add(lrcPreview.HSizePosZ(5, 5).VSizePosZ(5, 5), "LRC Preview");
+    lrcPreview.Background(White()).Margins(UiScaler::X(8)).NoLazy();
     
     lyricsEd.WhenAction << [this] {
         KillTimeCallback(timerId);
@@ -176,6 +180,7 @@ void Project::Populate() {
     fontSizeEd.SetData(data.fontSize);
     subtitleLinesDrop.SetData(data.subtitleLines);
     dehissOpt.SetData(data.dehiss);
+    UpdateLrcPreview();
     open = true;
     WhenDirty(dirty);
 }
@@ -237,6 +242,11 @@ void Project::UpdateLyricsData() {
     }
     data.timedLyrics = pick(vtl1);
     if (changed) SetDirty();
+    UpdateLrcPreview();
+}
+
+void Project::UpdateLrcPreview() {
+    lrcPreview.SetQTF(LrcPreviewGenerator::ToQtf(data));
 }
 
 bool Project::CloseProject(bool quitting) {
@@ -282,6 +292,7 @@ void Project::Timing() {
     tDlg.Run(data);
     SetDirty(dirty || tDlg.IsDirty());
     lyricsEd.SetData(data.rawLyrics);
+    UpdateLrcPreview();
     exportBtn.Enable(!data.title.IsEmpty() &&
                         !data.artist.IsEmpty() &&
                         data.timed == data.timedLyrics.GetCount() - 1);
@@ -294,6 +305,7 @@ void Project::VocalParts() {
     if (lpDlg.Run(data) == IDOK) {
         data.parts = lpDlg.GetParts();
         SetDirty();
+        UpdateLrcPreview();
     }
 }
 

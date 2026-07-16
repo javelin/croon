@@ -38,9 +38,11 @@ private:
         saveBtn.Enable(dirty);
     }
     void CleanUp();
+    void UpdateLrcPreview();
     
 private:
     DocEdit lyricsEd;
+    RichTextCtrl lrcPreview;
     String videoPath;
     bool open{false};
     bool dirty{false};
