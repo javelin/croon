@@ -238,6 +238,7 @@ def main() -> None:
         '#include "ProgressDlg.h"',
         '#include "FfmpegProgressParser.h"',
         '#include "SubtitleGenerator.h"',
+        '#include "SubtitleWrapProbeRunner.h"',
         '#include "ExportDlg.h"',
     ]:
         if needle not in export_impl:
@@ -252,7 +253,9 @@ def main() -> None:
         "return RunDlg(\"Export Video\")",
         "FfmpegProgressParser::ParseTimestamp",
         "AppIdentity::TempFileName(\".ass\")",
-        "SubtitleGenerator::ToAss(*data, data->subtitleLines)",
+        "SubtitleGenerator::HighlightProbeLyrics(*data, data->subtitleLines)",
+        "SubtitleWrapProbeRunner::Run(*data, probeLyrics, probeFrames, ffmpeg)",
+        "SubtitleGenerator::ToAss(*data, wrappedHighlights, data->subtitleLines)",
         "FfmpegAudioCommandBuilder::Dehiss",
         "FfmpegExportCommandBuilder::WithVisualization",
         "FfmpegExportCommandBuilder::WithBackgroundVideo",

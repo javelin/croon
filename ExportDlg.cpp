@@ -33,6 +33,7 @@ using namespace Upp;
 #include "ProgressDlg.h"
 #include "FfmpegProgressParser.h"
 #include "SubtitleGenerator.h"
+#include "SubtitleWrapProbeRunner.h"
 #include "ExportDlg.h"
 
 ExportDlg::ExportDlg() : ffmpeg(Config::Get(FFMPEG_LOCATION)) {
@@ -127,7 +128,14 @@ int ExportDlg::Run(const KarData& karData, String outputPath, int len, double th
 void ExportDlg::ExportASS() {
     UpdateProgress();
     assFilePath = AppIdentity::TempFileName(".ass");
-    SaveFile(assFilePath, SubtitleGenerator::ToAss(*data, data->subtitleLines));
+    Vector<bool> wrappedHighlights;
+    Vector<String> probeLyrics = SubtitleGenerator::HighlightProbeLyrics(*data, data->subtitleLines);
+    Vector<SubtitleWrapProbeFrame> probeFrames;
+    if (SubtitleWrapProbeRunner::Run(*data, probeLyrics, probeFrames, ffmpeg)) {
+        for (const auto& frame : probeFrames)
+            wrappedHighlights.Add(frame.bands.GetCount() > 1);
+    }
+    SaveFile(assFilePath, SubtitleGenerator::ToAss(*data, wrappedHighlights, data->subtitleLines));
     SetTimeCallback(500, [=] {
         phase = Dehiss;
         StartNextProcess();

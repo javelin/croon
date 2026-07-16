@@ -476,6 +476,20 @@ CONSOLE_APP_MAIN
 	String richAss = SubtitleGenerator::ToRichAss(exportData, 4);
 	Check(richAss.Find("@4") >= 0, "SubtitleGenerator emits rich ASS formatting");
 	Check(richAss.Find("Script Info") >= 0, "SubtitleGenerator emits rich ASS script info");
+	Vector<String> highlightProbeLyrics = SubtitleGenerator::HighlightProbeLyrics(exportData, 4);
+	Check(highlightProbeLyrics.GetCount() == exportData.timedLyrics.GetCount() - 1,
+		"SubtitleGenerator exposes highlighted probe lyrics aligned to timed lines");
+	Check(highlightProbeLyrics[0] == "Sing along", "SubtitleGenerator probe lyrics preserve highlighted text");
+	Vector<bool> noWrappedHighlights;
+	noWrappedHighlights.SetCount(highlightProbeLyrics.GetCount(), false);
+	String compactAss = SubtitleGenerator::ToAss(exportData, noWrappedHighlights, 4);
+	Check(compactAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,Grayed,,0,0,0,,{\\an2\\move(960,716,960,572") >= 0,
+		"SubtitleGenerator keeps compact grayed slot for unwrapped highlights");
+	Vector<bool> wrappedHighlights = clone(noWrappedHighlights);
+	wrappedHighlights[1] = true;
+	String raisedAss = SubtitleGenerator::ToAss(exportData, wrappedHighlights, 4);
+	Check(raisedAss.Find("Dialogue: 0,0:00:03.00,0:00:05.00,Grayed,,0,0,0,,{\\an2\\move(960,716,960,428") >= 0,
+		"SubtitleGenerator raises grayed slot when highlighted line wraps");
 
 	Vector<String> probeLyrics;
 	probeLyrics.Add("Sing along");

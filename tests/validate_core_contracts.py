@@ -610,6 +610,8 @@ def main() -> None:
 
     subtitle_generator_h = (root / "SubtitleGenerator.h").read_text()
     require(subtitle_generator_h, "ToAss", "SubtitleGenerator ASS contract")
+    require(subtitle_generator_h, "HighlightProbeLyrics", "SubtitleGenerator highlighted probe lyrics contract")
+    require(subtitle_generator_h, "const Vector<bool>& wrappedHighlights", "SubtitleGenerator wrap-aware ASS contract")
     require(subtitle_generator_h, "ToRichAss", "SubtitleGenerator rich ASS contract")
 
     lrc_generator_h = (root / "LrcGenerator.h").read_text()
@@ -644,6 +646,9 @@ def main() -> None:
 
     subtitle_generator_cpp = (root / "SubtitleGenerator.cpp").read_text()
     require(subtitle_generator_cpp, "String SubtitleGenerator::ToAss", "SubtitleGenerator ASS implementation")
+    require(subtitle_generator_cpp, "Vector<String> SubtitleGenerator::HighlightProbeLyrics", "SubtitleGenerator highlighted probe lyrics implementation")
+    require(subtitle_generator_cpp, "IsWrappedHighlight", "SubtitleGenerator wrap flag helper")
+    require(subtitle_generator_cpp, "wrappedHighlight ? -1:0", "SubtitleGenerator raises grayed row only for wrapped highlights")
     require(subtitle_generator_cpp, "String SubtitleGenerator::ToRichAss", "SubtitleGenerator rich ASS implementation")
     reject(subtitle_generator_cpp, '#include "Croon.h"', "SubtitleGenerator app shell dependency")
     require(subtitle_generator_cpp, '#include "SubtitleGenerator.h"', "SubtitleGenerator direct self dependency")
@@ -748,6 +753,9 @@ def main() -> None:
     require(core_tests_cpp, "SubtitleLineProcessor::ProcessMetadata", "core tests direct metadata processing dependency")
     require(core_tests_cpp, "SubtitleGenerator::ToAss", "core tests direct ASS generator dependency")
     require(core_tests_cpp, "SubtitleGenerator::ToRichAss", "core tests direct rich ASS generator dependency")
+    require(core_tests_cpp, "SubtitleGenerator::HighlightProbeLyrics", "core tests highlighted probe lyrics")
+    require(core_tests_cpp, "wrappedHighlights[1] = true", "core tests wrapped highlight spacing flag")
+    require(core_tests_cpp, "SubtitleGenerator raises grayed slot when highlighted line wraps", "core tests adaptive grayed spacing")
     require(core_tests_cpp, "SubtitleWrapProbe::BuildAss", "core tests subtitle wrap probe generation")
     require(core_tests_cpp, "SubtitleWrapProbe::AnalyzeRgbaFrames", "core tests subtitle wrap probe analysis")
     require(core_tests_cpp, "SubtitleWrapProbeRunner::Run", "core tests subtitle wrap probe runner")

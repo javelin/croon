@@ -86,9 +86,37 @@ String SubtitleGrayText(String line) {
     return line;
 }
 
+String SubtitleHighlightText(String line) {
+    line = TrimBoth(line);
+    line.Replace("@CountIn", "");
+    line.Replace("\\(", "(");
+    line.Replace("\\)", ")");
+    return line;
+}
+
+bool IsWrappedHighlight(const Vector<bool>& wrappedHighlights, int highlightIndex) {
+    return highlightIndex >= 0 &&
+           highlightIndex < wrappedHighlights.GetCount() &&
+           wrappedHighlights[highlightIndex];
+}
+
 }
 
 String SubtitleGenerator::ToAss(const KarData& data, int linesToDisplay, int resX, int resY) {
+    return ToAss(data, Vector<bool>(), linesToDisplay, resX, resY);
+}
+
+Vector<String> SubtitleGenerator::HighlightProbeLyrics(const KarData& data, int linesToDisplay) {
+    if (data.timedLyrics.IsEmpty()) return Vector<String>();
+    Vector<TimeLyrics> vtl;
+    SubtitleLineProcessor::ProcessMetadata(data, vtl, linesToDisplay);
+    Vector<String> lines;
+    for (int i = 1; i < vtl.GetCount(); ++i)
+        lines.Add(SubtitleHighlightText(vtl[i].lyrics));
+    return lines;
+}
+
+String SubtitleGenerator::ToAss(const KarData& data, const Vector<bool>& wrappedHighlights, int linesToDisplay, int resX, int resY) {
     if (data.timedLyrics.IsEmpty()) return "";
     Vector<TimeLyrics> vtl;
     SubtitleLineProcessor::ProcessMetadata(data, vtl, linesToDisplay);
@@ -143,6 +171,8 @@ String SubtitleGenerator::ToAss(const KarData& data, int linesToDisplay, int res
         auto startTS = tl.time;
         auto endTS = startTS + 5.0f;
         String line = TrimBoth(tl.lyrics);
+        int highlightIndex = i - 1;
+        bool wrappedHighlight = IsWrappedHighlight(wrappedHighlights, highlightIndex);
         if (line == "\u00A0" && lastLine == "\u00A0") continue;
         bool hasCountIn = line.StartsWith("@CountIn");
         line.Replace("@CountIn", "");
@@ -176,9 +206,7 @@ String SubtitleGenerator::ToAss(const KarData& data, int linesToDisplay, int res
             }
         }
         
-        String singLine = line;
-        singLine.Replace("\\(", "(");
-        singLine.Replace("\\)", ")");
+        String singLine = SubtitleHighlightText(line);
         String hilite = SubtitleLineProcessor::ResolveStyle(part, singLine, hasCountIn, incomingLyrics, tl.isMeta);
         vs.AddPick(Format("Dialogue: 0,%s,%s,%s,,0,0,0,,%s%s",
                             TimeFormatter::Ass(startTS),
@@ -191,7 +219,7 @@ String SubtitleGenerator::ToAss(const KarData& data, int linesToDisplay, int res
             vs.AddPick(Format("Dialogue: 0,%s,%s,Grayed,,0,0,0,,%s%s",
                                 TimeFormatter::Ass(startTS),
                                 TimeFormatter::Ass(endTS),
-                                SubtitleMoveTag(data, resX, resY, startTS, endTS, 1, 0),
+                                SubtitleMoveTag(data, resX, resY, startTS, endTS, 1, wrappedHighlight ? -1:0),
                                 SubtitleGrayText(lastLine)));
         }
         lastLine = hasCountIn ? "\u00A03... 2... 1...":line;

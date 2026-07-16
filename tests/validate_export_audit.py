@@ -41,7 +41,10 @@ def main() -> None:
     export_cpp = (root / "ExportDlg.cpp").read_text()
     for needle in [
         'AppIdentity::TempFileName(".ass")',
-        "SubtitleGenerator::ToAss(*data, data->subtitleLines)",
+        "SubtitleGenerator::HighlightProbeLyrics(*data, data->subtitleLines)",
+        "SubtitleWrapProbeRunner::Run(*data, probeLyrics, probeFrames, ffmpeg)",
+        "wrappedHighlights.Add(frame.bands.GetCount() > 1)",
+        "SubtitleGenerator::ToAss(*data, wrappedHighlights, data->subtitleLines)",
         "FfmpegAudioCommandBuilder::Dehiss",
         "FfmpegExportCommandBuilder::WithVisualization",
         "FfmpegExportCommandBuilder::WithBackgroundVideo",
