@@ -14,6 +14,13 @@ struct FfmpegSubtitleProbeCommandBuilder {
                                      int height=1080,
                                      int cropY=700,
                                      int cropHeight=300);
+    static Vector<String> RenderPngFrames(String assFilePath,
+                                          String outputPattern,
+                                          int frameCount,
+                                          int width=1920,
+                                          int height=1080,
+                                          int cropY=700,
+                                          int cropHeight=300);
 };
 
 #endif

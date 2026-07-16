@@ -215,6 +215,10 @@ CONSOLE_APP_MAIN
 		"-t", "3", "-vf", "subtitles=probe.ass,crop=1920:300:0:700",
 		"-pix_fmt", "rgba", "-f", "rawvideo", "probe.rgba"
 	}, "Render subtitle probe RGBA");
+	CheckEq(FfmpegSubtitleProbeCommandBuilder::RenderPngFrames("probe.ass", "probe_%04d.png", 3, 1920, 1080, 700, 300), {
+		"-y", "-f", "lavfi", "-i", "color=c=black@0.0:s=1920x1080:r=1",
+		"-t", "3", "-vf", "subtitles=probe.ass,crop=1920:300:0:700", "probe_%04d.png"
+	}, "Render subtitle probe PNG frames");
 
 	CheckEq(FfmpegProjectCommandBuilder::ExtractAudioAndInfo("song.croon", "song.ogg", "song.json"), {
 		"-dump_attachment:t:0", "song.json", "-i", "song.croon", "-map", "0:a:0",
