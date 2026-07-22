@@ -1211,6 +1211,7 @@ def main() -> None:
     reject(project_cpp, "lrcPreview.TextColor", "Project LRC preview text color override")
     require(project_cpp, "SaveProjectDlg().Run(data) == IDOK", "Project save clears dirty only after successful save")
     require(project_cpp, "saveDlg.Run(savePath, data)", "Project injected data save-as")
+    require(project_cpp, 'Format("%s - %s%s", data.artist, data.title, AppIdentity::ProjectExtension())', "Project save-as suggested filename")
     require(project_cpp, "LyricsTransformer::RawToUntimed(data)", "Project injected data lyrics update")
     require(project_cpp, "expDlg.Run(data, outputPath, quality)", "Project injected data export")
     require(project_cpp, "void Project::ExportVideo(ExportQuality quality)", "Project video export implementation")

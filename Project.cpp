@@ -224,7 +224,8 @@ void Project::SaveProjectAs() {
         FileSel fsel;
         String projectDir{Config::Get(PROJECT_DIR, GetHomeDirectory())};
         if (projectDir.IsEmpty()) projectDir = Config::Get(MUSIC_DIR);
-        fsel <<= ::GetFileDirectory(data.projectPath);
+        fsel <<= AppendFileName(::GetFileDirectory(data.projectPath),
+                                Format("%s - %s%s", data.artist, data.title, AppIdentity::ProjectExtension()));
         fsel.Type(AppIdentity::ProjectTypeName(), AppIdentity::ProjectGlob());
         if (fsel.ExecuteSaveAs("Save Project As")) {
             String savePath{~fsel};

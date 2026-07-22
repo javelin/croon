@@ -13,3 +13,6 @@ icon32x32.png
 icon256x256.png
 icon.ico
 icons.icns
+
+# Local, per-change shipping helper (copied from .ship_change.sh.sample)
+ship_change.sh
