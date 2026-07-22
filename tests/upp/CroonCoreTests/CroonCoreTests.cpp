@@ -29,6 +29,7 @@ using namespace Upp;
 #include <Croon/RecentProjectService.h>
 #include <Croon/Visualization.h>
 
+#include <Croon/ExportQuality.h>
 #include <Croon/FfmpegAudioCommandBuilder.h>
 #include <Croon/FfmpegExportCommandBuilder.h>
 #include <Croon/FfmpegProjectCommandBuilder.h>
@@ -231,14 +232,47 @@ CONSOLE_APP_MAIN
 	commandData.videoFilePath = "video.mp4";
 	commandData.audioFilePath = "audio.ogg";
 	commandData.infoFilePath = "croon.json";
-	CheckEq(FfmpegExportCommandBuilder::WithBackgroundVideo(commandData, "song.ass", "song.mp4", "clean.ogg", false), {
+	CheckEq(FfmpegExportCommandBuilder::WithBackgroundVideo(commandData, "song.ass", "song.mp4", "clean.ogg", ExportScaleHeight(FullSource)), {
 		"-stream_loop", "-1", "-i", "video.mp4", "-i", "clean.ogg", "-map_metadata:s", "-1",
 		"-filter_complex", "[0:v]subtitles=song.ass[v]", "-map", "[v]", "-map", "1:a",
 		"-shortest", "-c:v", "libx265", "-c:a", "copy",
 		"-metadata", "title=", "-metadata", "artist=", "-metadata", "composer=",
 		"-metadata", "copyright=", "-metadata", "genre=", "-metadata", "year=0",
 		"-metadata", "comment=Year: 0\nOriginal Video: ", "-metadata", "lyrics=", "song.mp4"
-	}, "WithBackgroundVideo");
+	}, "WithBackgroundVideoSource");
+
+	CheckEq(FfmpegExportCommandBuilder::WithBackgroundVideo(commandData, "song.ass", "song.mp4", "clean.ogg", ExportScaleHeight(FullHD)), {
+		"-stream_loop", "-1", "-i", "video.mp4", "-i", "clean.ogg", "-map_metadata:s", "-1",
+		"-filter_complex", "[0:v]scale=-2:1080,subtitles=song.ass[v]", "-map", "[v]", "-map", "1:a",
+		"-shortest", "-c:v", "libx265", "-c:a", "copy",
+		"-metadata", "title=", "-metadata", "artist=", "-metadata", "composer=",
+		"-metadata", "copyright=", "-metadata", "genre=", "-metadata", "year=0",
+		"-metadata", "comment=Year: 0\nOriginal Video: ", "-metadata", "lyrics=", "song.mp4"
+	}, "WithBackgroundVideoHD");
+
+	CheckEq(FfmpegExportCommandBuilder::WithBackgroundVideo(commandData, "song.ass", "song.mp4", "clean.ogg", ExportScaleHeight(Full4K)), {
+		"-stream_loop", "-1", "-i", "video.mp4", "-i", "clean.ogg", "-map_metadata:s", "-1",
+		"-filter_complex", "[0:v]scale=-2:2160,subtitles=song.ass[v]", "-map", "[v]", "-map", "1:a",
+		"-shortest", "-c:v", "libx265", "-c:a", "copy",
+		"-metadata", "title=", "-metadata", "artist=", "-metadata", "composer=",
+		"-metadata", "copyright=", "-metadata", "genre=", "-metadata", "year=0",
+		"-metadata", "comment=Year: 0\nOriginal Video: ", "-metadata", "lyrics=", "song.mp4"
+	}, "WithBackgroundVideo4K");
+
+	Check(ExportIsLowRes(LowRes30Sec) && ExportIsLowRes(LowRes60Sec) && ExportIsLowRes(LowResFull),
+		"ExportQuality flags low-res previews");
+	Check(!ExportIsLowRes(FullSource) && !ExportIsLowRes(FullHD) && !ExportIsLowRes(Full4K),
+		"ExportQuality treats full renders as non-preview");
+	Check(ExportScaleHeight(LowRes30Sec) == 180 && ExportScaleHeight(LowResFull) == 180,
+		"ExportQuality renders previews at 180p");
+	Check(ExportScaleHeight(FullSource) == 0,
+		"ExportQuality keeps the source resolution for source-resolution exports");
+	Check(ExportScaleHeight(FullHD) == 1080 && ExportScaleHeight(Full4K) == 2160,
+		"ExportQuality maps fixed tiers to their scale height");
+	Check(ExportPreviewSeconds(LowRes30Sec) == 30 && ExportPreviewSeconds(LowRes60Sec) == 60,
+		"ExportQuality maps timed previews to seconds");
+	Check(ExportPreviewSeconds(LowResFull) == 0 && ExportPreviewSeconds(FullHD) == 0 && ExportPreviewSeconds(Full4K) == 0,
+		"ExportQuality leaves full renders untimed");
 
 	CheckEq(FfmpegProjectCommandBuilder::SaveWithBackgroundVideo(commandData, "song.croon"), {
 		"-i", "video.mp4", "-i", "audio.ogg", "-map", "0:v:0", "-map", "1:a:0",
@@ -286,10 +320,15 @@ CONSOLE_APP_MAIN
 		"SongLyricsProvider extracts song lyric block");
 	Check(extractedLyrics == "First\nSecond", "SongLyricsProvider cleans extracted lyric lines");
 
-	String freqFilter = Visualization::Filter("@@freqs", "subtitles.ass", true);
+	String freqFilter = Visualization::Filter("@@freqs", "subtitles.ass", ExportScaleHeight(LowResFull));
 	Check(freqFilter.Find("showfreqs") >= 0, "freq visualization uses showfreqs");
 	Check(freqFilter.Find("subtitles=subtitles.ass") >= 0, "freq visualization includes subtitles filter");
-	Check(Visualization::Filter("@@unknown", "subtitles.ass", true).IsVoid(), "unknown visualization returns void");
+	Check(freqFilter.Find("320x180") >= 0, "preview visualization uses an even 180p canvas");
+	Check(Visualization::Filter("@@unknown", "subtitles.ass", 1080).IsVoid(), "unknown visualization returns void");
+	String freqFilterHD = Visualization::Filter("@@freqs", "subtitles.ass", ExportScaleHeight(FullHD));
+	Check(freqFilterHD.Find("1926x1080") >= 0, "HD visualization uses full-size canvas");
+	String freqFilter4K = Visualization::Filter("@@freqs", "subtitles.ass", ExportScaleHeight(Full4K));
+	Check(freqFilter4K.Find("3852x2160") >= 0, "4K visualization scales the canvas to UHD");
 	Check(Config::GetFontSize() == ConfigService::DefaultFontSize, "Config facade preserves default font size");
 	Vector<String> recentPaths;
 	recentPaths.Add(" /tmp/song-a.croon ");

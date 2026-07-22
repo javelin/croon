@@ -33,6 +33,7 @@ def main() -> None:
         "ProjectSerializer.h",
         "FfmpegAudioCommandBuilder.h",
         "FfmpegExportCommandBuilder.h",
+        "ExportQuality.h",
         "FfmpegProgressParser.cpp",
         "FfmpegProgressParser.h",
         "FfmpegProjectCommandBuilder.h",
@@ -107,6 +108,7 @@ def main() -> None:
         "FfmpegAudioCommandBuilder.h" not in upp or
         "FfmpegExportCommandBuilder.cpp" not in upp or
         "FfmpegExportCommandBuilder.h" not in upp or
+        "ExportQuality.h" not in upp or
         "FfmpegProgressParser.cpp" not in upp or
         "FfmpegProgressParser.h" not in upp or
         "FfmpegProjectCommandBuilder.cpp" not in upp or

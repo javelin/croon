@@ -87,7 +87,7 @@ LAYOUT(CroonProjectLayout, 900, 640)
 	ITEM(Button, timingBtn, SetLabel(t_("Timing")).RightPos(Zx(10), 250).BottomPosZ(155, 28))
 	ITEM(Button, partsBtn, SetLabel(t_("Parts")).RightPos(Zx(10), 250).BottomPosZ(126, 28))
 	ITEM(LabelBox, exportBox, RightPos(Zx(7), 250 + Zx(6)).BottomPosZ(43, 58))
-	ITEM(Button, exportBtn, SetLabel(t_("Export")).RightPos(Zx(10), 250).BottomPosZ(68, 28))
+	ITEM(Button, exportBtn, SetLabel(t_("Export Video")).RightPos(Zx(10), 250).BottomPosZ(68, 28))
 	ITEM(DropList, exportOpts, RightPos(Zx(11), 250 - Zx(2)).BottomPosZ(47, 20))
 	ITEM(Button, saveBtn, SetLabel(t_("Save")).RightPos(Zx(10), 250).BottomPosZ(10, 28))
 END_LAYOUT

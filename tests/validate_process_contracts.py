@@ -213,8 +213,10 @@ def main() -> None:
         fail("ExportDlg.h still owns export run process kickoff")
     if "AppIdentity::TaggedTempFileName(\"dehissed\", \".ogg\")" in export_header:
         fail("ExportDlg.h still owns export run temp file setup")
-    if "int Run(const KarData& karData, String outputPath, int len=1, double thumbnailTS=-1.0f);" not in export_header:
+    if "int Run(const KarData& karData, String outputPath, ExportQuality len=FullHD, double thumbnailTS=-1.0f);" not in export_header:
         fail("ExportDlg.h missing export run declaration")
+    if '#include "ExportQuality.h"' not in export_header:
+        fail("ExportDlg.h missing ExportQuality dependency")
     if '#include "Croon.h"' in export_impl:
         fail("ExportDlg.cpp still depends on Croon.h")
     for needle in [
@@ -245,7 +247,10 @@ def main() -> None:
             fail(f"ExportDlg.cpp missing direct dependency {needle}")
     for needle in [
         "Config::Get(FFMPEG_LOCATION)",
-        "int ExportDlg::Run(const KarData& karData, String outputPath, int len, double thumbnailTS)",
+        "int ExportDlg::Run(const KarData& karData, String outputPath, ExportQuality len, double thumbnailTS)",
+        "ExportIsLowRes(length)",
+        "ExportScaleHeight(length)",
+        "ExportPreviewSeconds(length)",
         "data = &karData",
         "this->outputPath = outputPath",
         "AppIdentity::TaggedTempFileName(\"dehissed\", \".ogg\")",
@@ -257,6 +262,7 @@ def main() -> None:
         "AppIdentity::TempFileName(\".ass\")",
         "SubtitleGenerator::HighlightProbeLyrics(*data, data->subtitleLines)",
         "Size probeCanvas = ProbeCanvasForExport(*data, ffmpeg)",
+        "probeCanvas = NormalizeSubtitleCanvas(probeCanvas)",
         "SubtitleWrapProbeRunner::Run(*data, probeLyrics, probeFrames, ffmpeg,",
         "SubtitleWrapProbeRunner::Run(*data, probeLyrics, incomingProbeFrames, ffmpeg",
         "data->subtitleLines, probeCanvas.cx, probeCanvas.cy)",

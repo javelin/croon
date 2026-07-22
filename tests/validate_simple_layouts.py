@@ -22,6 +22,11 @@ def main() -> None:
         if layout not in lay:
             fail(f"missing {layout}")
 
+    if 'SetLabel(t_("Export Video"))' not in lay:
+        fail("export button is not labeled 'Export Video'")
+    if 'SetLabel(t_("Export"))' in lay:
+        fail("export button still uses the old 'Export' label")
+
     checks = {
         "SettingsDlg": "WithCroonSettingsLayout<TopWindow>",
         "TimingLineDlg": "WithCroonTimingLineLayout<TopWindow>",

@@ -6,6 +6,8 @@
 #ifndef _Croon_Project_h_
 #define _Croon_Project_h_
 
+#include "ExportQuality.h"
+
 struct KarData;
 class VideoDlg;
 
@@ -23,7 +25,7 @@ public:
     void Timing();
     void VocalParts();
     void ReplaceAudio();
-    void ExportVideo(int length=1);
+    void ExportVideo(ExportQuality quality=FullHD);
     void ExportLrc();
     Event<bool> WhenDirty;
     Event<> WhenProjectSaved;
@@ -39,6 +41,8 @@ private:
     }
     void CleanUp();
     void UpdateLrcPreview();
+    void RefreshExportOptions();
+    bool IsVisualization() const;
     
 private:
     DocEdit lyricsEd;

@@ -136,6 +136,22 @@ int ProbeCropY(int resY) {
     return max(0, resY - ProbeCropHeight(resY));
 }
 
+// The ASS is authored against a fixed reference height so the burned-in font
+// size stays a constant fraction of the frame regardless of the source video's
+// resolution. libass renders the script at the real output frame with full
+// sharpness but scales positions/sizes uniformly, so a 4K, HD, or original-
+// resolution export all show the subtitles at the same "just right" size that
+// was tuned for 1080p. Width tracks the source aspect ratio (kept even).
+constexpr int SubtitleReferenceHeight = 1080;
+
+Size NormalizeSubtitleCanvas(Size canvas) {
+    if (canvas.cx <= 0 || canvas.cy <= 0)
+        return Size(1926, SubtitleReferenceHeight);
+    int w = canvas.cx * SubtitleReferenceHeight / canvas.cy;
+    w -= w % 2;
+    return Size(max(2, w), SubtitleReferenceHeight);
+}
+
 }
 
 ExportDlg::ExportDlg() : ffmpeg(Config::Get(FFMPEG_LOCATION)) {
@@ -160,13 +176,13 @@ ExportDlg::ExportDlg() : ffmpeg(Config::Get(FFMPEG_LOCATION)) {
             }
             else if (phase == ExportVideo) {
                 phase = Finished;
-                if (length != 1) {
+                if (ExportIsLowRes(length)) {
                     PromptOK("Preview video exported successfully.");
                 }
                 else {
                     PromptOK("Video exported successfully.");
                 }
-                
+
             }
         }
         else {
@@ -207,7 +223,8 @@ ExportDlg::ExportDlg() : ffmpeg(Config::Get(FFMPEG_LOCATION)) {
     };
     
     WhenUpdateProgress << [=] {
-        progress.Set(progressVal, phase == ExportVideo && length > 1 ? length:(int)data->duration);
+        int previewSeconds = ExportPreviewSeconds(length);
+        progress.Set(progressVal, phase == ExportVideo && previewSeconds > 0 ? previewSeconds:(int)data->duration);
         static const char* captions[]{"subtitles...", "audio...", "video...", "thumbnail...", "Done."};
         monitor.SetLabel(Format("%s %s %s", phase == Finished ? "":"Exporting",
                                 captions[(int)phase],
@@ -217,7 +234,7 @@ ExportDlg::ExportDlg() : ffmpeg(Config::Get(FFMPEG_LOCATION)) {
     WhenWarnOnClose = [=] { return phase != Finished; };
 }
 
-int ExportDlg::Run(const KarData& karData, String outputPath, int len, double thumbnailTS) {
+int ExportDlg::Run(const KarData& karData, String outputPath, ExportQuality len, double thumbnailTS) {
     length = len;
     this->thumbnailTS = thumbnailTS;
     data = &karData;
@@ -234,6 +251,7 @@ void ExportDlg::ExportASS() {
     Vector<bool> wrappedIncoming;
     Vector<String> probeLyrics = SubtitleGenerator::HighlightProbeLyrics(*data, data->subtitleLines);
     Size probeCanvas = ProbeCanvasForExport(*data, ffmpeg);
+    probeCanvas = NormalizeSubtitleCanvas(probeCanvas);
     int probeCropY = ProbeCropY(probeCanvas.cy);
     int probeCropHeight = ProbeCropHeight(probeCanvas.cy);
     Vector<SubtitleWrapProbeFrame> probeFrames;
@@ -272,7 +290,9 @@ void ExportDlg::DehissAudio() {
 }
 
 void ExportDlg::ExportViz() {
-    args = FfmpegExportCommandBuilder::WithVisualization(*data, assFilePath, outputPath, dehissedAudioFilepath, length != 1);
+    int canvasHeight = ExportScaleHeight(length);
+    if (canvasHeight <= 0) canvasHeight = 1080;   // a visualization has no source resolution
+    args = FfmpegExportCommandBuilder::WithVisualization(*data, assFilePath, outputPath, dehissedAudioFilepath, canvasHeight);
     if (args.IsEmpty()) {
         ErrorOK("Unknown visualization type. Unable to save video.");
         phase = Finished;
@@ -291,11 +311,12 @@ void ExportDlg::ExportViz() {
         return;
     }
     
-    if (length > 1) {
-        args.Insert(11, IntStr(length));
+    int previewSeconds = ExportPreviewSeconds(length);
+    if (previewSeconds > 0) {
+        args.Insert(11, IntStr(previewSeconds));
         args.Insert(11, "-t");
     }
-    
+
     StartExport();
 }
 
@@ -308,13 +329,14 @@ void ExportDlg::ExportBg() {
         Hide();
     }
     
-    args = FfmpegExportCommandBuilder::WithBackgroundVideo(*data, assFilePath, outputPath, dehissedAudioFilepath, length != 1);
-    
-    if (length > 1) {
-        args.Insert(15, IntStr(length));
+    args = FfmpegExportCommandBuilder::WithBackgroundVideo(*data, assFilePath, outputPath, dehissedAudioFilepath, ExportScaleHeight(length));
+
+    int previewSeconds = ExportPreviewSeconds(length);
+    if (previewSeconds > 0) {
+        args.Insert(15, IntStr(previewSeconds));
         args.Insert(15, "-t");
     }
-    
+
     StartExport();
 }
 

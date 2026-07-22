@@ -40,6 +40,7 @@ file
 	DownloadDlg.h,
 	ExportDlg.cpp,
 	ExportDlg.h,
+	ExportQuality.h,
 	FfmpegAudioCommandBuilder.cpp,
 	FfmpegAudioCommandBuilder.h,
 	FfmpegExportCommandBuilder.cpp,

@@ -13,15 +13,15 @@ using namespace Upp;
 #include "Visualization.h"
 #include "FfmpegExportCommandBuilder.h"
 
-Vector<String> FfmpegExportCommandBuilder::WithBackgroundVideo(const KarData& data, String assFilePath, String outputPath, String audioFilepath, bool preview) {
+Vector<String> FfmpegExportCommandBuilder::WithBackgroundVideo(const KarData& data, String assFilePath, String outputPath, String audioFilepath, int scaleHeight) {
     String filterComplex;
     auto assFn{assFilePath};
 #ifdef PLATFORM_WIN32
     assFn.Replace("\\", "/");
     assFn.Replace(":", "\\\\:");
 #endif
-    if (preview) {
-        filterComplex = Format("[0:v]scale=-2:180,subtitles=%s[v]", assFn);
+    if (scaleHeight > 0) {
+        filterComplex = Format("[0:v]scale=-2:%d,subtitles=%s[v]", scaleHeight, assFn);
     }
     else {
         filterComplex = Format("[0:v]subtitles=%s[v]", assFn);
@@ -57,19 +57,19 @@ Vector<String> FfmpegExportCommandBuilder::WithBackgroundVideo(const KarData& da
     };
 }
 
-Vector<String> FfmpegExportCommandBuilder::WithVisualization(const KarData& data, String assFilePath, String outputPath, String audioFilepath, bool preview) {
+Vector<String> FfmpegExportCommandBuilder::WithVisualization(const KarData& data, String assFilePath, String outputPath, String audioFilepath, int canvasHeight) {
     auto assFn{assFilePath};
 #ifdef PLATFORM_WIN32
     assFn.Replace("\\", "/");
     assFn.Replace(":", "\\\\:");
 #endif
-    auto filter = Visualization::Filter(data.videoFilePath, assFn, preview);
+    auto filter = Visualization::Filter(data.videoFilePath, assFn, canvasHeight);
 
     return filter.IsVoid() ? Vector<String>{} : Vector<String>{
         "-f",
         "lavfi",
         "-i",
-        Format("color=black:s=%s", Visualization::Reso(preview, 'x')),
+        Format("color=black:s=%s", Visualization::Reso(canvasHeight, 'x')),
         "-i",
         audioFilepath.IsEmpty() ? data.audioFilePath:audioFilepath,
         "-filter_complex",

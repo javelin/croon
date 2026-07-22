@@ -66,12 +66,7 @@ Project::Project(KarData& projectData, VideoDlg& videoDialog) : videoPath(""), d
     
     for (const auto& genre : GenreCatalog::List()) genreEd.AddList(genre);
             
-    exportOpts.Add(30, "30-secs, 180p")
-                .Add(60, "1-min, 180p")
-                .Add(0, "Complete, 180p")
-                .AddSeparator()
-                .Add(1, "Complete, Full-Sized")
-                .SetData(30);
+    RefreshExportOptions();
     
     saveBtn.Disable();
     
@@ -133,6 +128,7 @@ Project::Project(KarData& projectData, VideoDlg& videoDialog) : videoPath(""), d
         if (videoDlg.Run() == IDOK) {
             videoImg.SetImage(data.videoThumbnail);
             videoImg.Tip(data.origVideoFile);
+            RefreshExportOptions();
             SetDirty();
         }
     };
@@ -141,7 +137,7 @@ Project::Project(KarData& projectData, VideoDlg& videoDialog) : videoPath(""), d
     
     partsBtn << [this] { VocalParts(); };
     
-    exportBtn << [this] { ExportVideo(exportOpts.GetData()); };
+    exportBtn << [this] { ExportVideo((ExportQuality)(int)exportOpts.GetData()); };
     
     saveBtn << [this] { SaveProject(); };
     
@@ -180,9 +176,38 @@ void Project::Populate() {
     fontSizeEd.SetData(data.fontSize);
     subtitleLinesDrop.SetData(data.subtitleLines);
     dehissOpt.SetData(data.dehiss);
+    RefreshExportOptions();
     UpdateLrcPreview();
     open = true;
     WhenDirty(dirty);
+}
+
+bool Project::IsVisualization() const {
+    return data.videoFilePath.StartsWith("@@");
+}
+
+void Project::RefreshExportOptions() {
+    int selected = LowRes30Sec;
+    if (exportOpts.GetCount() && !exportOpts.GetData().IsNull())
+        selected = (int)exportOpts.GetData();
+
+    exportOpts.Clear();
+    exportOpts.Add(LowRes30Sec, "30-secs, 180p")
+                .Add(LowRes60Sec, "1-min, 180p")
+                .Add(LowResFull, "Complete, 180p")
+                .AddSeparator()
+                .Add(FullHD, "Complete, HD")
+                .Add(Full4K, "Complete, 4K");
+    // Source Resolution keeps the source video's resolution, which a generated
+    // visualization does not have, so it is offered for background videos only.
+    if (!IsVisualization()) {
+        exportOpts.AddSeparator().Add(FullSource, "Complete, Source Resolution");
+    }
+
+    if (exportOpts.FindKey(selected) < 0) {
+        selected = LowRes30Sec;
+    }
+    exportOpts.SetData(selected);
 }
 
 void Project::SaveProject() {
@@ -337,10 +362,10 @@ void Project::ReplaceAudio() {
     }
 }
 
-void Project::ExportVideo(int length) {
+void Project::ExportVideo(ExportQuality quality) {
     String ext = "mp4";
-    if (length != 1) {
-        ext = length == 0 ? "FULL":(IntStr(length) + "-SEC");
+    if (ExportIsLowRes(quality)) {
+        ext = quality == LowResFull ? "FULL":(IntStr(ExportPreviewSeconds(quality)) + "-SEC");
         ext += "_PREVIEW.mp4";
     }
 
@@ -367,7 +392,7 @@ void Project::ExportVideo(int length) {
     Config::Set(EXPORT_DIR, saveDir);
     
     ExportDlg expDlg;
-    expDlg.Run(data, outputPath, length);
+    expDlg.Run(data, outputPath, quality);
 }
 
 void Project::ExportLrc() {
@@ -420,18 +445,25 @@ Event<Bar&> Project::MainMenu() {
             bar.Separator();
             bar.Sub("Export", [=](Bar& sub) {
                 sub.Add("30-sec Preview...", [=] {
-                    ExportVideo(30);
+                    ExportVideo(LowRes30Sec);
                 });
                 sub.Add("60-sec Preview...", [=] {
-                    ExportVideo(60);
+                    ExportVideo(LowRes60Sec);
                 });
                 sub.Add("Full Preview...", [=] {
-                    ExportVideo(0);
+                    ExportVideo(LowResFull);
                 });
                 sub.Separator();
                 sub.Add("HD Video...", [=] {
-                    ExportVideo();
+                    ExportVideo(FullHD);
                 });
+                sub.Add("4K Video...", [=] {
+                    ExportVideo(Full4K);
+                });
+                sub.Separator();
+                sub.Add("Source Resolution...", [=] {
+                    ExportVideo(FullSource);
+                }).Enable(!IsVisualization());
                 sub.Separator();
                 sub.Add("LRC File...", [=] {
                     ExportLrc();

@@ -34,6 +34,7 @@ def main() -> None:
     for needle in [
         '"libx265"',
         "subtitles=%s[v]",
+        "[0:v]scale=-2:%d,subtitles=%s[v]",
     ]:
         if needle not in ffmpeg_export_cpp:
             fail(f"FfmpegExportCommandBuilder.cpp missing {needle}")
@@ -45,6 +46,8 @@ def main() -> None:
         'AppIdentity::TempFileName(".ass")',
         "SubtitleGenerator::HighlightProbeLyrics(*data, data->subtitleLines)",
         "Size probeCanvas = ProbeCanvasForExport(*data, ffmpeg)",
+        "probeCanvas = NormalizeSubtitleCanvas(probeCanvas)",
+        "constexpr int SubtitleReferenceHeight = 1080",
         "SubtitleWrapProbeRunner::Run(*data, probeLyrics, probeFrames, ffmpeg,",
         "SubtitleWrapProbeRunner::Run(*data, probeLyrics, incomingProbeFrames, ffmpeg",
         "SubtitleWrapProbe::IsWrappedFrame(frame, data->fontSize)",

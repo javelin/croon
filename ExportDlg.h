@@ -6,10 +6,12 @@
 #ifndef _Croon_ExportDlg_h_
 #define _Croon_ExportDlg_h_
 
+#include "ExportQuality.h"
+
 class ExportDlg : public ProgressDlg {
 public:
     ExportDlg();
-    int Run(const KarData& karData, String outputPath, int len=1, double thumbnailTS=-1.0f);
+    int Run(const KarData& karData, String outputPath, ExportQuality len=FullHD, double thumbnailTS=-1.0f);
     
 private:
     enum Phase {
@@ -30,7 +32,7 @@ private:
     
 private:
     Phase phase{SaveASS};
-    int length{1};
+    ExportQuality length{FullHD};
     const KarData* data{nullptr};
     String dehissedAudioFilepath;
     String outputPath;
