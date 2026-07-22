@@ -46,7 +46,9 @@ String VocalPartPrefix(VocalPart part) {
     }
 }
 
-String LrcText(String line, bool isMeta) {
+}
+
+String LrcGenerator::LrcText(String line, bool isMeta) {
     line.Replace("\\(", "(");
     line.Replace("\\)", ")");
     if (line.StartsWith("@CountIn")) return "************";
@@ -61,13 +63,11 @@ String LrcText(String line, bool isMeta) {
     return line;
 }
 
-}
-
 String LrcGenerator::ToLrc(const KarData& data) {
     if (data.timedLyrics.IsEmpty()) return "";
     Vector<TimeLyrics> lines;
     SubtitleLineProcessor::ProcessMetadata(data, lines, DefaultASSDisplayLines);
-    
+
     Vector<String> lrc;
     for (int i = 1; i < lines.GetCount(); ++i) {
         const TimeLyrics& line = lines[i];

@@ -29,21 +29,6 @@ String LrcPreviewStyle(const String& style) {
     return "*@(250.80.83)";
 }
 
-String LrcText(String line, bool isMeta) {
-    line.Replace("\\(", "(");
-    line.Replace("\\)", ")");
-    if (line.StartsWith("@CountIn")) return "************";
-    if (line == "\u00A0") return "";
-    if (line.StartsWith("~")) {
-        line.Remove(0);
-        return Format("(%s)", line);
-    }
-    if (isMeta && line.StartsWith("@")) {
-        line.Remove(0);
-    }
-    return line;
-}
-
 String ResolvePreviewStyle(const Vector<TimeLyrics>& lines,
                            int index,
                            const Vector<Tuple<int,bool,bool,bool>>& parts) {
@@ -66,7 +51,7 @@ String LrcPreviewGenerator::ToQtf(const KarData& data) {
     SubtitleLineProcessor::ProcessMetadata(data, processedLines, DefaultASSDisplayLines);
     int lrcIndex = 0;
     for (int i = 1; i < processedLines.GetCount() && lrcIndex < lrcLines.GetCount(); ++i) {
-        String exportedText = LrcText(TrimBoth(processedLines[i].lyrics), processedLines[i].isMeta);
+        String exportedText = LrcGenerator::LrcText(TrimBoth(processedLines[i].lyrics), processedLines[i].isMeta);
         if (exportedText.IsEmpty())
             continue;
 
