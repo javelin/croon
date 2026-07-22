@@ -1224,6 +1224,8 @@ def main() -> None:
     require(project_cpp, "ExportVideo(FullHD)", "Project HD export menu action")
     require(project_cpp, "ExportVideo(Full4K)", "Project 4K export menu action")
     require(project_cpp, "ExportVideo(FullSource)", "Project source-resolution menu action")
+    require(project_cpp, 'ext = "HD.mp4"', "Project HD export filename suffix")
+    require(project_cpp, 'ext = "4K.mp4"', "Project 4K export filename suffix")
     require(project_cpp, ".Enable(!IsVisualization())", "Project disables original resolution for visualizations")
     require(project_cpp, "bool Project::IsVisualization() const", "Project visualization predicate")
     require(project_cpp, "void Project::RefreshExportOptions()", "Project export option refresh")

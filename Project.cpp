@@ -368,6 +368,12 @@ void Project::ExportVideo(ExportQuality quality) {
         ext = quality == LowResFull ? "FULL":(IntStr(ExportPreviewSeconds(quality)) + "-SEC");
         ext += "_PREVIEW.mp4";
     }
+    else if (quality == FullHD) {
+        ext = "HD.mp4";
+    }
+    else if (quality == Full4K) {
+        ext = "4K.mp4";
+    }
 
 #ifdef PLATFORM_POSIX
     std::filesystem::path savePath((const char*)data.projectPath);
