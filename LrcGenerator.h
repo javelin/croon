@@ -8,6 +8,7 @@
 
 struct LrcGenerator {
     static String ToLrc(const KarData& data);
+    static String LrcText(String line, bool isMeta);
 };
 
 #endif
