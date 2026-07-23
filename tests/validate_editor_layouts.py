@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import re
 import sys
 from pathlib import Path
 
@@ -6,6 +7,49 @@ from pathlib import Path
 def fail(message: str) -> None:
     print(f"validate_editor_layouts: {message}", file=sys.stderr)
     raise SystemExit(1)
+
+
+# Project editor Tab order rule: controls must be declared in order of
+# increasing X then Y, i.e. the left column top-to-bottom, then the right
+# column top-to-bottom. The .lay declaration order is what CtrlLayout uses for
+# focus/Tab order, so the sequence must be non-decreasing by (column, top-Y).
+# A control belongs to the right column when it is anchored with RightPos.
+def check_project_tab_order(lay: str) -> None:
+    layout_height = 640
+    body = lay.split("LAYOUT(CroonProjectLayout", 1)[-1].split("END_LAYOUT", 1)[0]
+    items = re.findall(r"ITEM\([\w:<>]+,\s*(\w+),\s*(.*)\)\s*$", body, re.MULTILINE)
+    if not items:
+        fail("could not parse CroonProjectLayout items for Tab-order check")
+
+    def top_y(expr: str):
+        m = re.search(r"TopPosZ\((\d+)", expr)
+        if m:
+            return int(m.group(1))
+        m = re.search(r"TopPos\(Zy\((\d+)\)\s*(?:\+\s*(\d+))?", expr)
+        if m:
+            return int(m.group(1)) + (int(m.group(2)) if m.group(2) else 0)
+        m = re.search(r"VSizePosZ\((\d+)", expr)
+        if m:
+            return int(m.group(1))
+        m = re.search(r"BottomPos[Z]?\((?:Zy\()?(\d+)\)?,\s*(?:Zy\()?(\d+)\)?", expr)
+        if m:
+            return layout_height - int(m.group(1)) - int(m.group(2))
+        return None
+
+    prev_key = None
+    prev_name = None
+    for name, expr in items:
+        column = 1 if "RightPos(" in expr else 0
+        y = top_y(expr)
+        if y is None:
+            fail(f"CroonProjectLayout item {name} has an unrecognized vertical position")
+        key = (column, y)
+        if prev_key is not None and key < prev_key:
+            fail(f"CroonProjectLayout Tab-order regression: {name} (column {column}, y {y}) "
+                 f"is declared after {prev_name} (column {prev_key[0]}, y {prev_key[1]}); "
+                 "controls must be ordered left column then right column, each top to bottom")
+        prev_key = key
+        prev_name = name
 
 
 def main() -> None:
@@ -25,6 +69,8 @@ def main() -> None:
     ]:
         if layout not in lay:
             fail(f"missing {layout}")
+
+    check_project_tab_order(lay)
 
     for layout in [
         "LAYOUT(CroonMainWindowLayout",
