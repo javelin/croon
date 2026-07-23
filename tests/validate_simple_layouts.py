@@ -57,6 +57,10 @@ def main() -> None:
         if not text.endswith("\n\n") or text.endswith("\n\n\n"):
             fail(f"{rel} must end with exactly one trailing blank line "
                  "(TheIDE adds one on load; commit it to avoid noisy diffs)")
+        # U++ enum constants (ALIGN_*) must be Upp::-qualified so TheIDE does not
+        # rewrite them on load.
+        for m in re.finditer(r"(?<!Upp::)\bALIGN_\w+", text):
+            fail(f"{rel}: enum '{m.group(0)}' must be Upp::-qualified")
 
     check_lay_upp_prefix(root, lay_files)
 
@@ -119,6 +123,8 @@ def main() -> None:
         'CtrlLayout(*this, "Edit Lyrics")',
         "decorEd.SetData(decor)",
         "lyricsEd.SetData(lyrics)",
+        "okBtn.Ok()",
+        "cancelBtn.Cancel()",
         "Break(IDOK)",
         "Break(IDCANCEL)",
     ]:
@@ -160,6 +166,8 @@ def main() -> None:
         "data = &karData",
         "Populate()",
         "return TopWindow::Run()",
+        "okBtn.Ok()",
+        "cancelBtn.Cancel()",
         "PromptYesNo(\"Discard changes and cancel?\")",
         "lpCtrl.ClearParts()",
         "lpCtrl.WhenToggle",
@@ -202,6 +210,7 @@ def main() -> None:
         "fs.ExecuteOpen(\"Find Ffmpeg Executable...\")",
         "Config::Set(LYRICS_PREFIX",
         "Config::Set(FONT_SIZE",
+        "closeBtn.Ok()",
     ]:
         if needle not in settings_impl:
             fail(f"SettingsDlg.cpp missing behavior {needle}")

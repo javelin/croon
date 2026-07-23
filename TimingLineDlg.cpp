@@ -37,11 +37,13 @@ TimingLineDlg::TimingLineDlg(String decor, String lyrics) {
     decorEd.SetData(decor);
     lyricsEd.SetData(lyrics);
     
+    okBtn.Ok();
     okBtn << [=] {
         Break(IDOK);
         Close();
     };
-    
+
+    cancelBtn.Cancel();
     cancelBtn << [=] {
         Break(IDCANCEL);
         Close();
