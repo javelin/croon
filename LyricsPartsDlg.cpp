@@ -30,9 +30,11 @@ LyricsPartsDlg::LyricsPartsDlg() {
     CtrlLayout(*this);
     CenterOwner();
     
+    okBtn.Ok();
     okBtn << [=] { Break(IDOK); };
     okBtn.Disable();
-    
+
+    cancelBtn.Cancel();
     cancelBtn << [=] {
         if (dirty) {
             if (PromptYesNo("Discard changes and cancel?") != 1) return;

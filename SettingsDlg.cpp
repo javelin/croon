@@ -52,6 +52,7 @@ SettingsDlg::SettingsDlg() {
         Config::Set(FFMPEG_LOCATION, ffmpegLoc);
     };
     
+    closeBtn.Ok();
     closeBtn << [=] {
         Close();
     };

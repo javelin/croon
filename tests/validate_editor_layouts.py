@@ -39,7 +39,7 @@ def check_project_tab_order(lay: str) -> None:
     prev_key = None
     prev_name = None
     for name, expr in items:
-        column = 1 if "RightPos(" in expr else 0
+        column = 1 if "RightPos" in expr else 0
         y = top_y(expr)
         if y is None:
             fail(f"CroonProjectLayout item {name} has an unrecognized vertical position")

@@ -80,7 +80,7 @@ MainWindow::MainWindow(KarData& data) : videoDlg(data), wizardDlg(data), project
     CtrlLayout(*this);
     Add(projects.HSizePos().VSizePos());
     Add(project.HSizePos().VSizePos());
-    Title(AppIdentity::ProductName()).Sizeable().Zoomable().SetMinSize(Size(UiScaler::X(640), UiScaler::Y(490)));
+    Title(AppIdentity::ProductName()).Sizeable().Zoomable().SetMinSize(Size(UiScaler::X(640), UiScaler::Y(520)));
     int x{Config::GetInt(WIN_X, -9999)},
         y{Config::GetInt(WIN_Y, -9999)},
         w{Config::GetInt(WIN_W, 2048)},
