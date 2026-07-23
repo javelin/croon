@@ -13,6 +13,21 @@ def main() -> None:
         fail("expected repository root argument")
 
     root = Path(sys.argv[1])
+
+    # Every .lay file must end with exactly one trailing blank line. TheIDE adds
+    # one automatically when it loads a layout, so keeping it in the committed
+    # file avoids a spurious one-line diff every time the layout is opened. This
+    # rule applies to all current and future .lay files.
+    lay_files = sorted(p for p in root.rglob("*.lay") if "build" not in p.parts)
+    if not lay_files:
+        fail("no .lay files found to validate")
+    for lay_path in lay_files:
+        text = lay_path.read_text()
+        rel = lay_path.relative_to(root)
+        if not text.endswith("\n\n") or text.endswith("\n\n\n"):
+            fail(f"{rel} must end with exactly one trailing blank line "
+                 "(TheIDE adds one on load; commit it to avoid noisy diffs)")
+
     lay = (root / "Croon.lay").read_text()
     for layout in [
         "LAYOUT(CroonSettingsLayout",

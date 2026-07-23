@@ -9,3 +9,4 @@ LAYOUT(CroonTimingDlgLayout, 640, 800)
 	ITEM(Label, adjustLbl, SetLabel(t_("Adjust All Timed")).LeftPosZ(125, 100).BottomPosZ(15, 25))
 	ITEM(Button, closeBtn, SetLabel(t_("Close")).RightPosZ(10, 100).BottomPosZ(15, 25))
 END_LAYOUT
+

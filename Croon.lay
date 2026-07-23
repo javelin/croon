@@ -91,3 +91,4 @@ LAYOUT(CroonProjectLayout, 900, 640)
 	ITEM(DropList, exportOpts, RightPos(Zx(11), 250 - Zx(2)).BottomPosZ(47, 20))
 	ITEM(Button, saveBtn, SetLabel(t_("Save")).RightPos(Zx(10), 250).BottomPosZ(10, 28))
 END_LAYOUT
+
