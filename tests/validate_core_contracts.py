@@ -216,11 +216,14 @@ def main() -> None:
         require(sdl_mixer_audio_player_h, needle, "SDLMixerAudioPlayer backend header dependency")
     for needle in [
         "#include <Core/Core.h>",
-        "#include <SDL2/SDL.h>",
-        "#include <SDL2/SDL_mixer.h>",
+        "#include <SDL.h>",
+        "#include <SDL_mixer.h>",
         '#include "SDLMixerAudioPlayer.h"',
     ]:
         require(sdl_mixer_audio_player_cpp, needle, "SDLMixerAudioPlayer direct dependency")
+    reject(sdl_mixer_audio_player_cpp, "#include <SDL2/SDL.h>", "SDLMixerAudioPlayer SDL2-pinned include")
+    reject(sdl_mixer_audio_player_cpp, "#include <SDL2/SDL_mixer.h>", "SDLMixerAudioPlayer SDL2-pinned mixer include")
+    reject(sdl_mixer_audio_player_cpp, "PLATFORM_POSIX", "SDLMixerAudioPlayer platform-guarded SDL include")
     for needle in [
         "SDL_Init(SDL_INIT_AUDIO)",
         "Mix_OpenAudio",
